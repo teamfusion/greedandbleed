@@ -42,7 +42,6 @@ public interface IHasTaskManager {
      */
     void holdInMainHand(ItemStack stack);
 
-
     /**
      * Handler for setting an ItemStack to the off hand
      * Useful for mobs that have specific behaviors for held items in the off hand

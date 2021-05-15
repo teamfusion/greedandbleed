@@ -235,9 +235,17 @@ public class PiglinPygmyTaskManager<T extends PiglinPygmyEntity> extends PiglinT
         idleTasks.add(
                 new SupplementedTask<>(PiglinReflectionHelper::reflectCanHunt, new PiglinsHuntHoglinsTask<>())
         );
-        idleTasks.add(avoidRepellent()
+        idleTasks.add(
+                avoidRepellent()
         );
-        idleTasks.add(babySometimesRideBabyHoglin()
+        idleTasks.add(
+                babySometimesRideBabyHoglin()
+        );
+        idleTasks.add(
+                createIdleLookBehaviors()
+        );
+        idleTasks.add(
+                createIdleMovementBehaviors()
         );
         idleTasks.add(
                 new FindInteractionAndLookTargetTask(EntityType.PLAYER, 4)

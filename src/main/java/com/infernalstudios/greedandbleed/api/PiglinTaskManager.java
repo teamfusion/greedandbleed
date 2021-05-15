@@ -53,44 +53,10 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
     }
 
     @Override
-    public void initActivities() {
+    protected void initActivities() {
         this.initCoreActivity(0);
         this.initIdleActivity(10);
         this.initFightActivity(10);
-    }
-
-    @Override
-    protected List<Task<? super T>> getIdleTasks() {
-        List<Task<? super T>> idleTasks = super.getIdleTasks();
-        idleTasks.add(
-                createIdleLookBehaviors());
-        idleTasks.add(
-                createIdleMovementBehaviors());
-        return idleTasks;
-    }
-
-    // IDLE BEHAVIOR METHODS
-
-    protected FirstShuffledTask<T> createIdleLookBehaviors() {
-        return new FirstShuffledTask<>(
-                getIdleLookBehaviors()
-        );
-    }
-
-    protected FirstShuffledTask<T> createIdleMovementBehaviors() {
-        return new FirstShuffledTask<>(
-                getIdleMovementBehaviors()
-        );
-    }
-
-    // LIST METHODS
-
-    protected List<Pair<Task<? super T>, Integer>> getIdleLookBehaviors(){
-        return Collections.emptyList();
-    }
-
-    protected List<Pair<Task<? super T>, Integer>> getIdleMovementBehaviors(){
-        return Collections.emptyList();
     }
 
     // STATIC TASKS

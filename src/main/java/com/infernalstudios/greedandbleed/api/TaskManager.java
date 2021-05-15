@@ -1,6 +1,7 @@
 package com.infernalstudios.greedandbleed.api;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -51,19 +52,11 @@ public abstract class TaskManager<T extends LivingEntity & IHasTaskManager> impl
         this.dynamicBrain.useDefaultActivity();
     }
 
-    /**
-     * Accessor for the Brain associated with this TaskMaster
-     * @return dynamicBrain
-     */
     @Override
     public Brain<T> getBrain() {
         return this.dynamicBrain;
     }
 
-    /**
-     * Retrieves an Optional SoundEvent for the LivingEntity associated with this TaskMaster instance
-     * @return An Optional SoundEvent for mob
-     */
     @Override
     public Optional<SoundEvent> getSoundForCurrentActivity() {
         return this.mob.getBrain()
@@ -230,6 +223,19 @@ public abstract class TaskManager<T extends LivingEntity & IHasTaskManager> impl
                 .isPresent();
     }
 
+
+    protected FirstShuffledTask<T> createIdleLookBehaviors() {
+        return new FirstShuffledTask<>(
+                getIdleLookBehaviors()
+        );
+    }
+
+    protected FirstShuffledTask<T> createIdleMovementBehaviors() {
+        return new FirstShuffledTask<>(
+                getIdleMovementBehaviors()
+        );
+    }
+
     // LIST METHODS
 
     protected List<Task<? super T>> getCoreTasks(){
@@ -291,6 +297,15 @@ public abstract class TaskManager<T extends LivingEntity & IHasTaskManager> impl
     protected List<Task<? super T>> getRideTasks(){
         return Collections.emptyList();
     }
+
+    protected List<Pair<Task<? super T>, Integer>> getIdleLookBehaviors(){
+        return Collections.emptyList();
+    }
+
+    protected List<Pair<Task<? super T>, Integer>> getIdleMovementBehaviors(){
+        return Collections.emptyList();
+    }
+
 
     // ABSTRACT METHODS
 
@@ -447,5 +462,4 @@ public abstract class TaskManager<T extends LivingEntity & IHasTaskManager> impl
 
     public static boolean isNearRepellent(LivingEntity livingEntity) {
         return livingEntity.getBrain().hasMemoryValue(MemoryModuleType.NEAREST_REPELLENT);
-    }
-}
+    }}
