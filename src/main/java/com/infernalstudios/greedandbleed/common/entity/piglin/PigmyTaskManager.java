@@ -144,8 +144,8 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
     }
 
     @Override
-    public void wasHurtBy(LivingEntity entity) {
-        if (!(entity instanceof PigmyEntity)) {
+    public void wasHurtBy(LivingEntity attacker) {
+        if (!(attacker instanceof PigmyEntity)) {
             if (isHoldingItemInOffHand(this.mob)) {
                 stopHoldingOffHandItem(this.mob, false);
             }
@@ -154,27 +154,27 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
             brain.eraseMemory(MemoryModuleType.CELEBRATE_LOCATION);
             brain.eraseMemory(MemoryModuleType.DANCING);
             brain.eraseMemory(MemoryModuleType.ADMIRING_ITEM);
-            if (entity instanceof PlayerEntity) {
+            if (attacker instanceof PlayerEntity) {
                 brain.setMemoryWithExpiry(MemoryModuleType.ADMIRING_DISABLED, true, 400L);
             }
 
             getAvoidTarget(this.mob).ifPresent((p_234462_2_) -> {
-                if (p_234462_2_.getType() != entity.getType()) {
+                if (p_234462_2_.getType() != attacker.getType()) {
                     brain.eraseMemory(MemoryModuleType.AVOID_TARGET);
                 }
 
             });
             if (this.mob.isBaby()) {
-                brain.setMemoryWithExpiry(MemoryModuleType.AVOID_TARGET, entity, 100L);
-                if (isAttackAllowed(entity)) {
-                    broadcastAngerTarget(this.mob, entity);
+                brain.setMemoryWithExpiry(MemoryModuleType.AVOID_TARGET, attacker, 100L);
+                if (isAttackAllowed(attacker)) {
+                    broadcastAngerTarget(this.mob, attacker);
                 }
 
-            } else if (entity instanceof HoglinEntity && hoglinsOutnumberPiglins(this.mob)) {
-                setAvoidTargetAndDontHuntForAWhile(this.mob, entity);
-                broadcastRetreatToPygmies(this.mob, entity);
+            } else if (attacker instanceof HoglinEntity && hoglinsOutnumberPiglins(this.mob)) {
+                setAvoidTargetAndDontHuntForAWhile(this.mob, attacker);
+                broadcastRetreatToPygmies(this.mob, attacker);
             } else {
-                maybeRetaliate(this.mob, entity);
+                maybeRetaliate(this.mob, attacker);
             }
         }
     }
@@ -192,7 +192,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
 
     @Override
     protected List<Pair<Task<? super T>, Integer>> getIdleMovementBehaviors(){
-        float speedModifer = 8.0F;
+        float speedModifer = 0.6F;
         return Arrays.asList(
                 Pair.of(new WalkRandomlyTask(speedModifer), 2),
                 Pair.of(InteractWithEntityTask.of(EntityType.PIGLIN, 8, MemoryModuleType.INTERACTION_TARGET, speedModifer, 2), 2),

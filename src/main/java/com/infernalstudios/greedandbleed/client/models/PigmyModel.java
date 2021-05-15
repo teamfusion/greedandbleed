@@ -25,7 +25,7 @@ public class PigmyModel<T extends MobEntity> extends BipedModel<T> {
 	private final ModelRenderer hair;
 
 	public PigmyModel(float modelSize, int texWidthIn, int textHeightIn) {
-		super(RenderType::entityTranslucent, modelSize, 0.0F, 64, 64);
+		super(modelSize);
 		this.texWidth = texWidthIn;
 		this.texHeight = textHeightIn;
 
@@ -43,7 +43,7 @@ public class PigmyModel<T extends MobEntity> extends BipedModel<T> {
 
 		this.hair = new ModelRenderer(this);
 		this.hair.setPos(0.0F, 0.0F, 0.0F);
-		this.head.addChild(upperbody);
+		this.head.addChild(this.hair);
 		this.hair.texOffs(0, 22).addBox(0.0F, -30.0F, -4.0F, 0.0F, 12.0F, 10.0F, 0.0F, false);
 
 		//ears = new ModelRenderer(this);
@@ -53,14 +53,14 @@ public class PigmyModel<T extends MobEntity> extends BipedModel<T> {
 		this.earLeft = new ModelRenderer(this);
 		this.earLeft.setPos(-6.0F, -17.0F, -3.0F);
 		//ears.addChild(earRight);
-		this.head.addChild(earLeft);
+		this.head.addChild(this.earLeft);
 		setRotationAngle(this.earLeft, 0.0F, 0.0F, 0.1745F);
 		this.earLeft.texOffs(39, 26).addBox(-1.0F, -6.0F, 0.0F, 1.0F, 6.0F, 6.0F, 0.0F, false);
 
 		this.earRight = new ModelRenderer(this);
 		this.earRight.setPos(7.0F, -17.0F, -3.0F);
 		//ears.addChild(earLeft);
-		this.head.addChild(earRight);
+		this.head.addChild(this.earRight);
 		setRotationAngle(this.earRight, 0.0F, 0.0F, -0.1745F);
 		this.earRight.texOffs(14, 38).addBox(-1.0F, -6.0F, 0.0F, 1.0F, 6.0F, 6.0F, 0.0F, false);
 

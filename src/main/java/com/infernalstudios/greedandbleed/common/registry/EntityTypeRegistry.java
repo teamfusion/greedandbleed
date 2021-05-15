@@ -16,7 +16,8 @@ public class EntityTypeRegistry {
     public static final RegistryObject<EntityType<PigmyEntity>> PIGMY =
             ENTITY_TYPES.register("pigmy", () ->
                     EntityType.Builder.<PigmyEntity>of(PigmyEntity::new, EntityClassification.MONSTER)
-                            .sized(0.6F, 1.95F)
+                            // pigmy is 14x24 pixels, piglin is 16x31(?)
+                            .sized(0.6F, 1.5F)
                             .clientTrackingRange(8)
                             .build(new ResourceLocation(GreedAndBleed.MODID, "pigmy").toString()));
 }

@@ -67,7 +67,7 @@ public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, 
         this.taskManager.initMemories();
         this.populateDefaultEquipmentSlots(difficultyInstance);
         this.populateDefaultEquipmentEnchantments(difficultyInstance);
-        return this.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, compoundNBT);
+        return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, compoundNBT);
     }
 
     private ItemStack createSpawnWeapon() {
