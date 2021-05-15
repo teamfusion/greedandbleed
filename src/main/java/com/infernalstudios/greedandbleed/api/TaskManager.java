@@ -21,6 +21,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -239,71 +240,71 @@ public abstract class TaskManager<T extends LivingEntity & IHasTaskManager> impl
     // LIST METHODS
 
     protected List<Task<? super T>> getCoreTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getIdleTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getWorkTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getPlayTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getRestTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getMeetTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getPanicTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getRaidTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getPreRaidTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getHideTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getFightTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getCelebrateTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getAdmireItemTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getAvoidTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Task<? super T>> getRideTasks(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Pair<Task<? super T>, Integer>> getIdleLookBehaviors(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
     protected List<Pair<Task<? super T>, Integer>> getIdleMovementBehaviors(){
-        return Collections.emptyList();
+        return Arrays.asList();
     }
 
 

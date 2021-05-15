@@ -1,27 +1,21 @@
-package com.infernalstudios.greedandbleed.entity;
+package com.infernalstudios.greedandbleed.common.entity.piglin;
 
 import com.infernalstudios.greedandbleed.api.IHasTaskManager;
 import com.infernalstudios.greedandbleed.api.ITaskManager;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 public abstract class InfernalPiglinEntity extends AbstractPiglinEntity implements IHasTaskManager {
@@ -62,17 +56,6 @@ public abstract class InfernalPiglinEntity extends AbstractPiglinEntity implemen
     @Override
     public boolean removeWhenFarAway(double p_213397_1_) {
         return !this.isPersistenceRequired();
-    }
-
-
-    @Nullable
-    public ILivingEntityData finalizeSpawn(IServerWorld serverWorld, DifficultyInstance difficultyInstance, SpawnReason spawnReason, @Nullable ILivingEntityData entityData, @Nullable CompoundNBT compoundNBT) {
-        // extra spawn stuff goes here
-
-        this.taskManager.initMemories();
-        this.populateDefaultEquipmentSlots(difficultyInstance);
-        this.populateDefaultEquipmentEnchantments(difficultyInstance);
-        return this.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, compoundNBT);
     }
 
     public boolean hurt(DamageSource damageSource, float amount) {

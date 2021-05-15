@@ -1,4 +1,4 @@
-package com.infernalstudios.greedandbleed.tasks;
+package com.infernalstudios.greedandbleed.server.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Optional;

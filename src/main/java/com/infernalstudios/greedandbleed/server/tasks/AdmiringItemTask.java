@@ -1,4 +1,4 @@
-package com.infernalstudios.greedandbleed.tasks;
+package com.infernalstudios.greedandbleed.server.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.LivingEntity;
@@ -6,7 +6,6 @@ import net.minecraft.entity.ai.brain.memory.MemoryModuleStatus;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.Item;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.function.Predicate;

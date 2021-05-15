@@ -1,11 +1,10 @@
-package com.infernalstudios.greedandbleed.taskmanager;
+package com.infernalstudios.greedandbleed.common.entity.piglin;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
 import com.infernalstudios.greedandbleed.api.TaskManager;
-import com.infernalstudios.greedandbleed.entity.PiglinPygmyEntity;
-import com.infernalstudios.greedandbleed.tasks.*;
+import com.infernalstudios.greedandbleed.server.tasks.*;
 import com.infernalstudios.greedandbleed.api.PiglinReflectionHelper;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.Entity;
@@ -36,9 +35,9 @@ import java.util.Optional;
  * @author Thelnfamous1
  * @param <T> A class that extends PiglinPygmyEntity
  */
-public class PiglinPygmyTaskManager<T extends PiglinPygmyEntity> extends PiglinTaskManager<T> {
+public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T> {
 
-    public PiglinPygmyTaskManager(T pygmy, Brain<T> dynamicBrain) {
+    public PigmyTaskManager(T pygmy, Brain<T> dynamicBrain) {
         super(pygmy, dynamicBrain);
     }
 
@@ -146,12 +145,12 @@ public class PiglinPygmyTaskManager<T extends PiglinPygmyEntity> extends PiglinT
 
     @Override
     public void wasHurtBy(LivingEntity entity) {
-        if (!(entity instanceof PiglinPygmyEntity)) {
+        if (!(entity instanceof PigmyEntity)) {
             if (isHoldingItemInOffHand(this.mob)) {
                 stopHoldingOffHandItem(this.mob, false);
             }
 
-            Brain<PiglinPygmyEntity> brain = this.mob.getBrain();
+            Brain<PigmyEntity> brain = this.mob.getBrain();
             brain.eraseMemory(MemoryModuleType.CELEBRATE_LOCATION);
             brain.eraseMemory(MemoryModuleType.DANCING);
             brain.eraseMemory(MemoryModuleType.ADMIRING_ITEM);
@@ -296,16 +295,16 @@ public class PiglinPygmyTaskManager<T extends PiglinPygmyEntity> extends PiglinT
                 avoidRepellent()
         );
         celebrateTasks.add(
-                new ForgetAttackTargetTask<PiglinPygmyEntity>(AbstractPiglinEntity::isAdult, TaskManager::findNearestValidAttackTargetFor)
+                new ForgetAttackTargetTask<PigmyEntity>(AbstractPiglinEntity::isAdult, TaskManager::findNearestValidAttackTargetFor)
                 );
         celebrateTasks.add(
-                new ForgetAttackTargetTask<PiglinPygmyEntity>(AbstractPiglinEntity::isAdult, TaskManager::findNearestValidAttackTargetFor)
+                new ForgetAttackTargetTask<PigmyEntity>(AbstractPiglinEntity::isAdult, TaskManager::findNearestValidAttackTargetFor)
                 );
         celebrateTasks.add(
-                new SupplementedTask<PiglinPygmyEntity>((p_234457_0_) -> !p_234457_0_.isDancing(), new HuntCelebrationTask<>(2, 1.0F))
+                new SupplementedTask<PigmyEntity>((p_234457_0_) -> !p_234457_0_.isDancing(), new HuntCelebrationTask<>(2, 1.0F))
                 );
         celebrateTasks.add(
-                new SupplementedTask<PiglinPygmyEntity>(PiglinPygmyEntity::isDancing, new HuntCelebrationTask<>(4, 0.6F))
+                new SupplementedTask<PigmyEntity>(PigmyEntity::isDancing, new HuntCelebrationTask<>(4, 0.6F))
                 );
         celebrateTasks.add(
                 new FirstShuffledTask<>(
@@ -330,7 +329,7 @@ public class PiglinPygmyTaskManager<T extends PiglinPygmyEntity> extends PiglinT
                 createIdleMovementBehaviors()
                 );
         avoidTasks.add(
-                new PredicateTask<PiglinPygmyEntity>(PiglinTaskManager::wantsToStopFleeing, MemoryModuleType.AVOID_TARGET)
+                new PredicateTask<PigmyEntity>(PiglinTaskManager::wantsToStopFleeing, MemoryModuleType.AVOID_TARGET)
         );
         return avoidTasks;
     }
@@ -359,7 +358,7 @@ public class PiglinPygmyTaskManager<T extends PiglinPygmyEntity> extends PiglinT
         getVisibleAdultPiglins(piglin)
                 .stream()
                 .filter(
-                        (visibleAdultPiglin) -> visibleAdultPiglin instanceof PiglinPygmyEntity)
+                        (visibleAdultPiglin) -> visibleAdultPiglin instanceof PigmyEntity)
                 .forEach(
                         (pygmy) -> retreatFromNearestTarget(pygmy, targetIn));
     }
@@ -369,7 +368,7 @@ public class PiglinPygmyTaskManager<T extends PiglinPygmyEntity> extends PiglinT
             return false;
         } else {
             Entity vehicle = piglin.getVehicle();
-            return vehicle instanceof PiglinPygmyEntity && ((PiglinPygmyEntity)vehicle).isBaby() || vehicle instanceof HoglinEntity && ((HoglinEntity)vehicle).isBaby();
+            return vehicle instanceof PigmyEntity && ((PigmyEntity)vehicle).isBaby() || vehicle instanceof HoglinEntity && ((HoglinEntity)vehicle).isBaby();
         }
     }
 

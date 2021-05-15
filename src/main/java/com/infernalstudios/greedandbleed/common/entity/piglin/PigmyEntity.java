@@ -1,10 +1,9 @@
-package com.infernalstudios.greedandbleed.entity;
+package com.infernalstudios.greedandbleed.common.entity.piglin;
 
 import com.google.common.collect.ImmutableList;
 import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
 import com.infernalstudios.greedandbleed.api.IHasInventory;
 import com.infernalstudios.greedandbleed.api.TaskManager;
-import com.infernalstudios.greedandbleed.taskmanager.*;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -26,21 +25,21 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
 import net.minecraft.world.server.ServerWorld;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
-public class PiglinPygmyEntity extends InfernalPiglinEntity implements ICrossbowUser, IHasInventory {
+public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, IHasInventory {
     protected Inventory inventory = new Inventory(8);
 
-    public PiglinPygmyEntity(EntityType<? extends AbstractPiglinEntity> entityType, World world) {
+    public PigmyEntity(EntityType<? extends AbstractPiglinEntity> entityType, World world) {
         super(entityType, world);
     }
 
@@ -51,8 +50,46 @@ public class PiglinPygmyEntity extends InfernalPiglinEntity implements ICrossbow
                 .add(Attributes.ATTACK_DAMAGE, 5.0D);
     }
 
-    public static boolean checkPygmySpawnRules(EntityType<PiglinPygmyEntity> pygmy, IWorld blockState, SpawnReason spawnReason, BlockPos blockPos, Random random) {
+    public static boolean checkPygmySpawnRules(EntityType<PigmyEntity> pygmy, IWorld blockState, SpawnReason spawnReason, BlockPos blockPos, Random random) {
         return !blockState.getBlockState(blockPos.below()).is(Blocks.NETHER_WART_BLOCK);
+    }
+
+    @Override
+    public ILivingEntityData finalizeSpawn(IServerWorld serverWorld, DifficultyInstance difficultyInstance, SpawnReason spawnReason, @Nullable ILivingEntityData entityData, @Nullable CompoundNBT compoundNBT) {
+        if (spawnReason != SpawnReason.STRUCTURE) {
+            if (serverWorld.getRandom().nextFloat() < 0.2F) {
+                this.setBaby(true);
+            } else if (this.isAdult()) {
+                this.setItemSlot(EquipmentSlotType.MAINHAND, this.createSpawnWeapon());
+            }
+        }
+
+        this.taskManager.initMemories();
+        this.populateDefaultEquipmentSlots(difficultyInstance);
+        this.populateDefaultEquipmentEnchantments(difficultyInstance);
+        return this.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, compoundNBT);
+    }
+
+    private ItemStack createSpawnWeapon() {
+        return (double)this.random.nextFloat() < 0.5D ? new ItemStack(Items.CROSSBOW) : new ItemStack(Items.GOLDEN_SWORD);
+    }
+
+    @Override
+    protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance) {
+        if (this.isAdult()) {
+            this.maybeWearArmor(EquipmentSlotType.HEAD, new ItemStack(Items.GOLDEN_HELMET));
+            this.maybeWearArmor(EquipmentSlotType.CHEST, new ItemStack(Items.GOLDEN_CHESTPLATE));
+            this.maybeWearArmor(EquipmentSlotType.LEGS, new ItemStack(Items.GOLDEN_LEGGINGS));
+            this.maybeWearArmor(EquipmentSlotType.FEET, new ItemStack(Items.GOLDEN_BOOTS));
+        }
+
+    }
+
+    private void maybeWearArmor(EquipmentSlotType slotType, ItemStack stack) {
+        if (this.level.random.nextFloat() < 0.1F) {
+            this.setItemSlot(slotType, stack);
+        }
+
     }
 
     public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
@@ -136,7 +173,7 @@ public class PiglinPygmyEntity extends InfernalPiglinEntity implements ICrossbow
         super.customServerAiStep();
     }
 
-    protected Brain.BrainCodec<PiglinPygmyEntity> brainProvider() {
+    protected Brain.BrainCodec<PigmyEntity> brainProvider() {
         return Brain.provider(PYGMY_MEMORY_TYPES, PYGMY_SENSOR_TYPES);
     }
 
@@ -146,8 +183,8 @@ public class PiglinPygmyEntity extends InfernalPiglinEntity implements ICrossbow
     }
 
     @Override
-    public Brain<PiglinPygmyEntity> getBrain() {
-        return (Brain<PiglinPygmyEntity>)super.getBrain();
+    public Brain<PigmyEntity> getBrain() {
+        return (Brain<PigmyEntity>)super.getBrain();
     }
 
     // SAVE DATA
@@ -237,8 +274,8 @@ public class PiglinPygmyEntity extends InfernalPiglinEntity implements ICrossbow
     // HAS TASK MASTER
 
     @Override
-    public TaskManager<PiglinPygmyEntity> createTaskManager(Dynamic<?> dynamic) {
-        return new PiglinPygmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
+    public TaskManager<PigmyEntity> createTaskManager(Dynamic<?> dynamic) {
+        return new PigmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
     }
 
     @Override
@@ -266,7 +303,7 @@ public class PiglinPygmyEntity extends InfernalPiglinEntity implements ICrossbow
 
     // SENSOR TYPES AND MEMORY MODULE TYPES
 
-    public static final ImmutableList<SensorType<? extends Sensor<? super PiglinPygmyEntity>>> PYGMY_SENSOR_TYPES =
+    public static final ImmutableList<SensorType<? extends Sensor<? super PigmyEntity>>> PYGMY_SENSOR_TYPES =
             ImmutableList.of(
                     SensorType.NEAREST_LIVING_ENTITIES,
                     SensorType.NEAREST_PLAYERS,
