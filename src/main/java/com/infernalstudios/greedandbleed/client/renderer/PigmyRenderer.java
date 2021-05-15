@@ -2,7 +2,7 @@ package com.infernalstudios.greedandbleed.client.renderer;
 
 import com.google.common.collect.ImmutableMap;
 import com.infernalstudios.greedandbleed.GreedAndBleed;
-import com.infernalstudios.greedandbleed.client.models.PigmyModel;
+import com.infernalstudios.greedandbleed.client.models.BetterPigmyModel;
 import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -15,7 +15,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Map;
 
-public class PigmyRenderer extends BipedRenderer<MobEntity, PigmyModel<MobEntity>> {
+public class PigmyRenderer extends BipedRenderer<MobEntity, BetterPigmyModel<MobEntity>> {
     private static final Map<EntityType<?>, ResourceLocation> resourceLocations = ImmutableMap.of(
             EntityTypeRegistry.PIGMY.get(), new ResourceLocation(GreedAndBleed.MODID, "textures/entity/piglin/pigmy.png"));
 
@@ -24,8 +24,8 @@ public class PigmyRenderer extends BipedRenderer<MobEntity, PigmyModel<MobEntity
         this.addLayer(new BipedArmorLayer<>(this, new BipedModel(0.5F), new BipedModel(1.02F)));
     }
 
-    private static PigmyModel<MobEntity> createModel(boolean zombified) {
-        PigmyModel<MobEntity> pigmyModel = new PigmyModel<>(0.0F, 64, 64);
+    private static BetterPigmyModel<MobEntity> createModel(boolean zombified) {
+        BetterPigmyModel<MobEntity> pigmyModel = new BetterPigmyModel<>(0.0F, 64, 64);
         if (zombified) {
             pigmyModel.earLeft.visible = false;
         }
