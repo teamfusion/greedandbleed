@@ -36,13 +36,13 @@ public abstract class TaskManager<T extends LivingEntity & IHasTaskManager> impl
     protected final Brain<T> dynamicBrain;
 
     /**
-     * Constructs a new TaskMaster instance given a LivingEntity and a Brain.
+     * Constructs a new TaskManager instance given a LivingEntity and a Brain.
      * Note that this should only be instantiated inside LivingEntity#makeBrain,
-     * ideally using IHasTaskMaster#createTaskMaster,
+     * ideally using IHasTaskManager#createTaskManager,
      * and dynamicBrain should be the Brain returned from LivingEntity#brainProvider().makeBrain(dynamic)
      * where dynamic is the Dynamic instance passed into LivingEntity#makeBrain.
-     * @param mob The LivingEntity to associate with this TaskMaster
-     * @param dynamicBrain The Brain to associate with this TaskMaster
+     * @param mob The LivingEntity to associate with this TaskManager
+     * @param dynamicBrain The Brain to associate with this TaskManager
      */
     public TaskManager(T mob, Brain<T> dynamicBrain) {
         this.mob = mob;
@@ -317,8 +317,8 @@ public abstract class TaskManager<T extends LivingEntity & IHasTaskManager> impl
 
     // STATIC HELPER METHODS
 
-    public static Optional<? extends LivingEntity> findNearestValidAttackTargetFor(IHasTaskManager hasTaskMaster){
-        return hasTaskMaster.getTaskManager().findNearestValidAttackTarget();
+    public static Optional<? extends LivingEntity> findNearestValidAttackTargetFor(IHasTaskManager hasTaskManager){
+        return hasTaskManager.getTaskManager().findNearestValidAttackTarget();
     }
 
     public static boolean hasCrossbow(LivingEntity livingEntity) {

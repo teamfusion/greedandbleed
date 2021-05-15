@@ -12,28 +12,28 @@ import java.util.Optional;
 public interface ITaskManager<T extends LivingEntity & IHasTaskManager> {
 
     /**
-     * Accessor for the Brain associated with this ITaskMaster
+     * Accessor for the Brain associated with this ITaskManager
      * @return dynamicBrain
      */
     Brain<T> getBrain();
 
     /**
-     * Retrieves an Optional SoundEvent for the LivingEntity associated with this ITaskMaster instance
-     * Call this in LivingEntity#playAmbientSound and ITaskMaster#updateActivity
+     * Retrieves an Optional SoundEvent for the LivingEntity associated with this ITaskManager instance
+     * Call this in LivingEntity#playAmbientSound and ITaskManager#updateActivity
      * Inspired by PiglinTasks#getSoundForCurrentActivity
-     * @return An Optional SoundEvent for this TaskMaster's mob
+     * @return An Optional SoundEvent for this TaskManager's mob
      */
     Optional<SoundEvent> getSoundForCurrentActivity();
 
     /**
-     * Initializes specific MemoryModuleTypes for this ITaskMaster's dynamicBrain
+     * Initializes specific MemoryModuleTypes for this ITaskManager's dynamicBrain
      * Inspired by PiglinTasks#initMemories
      * Call this in MobEntity#finalizeSpawn
      */
     void initMemories();
 
     /**
-     * Handles when a PlayerEntity interacts with this ITaskMaster's mob
+     * Handles when a PlayerEntity interacts with this ITaskManager's mob
      * Call this in MobEntity#mobInteract
      * Inspired by PiglinTasks#mobInteract
      *
@@ -44,7 +44,7 @@ public interface ITaskManager<T extends LivingEntity & IHasTaskManager> {
     ActionResultType mobInteract(PlayerEntity player, Hand hand);
 
     /**
-     * Handles updating the Activity of this ITaskMaster's dynamicBrain
+     * Handles updating the Activity of this ITaskManager's dynamicBrain
      * Inspired by PiglinTasks#updateActivity
      * Call this in MobEntity#updateServerAiStep
      */
@@ -53,14 +53,14 @@ public interface ITaskManager<T extends LivingEntity & IHasTaskManager> {
     /**
      * Call this in LivingEntity#hurt
      * Inspired by PiglinTasks#wasHurtBy
-     * @param entity The LivingEntity that hurt  this TaskMaster's mob
+     * @param entity The LivingEntity that hurt  this TaskManager's mob
      */
     void wasHurtBy(LivingEntity entity);
 
     /**
-     * Retrieves an Optional of the nearest valid attack target for this ITaskMaster's mob
+     * Retrieves an Optional of the nearest valid attack target for this ITaskManager's mob
      * Call this in a static helper method supplied to FindNewAttackTargetTask
-     * @return An Optional of a LivingEntity that is the nearest valid attack target for this ITaskMaster's mob
+     * @return An Optional of a LivingEntity that is the nearest valid attack target for this ITaskManager's mob
      */
     Optional<? extends LivingEntity> findNearestValidAttackTarget();
 }
