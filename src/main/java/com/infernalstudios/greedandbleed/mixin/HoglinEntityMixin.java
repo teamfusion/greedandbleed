@@ -1,14 +1,14 @@
 package com.infernalstudios.greedandbleed.mixin;
 
-import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
+import com.infernalstudios.greedandbleed.common.entity.IActionMount;
 import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.monster.HoglinEntity;
-import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.entity.monster.HoglinTasks;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,8 +20,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 
 @Mixin(HoglinEntity.class)
-public abstract class HoglinEntityMixin extends AnimalEntity implements IRideable, IEquipable {
+public abstract class HoglinEntityMixin extends AnimalEntity implements IRideable, IEquipable, IActionMount {
     private static final DataParameter<Boolean> DATA_SADDLE_ID = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> DATA_BOOST_TIME = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.INT);
     private final BoostHelper steering = new BoostHelper(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
@@ -41,18 +39,16 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         super(entityType, world);
     }
 
-    @Override
-    public void onSyncedDataUpdated(DataParameter<?> dataParameter) {
-        if (DATA_BOOST_TIME.equals(dataParameter) && this.level.isClientSide) {
-            this.steering.onSynced();
-        }
-        super.onSyncedDataUpdated(dataParameter);
-    }
+    // MIXINS
 
     @Inject(at = @At("RETURN"), method = "Lnet/minecraft/entity/monster/HoglinEntity;mobInteract(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResultType;", cancellable = true)
     private void giveSaddle(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResultType> cir){
         boolean food = this.isFood(player.getItemInHand(hand));
-        if (!food && this.isSaddled() && !this.isVehicle() && !player.isSecondaryUseActive()) {
+        if (!food
+                && this.isSaddled()
+                && !this.isVehicle()
+                && !player.isSecondaryUseActive()
+                && isPacified(this)) {
             if (!this.level.isClientSide) {
                 player.startRiding(this);
             }
@@ -67,6 +63,10 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
                         ActionResultType.PASS);
             }
         }
+    }
+
+    private static boolean isPacified(AnimalEntity hoglin) {
+        return hoglin.getBrain().hasMemoryValue(MemoryModuleType.PACIFIED);
     }
 
     @Inject(at = @At("RETURN"), method = "Lnet/minecraft/entity/monster/HoglinEntity;defineSynchedData()V")
@@ -84,6 +84,44 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     private void readSteeringData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
         this.steering.readAdditionalSaveData(compoundNBT);
     }
+
+    @Inject(at = @At("HEAD"), method = "Lnet/minecraft/entity/monster/HoglinEntity;doHurtTarget(Lnet/minecraft/entity/Entity;)Z")
+    private void removeRiders(Entity target, CallbackInfoReturnable<Boolean> cir) {
+        if(this.getPassengers().contains(target)){
+            this.ejectPassengers();
+        }
+    }
+
+    // OVERRIDDEN METHODS
+
+    @Override
+    public void onSyncedDataUpdated(DataParameter<?> dataParameter) {
+        if (DATA_BOOST_TIME.equals(dataParameter) && this.level.isClientSide) {
+            this.steering.onSynced();
+        }
+        super.onSyncedDataUpdated(dataParameter);
+    }
+
+    @Nullable
+    public Entity getControllingPassenger() {
+        return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
+    }
+
+    @Override
+    public boolean canBeControlledByRider() {
+        Entity entity = this.getControllingPassenger();
+        if (!(entity instanceof PlayerEntity)) {
+            return false;
+        } else {
+            PlayerEntity playerentity = (PlayerEntity)entity;
+            return playerentity.getMainHandItem().getItem() ==
+                    ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get()
+                    || playerentity.getOffhandItem().getItem()
+                    == ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get();
+        }
+    }
+
+    // IRIDEABLE METHODS
 
     @Override
     public boolean boost() {
@@ -105,6 +143,8 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         return (float)this.getAttributeValue(Attributes.MOVEMENT_SPEED) * (0.225F);
     }
 
+    // IEQUIPABLE METHODS
+
     @Override
     public boolean isSaddleable() {
         return this.isAlive() && !this.isBaby();
@@ -123,23 +163,41 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         return this.steering.hasSaddle();
     }
 
-    @Nullable
-    public Entity getControllingPassenger() {
-        return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
+    // IACTIONMOUNT METHODS
+
+    @Override
+    public void onPlayerInput(int powerIn) {
+        if (this.isSaddled()) {
+            if (powerIn < 0) {
+                powerIn = 0;
+            } else {
+                //this.allowStandSliding = true;
+                //this.stand();
+            }
+
+            if (powerIn >= 90) {
+                //this.playerJumpPendingScale = 1.0F;
+            } else {
+                //this.playerJumpPendingScale = 0.4F + 0.4F * (float) powerIn / 90.0F;
+            }
+        }
     }
 
     @Override
-    public boolean canBeControlledByRider() {
-        Entity entity = this.getControllingPassenger();
-        if (!(entity instanceof PlayerEntity)) {
-            return false;
-        } else {
-            PlayerEntity playerentity = (PlayerEntity)entity;
-            return playerentity.getMainHandItem().getItem() ==
-                    ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get()
-                    || playerentity.getOffhandItem().getItem()
-                    == ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get();
-        }
+    public boolean canPerformMountAction() {
+        return this.isSaddled();
+    }
+
+    @Override
+    public void handleStartMountAction(int powerIn) {
+        //this.allowStandSliding = true;
+        //this.stand();
+        //this.playJumpSound();
+    }
+
+    @Override
+    public void handleStopMountAction() {
+
     }
 
 }

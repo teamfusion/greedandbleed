@@ -437,20 +437,20 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
         } else {
             boolean isBaby = pigmy.isBaby();
             MobEntity mobVehicle = (MobEntity)vehicle;
-            boolean ridingWalkingPiglin = mobVehicle instanceof PigmyEntity
+            boolean ridingWalkingPigmy = mobVehicle instanceof PigmyEntity
                     && mobVehicle.getVehicle() == null;
             if(isBaby){
                 return !mobVehicle.isBaby()
                         || !mobVehicle.isAlive()
                         || wasHurtRecently(pigmy)
                         || wasHurtRecently(mobVehicle)
-                        || ridingWalkingPiglin;
+                        || ridingWalkingPigmy;
             } else{
                 return mobVehicle.isBaby()
                         || !mobVehicle.isAlive()
                         || wasHurtRecently(pigmy)
                         || wasHurtRecently(mobVehicle)
-                        || ridingWalkingPiglin;
+                        || ridingWalkingPigmy;
             }
         }
     }

@@ -90,11 +90,13 @@ public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, 
                             && !hoglin.isPassenger();
             List<HoglinEntity> nearbyAdultHoglins = serverWorld.getEntitiesOfClass(HoglinEntity.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),
                     isRideableHoglin);
-            if (!nearbyAdultHoglins.isEmpty()) {
-                HoglinEntity hoglin = nearbyAdultHoglins.get(0);
+            for(HoglinEntity hoglin : nearbyAdultHoglins){
                 //hoglin.setChickenJockey(true);
-                this.startRiding(hoglin);
-                return true;
+                if(hoglin instanceof IEquipable
+                        && ((IEquipable)hoglin).isSaddled()){
+                    this.startRiding(hoglin);
+                    return true;
+                }
             }
         } else if ((double) serverWorld.getRandom().nextFloat() < 0.05D) {
             HoglinEntity hoglin = EntityType.HOGLIN.create(this.level);
@@ -102,9 +104,12 @@ public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, 
             hoglin.finalizeSpawn(serverWorld, difficultyInstance, SpawnReason.JOCKEY, (ILivingEntityData)null, (CompoundNBT)null);
             hoglin.setBaby(false);
             //hoglin.setChickenJockey(true);
-            this.startRiding(hoglin);
-            serverWorld.addFreshEntity(hoglin);
-            return true;
+            if(hoglin instanceof IEquipable && ((IEquipable)hoglin).isSaddleable()){
+                ((IEquipable)hoglin).equipSaddle((SoundCategory) null);
+                this.startRiding(hoglin);
+                serverWorld.addFreshEntity(hoglin);
+                return true;
+            }
         }
         return false;
     }
