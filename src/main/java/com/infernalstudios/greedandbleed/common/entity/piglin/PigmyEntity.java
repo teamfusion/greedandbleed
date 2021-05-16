@@ -1,9 +1,11 @@
 package com.infernalstudios.greedandbleed.common.entity.piglin;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
 import com.infernalstudios.greedandbleed.api.IHasInventory;
 import com.infernalstudios.greedandbleed.api.TaskManager;
+import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
+import com.infernalstudios.greedandbleed.server.registry.MemoryModuleTypeRegistry;
 import com.infernalstudios.greedandbleed.server.registry.SensorTypeRegistry;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.block.BlockState;
@@ -17,6 +19,7 @@ import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.monster.piglin.PiglinAction;
@@ -35,7 +38,9 @@ import net.minecraft.world.*;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, IHasInventory {
     protected Inventory inventory = new Inventory(8);
@@ -61,14 +66,47 @@ public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, 
             if (serverWorld.getRandom().nextFloat() < 0.2F) {
                 this.setBaby(true);
             } else if (this.isAdult()) {
-                this.setItemSlot(EquipmentSlotType.MAINHAND, this.createSpawnWeapon());
+                boolean isHoglinJockey = this.createHoglinJockey(serverWorld, difficultyInstance);
+                this.setItemSlot(EquipmentSlotType.MAINHAND,
+                        isHoglinJockey ?
+                                new ItemStack(ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get()) :
+                                this.createSpawnWeapon());
             }
         }
 
         this.taskManager.initMemories();
         this.populateDefaultEquipmentSlots(difficultyInstance);
         this.populateDefaultEquipmentEnchantments(difficultyInstance);
+
         return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, compoundNBT);
+    }
+
+    private boolean createHoglinJockey(IServerWorld serverWorld, DifficultyInstance difficultyInstance) {
+        if ((double) serverWorld.getRandom().nextFloat() < 0.05D) {
+            Predicate<HoglinEntity> isRideableHoglin =
+                    (hoglin) -> hoglin.isAlive()
+                            && hoglin.isAdult()
+                            && !hoglin.isVehicle()
+                            && !hoglin.isPassenger();
+            List<HoglinEntity> nearbyAdultHoglins = serverWorld.getEntitiesOfClass(HoglinEntity.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),
+                    isRideableHoglin);
+            if (!nearbyAdultHoglins.isEmpty()) {
+                HoglinEntity hoglin = nearbyAdultHoglins.get(0);
+                //hoglin.setChickenJockey(true);
+                this.startRiding(hoglin);
+                return true;
+            }
+        } else if ((double) serverWorld.getRandom().nextFloat() < 0.05D) {
+            HoglinEntity hoglin = EntityType.HOGLIN.create(this.level);
+            hoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.yRot, 0.0F);
+            hoglin.finalizeSpawn(serverWorld, difficultyInstance, SpawnReason.JOCKEY, (ILivingEntityData)null, (CompoundNBT)null);
+            hoglin.setBaby(false);
+            //hoglin.setChickenJockey(true);
+            this.startRiding(hoglin);
+            serverWorld.addFreshEntity(hoglin);
+            return true;
+        }
+        return false;
     }
 
     private ItemStack createSpawnWeapon() {
@@ -304,8 +342,8 @@ public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, 
 
     // SENSOR TYPES AND MEMORY MODULE TYPES
 
-    public static final ImmutableList<SensorType<? extends Sensor<? super PigmyEntity>>> PYGMY_SENSOR_TYPES =
-            ImmutableList.of(
+    public static final List<SensorType<? extends Sensor<? super PigmyEntity>>> PYGMY_SENSOR_TYPES =
+            Lists.newArrayList(
                     SensorType.NEAREST_LIVING_ENTITIES,
                     SensorType.NEAREST_PLAYERS,
                     SensorType.NEAREST_ITEMS,
@@ -313,8 +351,8 @@ public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, 
                     SensorTypeRegistry.PIGMY_SPECIFIC_SENSOR.get()
             );
 
-    public static final ImmutableList<MemoryModuleType<?>> PYGMY_MEMORY_TYPES =
-            ImmutableList.of(
+    public static final List<MemoryModuleType<?>> PYGMY_MEMORY_TYPES =
+            Lists.newArrayList(
                     MemoryModuleType.LOOK_TARGET,
                     MemoryModuleType.DOORS_TO_CLOSE,
                     MemoryModuleType.LIVING_ENTITIES,
@@ -348,7 +386,7 @@ public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, 
                     MemoryModuleType.RIDE_TARGET,
                     MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT,
                     MemoryModuleType.VISIBLE_ADULT_HOGLIN_COUNT,
-                    MemoryModuleType.NEAREST_VISIBLE_HUNTABLE_HOGLIN,
+                    MemoryModuleTypeRegistry.NEAREST_VISIBLE_ADULT_HOGLIN.get(),
                     MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD,
                     MemoryModuleType.NEAREST_PLAYER_HOLDING_WANTED_ITEM,
                     MemoryModuleType.ATE_RECENTLY,

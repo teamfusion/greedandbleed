@@ -1,11 +1,14 @@
 package com.infernalstudios.greedandbleed.mixin;
 
+import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
 import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.monster.HoglinEntity;
+import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -17,6 +20,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -63,7 +68,6 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
             }
         }
     }
-
 
     @Inject(at = @At("RETURN"), method = "Lnet/minecraft/entity/monster/HoglinEntity;defineSynchedData()V")
     private void defineSteeringData(CallbackInfo callbackInfo){

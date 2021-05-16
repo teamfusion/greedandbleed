@@ -2,6 +2,7 @@ package com.infernalstudios.greedandbleed;
 
 import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
 import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
+import com.infernalstudios.greedandbleed.server.registry.MemoryModuleTypeRegistry;
 import com.infernalstudios.greedandbleed.server.registry.SensorTypeRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -34,6 +35,7 @@ public class GreedAndBleed
         EntityTypeRegistry.ENTITY_TYPES.register(modEventBus);
         ItemRegistry.ITEMS.register(modEventBus);
         SensorTypeRegistry.SENSOR_TYPES.register(modEventBus);
+        MemoryModuleTypeRegistry.MEMORY_MODULE_TYPES.register(modEventBus);
     }
 
     private void setup(final FMLCommonSetupEvent event)

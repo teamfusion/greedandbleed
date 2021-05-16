@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
+import com.infernalstudios.greedandbleed.server.registry.MemoryModuleTypeRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
@@ -29,21 +30,33 @@ import net.minecraft.world.server.ServerWorld;
 
 public class PigmySpecificSensor extends Sensor<LivingEntity> {
    public Set<MemoryModuleType<?>> requires() {
-      return ImmutableSet.of(MemoryModuleType.VISIBLE_LIVING_ENTITIES, MemoryModuleType.LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD, MemoryModuleType.NEAREST_PLAYER_HOLDING_WANTED_ITEM, MemoryModuleType.NEAREST_VISIBLE_HUNTABLE_HOGLIN, MemoryModuleType.NEAREST_VISIBLE_BABY_HOGLIN, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT, MemoryModuleType.VISIBLE_ADULT_HOGLIN_COUNT, MemoryModuleType.NEAREST_REPELLENT);
+      return ImmutableSet.of(
+              MemoryModuleType.VISIBLE_LIVING_ENTITIES,
+              MemoryModuleType.LIVING_ENTITIES,
+              MemoryModuleType.NEAREST_VISIBLE_NEMESIS,
+              MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD,
+              MemoryModuleType.NEAREST_PLAYER_HOLDING_WANTED_ITEM,
+              MemoryModuleTypeRegistry.NEAREST_VISIBLE_ADULT_HOGLIN.get(),
+              MemoryModuleType.NEAREST_VISIBLE_BABY_HOGLIN,
+              MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS,
+              MemoryModuleType.NEARBY_ADULT_PIGLINS,
+              MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT,
+              MemoryModuleType.VISIBLE_ADULT_HOGLIN_COUNT,
+              MemoryModuleType.NEAREST_REPELLENT);
    }
 
    protected void doTick(ServerWorld serverWorld, LivingEntity sensorMob) {
       Brain<?> brain = sensorMob.getBrain();
       brain.setMemory(MemoryModuleType.NEAREST_REPELLENT, findNearestRepellent(serverWorld, sensorMob));
       Optional<MobEntity> nearVisibleNemesis = Optional.empty();
-      Optional<HoglinEntity> nearVisibleHuntableHoglin = Optional.empty();
+      Optional<HoglinEntity> nearVisibleAdultHoglin = Optional.empty();
       Optional<HoglinEntity> nearVisibleBabyHoglin = Optional.empty();
       Optional<LivingEntity> nearVisibleZombified = Optional.empty();
       Optional<PlayerEntity> nearTargetPlayerNoGold = Optional.empty();
       Optional<PlayerEntity> nearPlayerHoldingWanted = Optional.empty();
       int adultHoglinCounter = 0;
       List<AbstractPiglinEntity> nearVisibleAdultPiglins = Lists.newArrayList();
-      List<AbstractPiglinEntity> nearAdultPiglin = Lists.newArrayList();
+      List<AbstractPiglinEntity> nearAdultPiglins = Lists.newArrayList();
 
       for(LivingEntity visibleLiving : brain.getMemory(MemoryModuleType.VISIBLE_LIVING_ENTITIES).orElse(ImmutableList.of())) {
          if (visibleLiving instanceof HoglinEntity) {
@@ -52,8 +65,8 @@ public class PigmySpecificSensor extends Sensor<LivingEntity> {
                nearVisibleBabyHoglin = Optional.of(hoglinentity);
             } else if (hoglinentity.isAdult()) {
                ++adultHoglinCounter;
-               if (!nearVisibleHuntableHoglin.isPresent() && hoglinentity.canBeHunted()) {
-                  nearVisibleHuntableHoglin = Optional.of(hoglinentity);
+               if (!nearVisibleAdultHoglin.isPresent()) {
+                  nearVisibleAdultHoglin = Optional.of(hoglinentity);
                }
             }
          } else if (visibleLiving instanceof AbstractPiglinEntity) {
@@ -83,17 +96,17 @@ public class PigmySpecificSensor extends Sensor<LivingEntity> {
 
       for(LivingEntity nearbyLiving : brain.getMemory(MemoryModuleType.LIVING_ENTITIES).orElse(ImmutableList.of())) {
          if (nearbyLiving instanceof AbstractPiglinEntity && ((AbstractPiglinEntity)nearbyLiving).isAdult()) {
-            nearAdultPiglin.add((AbstractPiglinEntity)nearbyLiving);
+            nearAdultPiglins.add((AbstractPiglinEntity)nearbyLiving);
          }
       }
 
       brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS, nearVisibleNemesis);
-      brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_HUNTABLE_HOGLIN, nearVisibleHuntableHoglin);
+      brain.setMemory(MemoryModuleTypeRegistry.NEAREST_VISIBLE_ADULT_HOGLIN.get(), nearVisibleAdultHoglin);
       brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_BABY_HOGLIN, nearVisibleBabyHoglin);
       brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, nearVisibleZombified);
       brain.setMemory(MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD, nearTargetPlayerNoGold);
       brain.setMemory(MemoryModuleType.NEAREST_PLAYER_HOLDING_WANTED_ITEM, nearPlayerHoldingWanted);
-      brain.setMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS, nearAdultPiglin);
+      brain.setMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS, nearAdultPiglins);
       brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, nearVisibleAdultPiglins);
       brain.setMemory(MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT, nearVisibleAdultPiglins.size());
       brain.setMemory(MemoryModuleType.VISIBLE_ADULT_HOGLIN_COUNT, adultHoglinCounter);
