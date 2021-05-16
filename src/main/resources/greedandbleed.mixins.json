@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.infernalstudios.greedandbleed.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.8",
+  "refmap": "greedandbleed.refmap.json",
+  "mixins": [
+    "HoglinEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

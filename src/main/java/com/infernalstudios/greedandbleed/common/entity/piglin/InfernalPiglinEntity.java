@@ -42,11 +42,9 @@ public abstract class InfernalPiglinEntity extends AbstractPiglinEntity implemen
         return !this.cannotHunt;
     }
 
-
     protected void setCannotHunt(boolean cannotHunt) {
         this.cannotHunt = cannotHunt;
     }
-
 
     @Override
     protected boolean shouldDespawnInPeaceful() {

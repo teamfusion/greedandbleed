@@ -2,10 +2,9 @@ package com.infernalstudios.greedandbleed.common.entity.piglin;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
-import com.infernalstudios.greedandbleed.api.TaskManager;
+import com.infernalstudios.greedandbleed.api.*;
+import com.infernalstudios.greedandbleed.server.loot.GreedAndBleedLootTables;
 import com.infernalstudios.greedandbleed.server.tasks.*;
-import com.infernalstudios.greedandbleed.api.PiglinReflectionHelper;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -20,12 +19,15 @@ import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.monster.piglin.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.*;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -147,7 +149,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
     public void wasHurtBy(LivingEntity attacker) {
         if (!(attacker instanceof PigmyEntity)) {
             if (isHoldingItemInOffHand(this.mob)) {
-                stopHoldingOffHandItem(this.mob, false);
+                pigmyStopHoldingOffhandItem(this.mob, false);
             }
 
             Brain<PigmyEntity> brain = this.mob.getBrain();
@@ -214,7 +216,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
                 new InteractWithDoorTask());
         coreTasks.add(babyAvoidNemesis());
         coreTasks.add(avoidZombified());
-        coreTasks.add(new FinishAdmiringItemTask<>(PiglinTaskManager::performBarter, TaskManager::canFinishAdmiringOffhandItem));
+        coreTasks.add(new FinishAdmiringItemTask<>(PigmyTaskManager::performPigmyBarter, TaskManager::canFinishAdmiringOffhandItem));
         coreTasks.add(new AdmiringItemTask<>(120, PiglinTaskManager::isPiglinLoved));
         coreTasks.add(new EndAttackTask(300, PiglinTaskManager::wantsToDance));
         coreTasks.add(
@@ -301,7 +303,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
                 new ForgetAttackTargetTask<PigmyEntity>(AbstractPiglinEntity::isAdult, TaskManager::findNearestValidAttackTargetFor)
                 );
         celebrateTasks.add(
-                new SupplementedTask<PigmyEntity>((p_234457_0_) -> !p_234457_0_.isDancing(), new HuntCelebrationTask<>(2, 1.0F))
+                new SupplementedTask<PigmyEntity>((pigmy) -> !pigmy.isDancing(), new HuntCelebrationTask<>(2, 1.0F))
                 );
         celebrateTasks.add(
                 new SupplementedTask<PigmyEntity>(PigmyEntity::isDancing, new HuntCelebrationTask<>(4, 0.6F))
@@ -354,8 +356,8 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
 
     // STATIC HELPER METHODS
 
-    public static void broadcastRetreatToPygmies(AbstractPiglinEntity piglin, LivingEntity targetIn) {
-        getVisibleAdultPiglins(piglin)
+    public static void broadcastRetreatToPygmies(PigmyEntity pigmy, LivingEntity targetIn) {
+        getVisibleAdultPiglins(pigmy)
                 .stream()
                 .filter(
                         (visibleAdultPiglin) -> visibleAdultPiglin instanceof PigmyEntity)
@@ -363,13 +365,50 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
                         (pygmy) -> retreatFromNearestTarget(pygmy, targetIn));
     }
 
-    public static boolean isPygmyBabyRidingBaby(AbstractPiglinEntity piglin) {
-        if (!piglin.isBaby()) {
+    public static boolean isPygmyBabyRidingBaby(PigmyEntity pigmy) {
+        if (!pigmy.isBaby()) {
             return false;
         } else {
-            Entity vehicle = piglin.getVehicle();
+            Entity vehicle = pigmy.getVehicle();
             return vehicle instanceof PigmyEntity && ((PigmyEntity)vehicle).isBaby() || vehicle instanceof HoglinEntity && ((HoglinEntity)vehicle).isBaby();
         }
+    }
+    public static <T extends PigmyEntity> void pigmyStopHoldingOffhandItem(T piglin, boolean doBarter) {
+        ItemStack itemstack = piglin.getItemInHand(Hand.OFF_HAND);
+        piglin.setItemInHand(Hand.OFF_HAND, ItemStack.EMPTY);
+        if (piglin.isAdult()) {
+            boolean isPiglinBarter = isBarteringItem(itemstack);
+            if (doBarter && isPiglinBarter) {
+                throwItems(piglin, getPigmyBarterResponseItems(piglin));
+            } else if (!isPiglinBarter) {
+                boolean didEquip = piglin.equipItemIfPossible(itemstack);
+                if (!didEquip) {
+                    putInInventory(piglin, itemstack);
+                }
+            }
+        } else {
+            boolean didEquip = piglin.equipItemIfPossible(itemstack);
+            if (!didEquip) {
+                ItemStack mainHandItem = piglin.getMainHandItem();
+                if (isLovedItem(mainHandItem.getItem())) {
+                    putInInventory(piglin, mainHandItem);
+                } else {
+                    throwItems(piglin, Collections.singletonList(mainHandItem));
+                }
+
+                piglin.holdInMainHand(itemstack);
+            }
+        }
+    }
+
+    public static <T extends PigmyEntity> Void performPigmyBarter(T piglin) {
+        pigmyStopHoldingOffhandItem(piglin, true);
+        return null;
+    }
+
+    public static List<ItemStack> getPigmyBarterResponseItems(PigmyEntity pigmy) {
+        LootTable loottable = pigmy.level.getServer().getLootTables().get(GreedAndBleedLootTables.PIGMY_BARTERING);
+        return loottable.getRandomItems((new LootContext.Builder((ServerWorld)pigmy.level)).withParameter(LootParameters.THIS_ENTITY, pigmy).withRandom(pigmy.level.random).create(LootParameterSets.PIGLIN_BARTER));
     }
 
 }

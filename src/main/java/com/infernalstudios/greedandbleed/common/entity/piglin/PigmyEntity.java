@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
 import com.infernalstudios.greedandbleed.api.IHasInventory;
 import com.infernalstudios.greedandbleed.api.TaskManager;
+import com.infernalstudios.greedandbleed.server.registry.SensorTypeRegistry;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -309,7 +310,7 @@ public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, 
                     SensorType.NEAREST_PLAYERS,
                     SensorType.NEAREST_ITEMS,
                     SensorType.HURT_BY,
-                    SensorType.PIGLIN_SPECIFIC_SENSOR
+                    SensorTypeRegistry.PIGMY_SPECIFIC_SENSOR.get()
             );
 
     public static final ImmutableList<MemoryModuleType<?>> PYGMY_MEMORY_TYPES =

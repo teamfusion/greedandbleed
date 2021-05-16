@@ -1,6 +1,5 @@
 package com.infernalstudios.greedandbleed.api;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -297,7 +296,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
             LivingEntity avoidTarget = brain.getMemory(MemoryModuleType.AVOID_TARGET).get();
             if (avoidTarget instanceof HoglinEntity) {
                 return piglinsEqualOrOutnumberHoglins(piglinEntity);
-            } else if (piglinsAvoid(avoidTarget)) {
+            } else if (isZombified(avoidTarget)) {
                 return !brain.isMemoryValue(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, avoidTarget);
             } else {
                 return false;
@@ -367,7 +366,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
         return PiglinReflectionHelper.reflectCanReplaceCurrentItem(mob, replacementItem, currentItem);
     }
 
-    public static boolean piglinsAvoid(LivingEntity livingEntity) {
+    public static boolean isZombified(LivingEntity livingEntity) {
         return livingEntity instanceof ZombifiedPiglinEntity || livingEntity instanceof ZoglinEntity;
     }
 
