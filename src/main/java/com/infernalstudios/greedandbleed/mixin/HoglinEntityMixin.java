@@ -1,12 +1,11 @@
 package com.infernalstudios.greedandbleed.mixin;
 
-import com.infernalstudios.greedandbleed.common.entity.IActionMount;
+import com.infernalstudios.greedandbleed.common.entity.IToleratingMount;
 import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.monster.HoglinEntity;
-import net.minecraft.entity.monster.HoglinTasks;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -30,10 +29,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 
 @Mixin(HoglinEntity.class)
-public abstract class HoglinEntityMixin extends AnimalEntity implements IRideable, IEquipable, IActionMount {
+public abstract class HoglinEntityMixin extends AnimalEntity implements IRideable, IEquipable, IToleratingMount {
     private static final DataParameter<Boolean> DATA_SADDLE_ID = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> DATA_BOOST_TIME = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.INT);
     private final BoostHelper steering = new BoostHelper(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
+
+    private static final DataParameter<Integer> DATA_TOLERANCE = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.INT);
 
     protected HoglinEntityMixin(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
@@ -41,7 +42,12 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     // MIXINS
 
-    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/entity/monster/HoglinEntity;mobInteract(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResultType;", cancellable = true)
+    /**
+     * Note that for these Mixins, I used the Minecraft Development plugin for IntelliJ
+     */
+
+    @Inject(at = @At("RETURN"),
+            method = "mobInteract", cancellable = true)
     private void giveSaddle(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResultType> cir){
         boolean food = this.isFood(player.getItemInHand(hand));
         if (!food
@@ -65,31 +71,40 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         }
     }
 
-    private static boolean isPacified(AnimalEntity hoglin) {
-        return hoglin.getBrain().hasMemoryValue(MemoryModuleType.PACIFIED);
-    }
-
-    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/entity/monster/HoglinEntity;defineSynchedData()V")
+    @Inject(at = @At("RETURN"),
+            method = "defineSynchedData")
     private void defineSteeringData(CallbackInfo callbackInfo){
         this.entityData.define(DATA_SADDLE_ID, false);
         this.entityData.define(DATA_BOOST_TIME, 0);
+        this.entityData.define(DATA_TOLERANCE, 0);
     }
 
-    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/entity/monster/HoglinEntity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundNBT;)V")
+    @Inject(at = @At("RETURN"),
+            method = "addAdditionalSaveData")
     private void addSteeringData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
         this.steering.addAdditionalSaveData(compoundNBT);
+        compoundNBT.putInt("Tolerance", this.getTolerance());
     }
 
-    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/entity/monster/HoglinEntity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundNBT;)V")
+    @Inject(at = @At("RETURN"),
+            method = "readAdditionalSaveData")
     private void readSteeringData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
         this.steering.readAdditionalSaveData(compoundNBT);
+        this.setTolerance(compoundNBT.getInt("Tolerance"));
     }
 
-    @Inject(at = @At("HEAD"), method = "Lnet/minecraft/entity/monster/HoglinEntity;doHurtTarget(Lnet/minecraft/entity/Entity;)Z")
-    private void removeRiders(Entity target, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(at = @At("HEAD"),
+            method = "doHurtTarget")
+    private void removeRidersIfTargetingThem(Entity target, CallbackInfoReturnable<Boolean> cir) {
         if(this.getPassengers().contains(target)){
             this.ejectPassengers();
         }
+    }
+
+    // HELPERS
+
+    private static boolean isPacified(AnimalEntity hoglin) {
+        return hoglin.getBrain().hasMemoryValue(MemoryModuleType.PACIFIED);
     }
 
     // OVERRIDDEN METHODS
@@ -113,6 +128,9 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         if (!(entity instanceof PlayerEntity)) {
             return false;
         } else {
+            if(!this.isTolerating()){
+                return false;
+            }
             PlayerEntity playerentity = (PlayerEntity)entity;
             return playerentity.getMainHandItem().getItem() ==
                     ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get()
@@ -121,11 +139,20 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         }
     }
 
+    @Override
+    protected void dropEquipment() {
+        super.dropEquipment();
+        if (this.isSaddled()) {
+            this.spawnAtLocation(Items.SADDLE);
+        }
+    }
+
     // IRIDEABLE METHODS
 
     @Override
     public boolean boost() {
-        return this.steering.boost(this.getRandom());
+        //return this.steering.boost(this.getRandom());
+        return false;
     }
 
     @Override
@@ -140,7 +167,14 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     @Override
     public float getSteeringSpeed() {
-        return (float)this.getAttributeValue(Attributes.MOVEMENT_SPEED) * (0.225F);
+        float toleranceProgress = this.getToleranceProgress();
+        float minSpeedFactor = 0.4F;
+        float middleSpeedFactor = minSpeedFactor * 1.75F;
+        float maxSpeedFactor = minSpeedFactor * 2.5F;
+        float speedFactor = toleranceProgress > 0.66F ?
+                maxSpeedFactor : toleranceProgress > 0.33F ?
+                middleSpeedFactor : minSpeedFactor;
+        return (float)this.getAttributeValue(Attributes.MOVEMENT_SPEED) * speedFactor;
     }
 
     // IEQUIPABLE METHODS
@@ -163,36 +197,31 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         return this.steering.hasSaddle();
     }
 
-    // IACTIONMOUNT METHODS
+    // ITOLERATINGMOUNT METHODS
 
     @Override
-    public void onPlayerInput(int powerIn) {
-        if (this.isSaddled()) {
-            if (powerIn < 0) {
-                powerIn = 0;
-            } else {
-                //this.allowStandSliding = true;
-                //this.stand();
-            }
+    public int getTolerance() {
+        return this.entityData.get(DATA_TOLERANCE);
+    }
 
-            if (powerIn >= 90) {
-                //this.playerJumpPendingScale = 1.0F;
-            } else {
-                //this.playerJumpPendingScale = 0.4F + 0.4F * (float) powerIn / 90.0F;
-            }
-        }
+    @Override
+    public int getMaxTolerance(){
+        return 18 * 20;
+    }
+
+    @Override
+    public void setTolerance(int valueIn) {
+        this.entityData.set(DATA_TOLERANCE, Math.min(valueIn, this.getMaxTolerance()));
     }
 
     @Override
     public boolean canPerformMountAction() {
-        return this.isSaddled();
+        return this.isSaddled() & this.isTolerating();
     }
 
     @Override
-    public void handleStartMountAction(int powerIn) {
-        //this.allowStandSliding = true;
-        //this.stand();
-        //this.playJumpSound();
+    public void handleStartMountAction() {
+
     }
 
     @Override

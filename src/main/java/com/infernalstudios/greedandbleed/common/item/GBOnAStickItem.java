@@ -1,5 +1,6 @@
 package com.infernalstudios.greedandbleed.common.item;
 
+import com.infernalstudios.greedandbleed.common.entity.IToleratingMount;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IRideable;
@@ -27,31 +28,40 @@ public class GBOnAStickItem extends OnAStickItem<PigEntity> {
 
    @Override
    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-      ItemStack itemstack = player.getItemInHand(hand);
-      if (world.isClientSide) {
-         return ActionResult.pass(itemstack);
-      } else {
-         Entity entity = player.getVehicle();
-         if (player.isPassenger()
-                 && entity instanceof IRideable
-                 && entity.getType() == this.canInteractWith) {
-            IRideable irideable = (IRideable)entity;
-            if (irideable.boost()) {
-               itemstack.hurtAndBreak(this.consumeItemDamage, player, (holder) -> {
-                  holder.broadcastBreakEvent(hand);
-               });
-               if (itemstack.isEmpty()) {
-                  ItemStack nothingOnAStickStack = new ItemStack(Items.FISHING_ROD);
-                  nothingOnAStickStack.setTag(itemstack.getTag());
-                  return ActionResult.success(nothingOnAStickStack);
+      ItemStack onAStick = player.getItemInHand(hand);
+      if (!world.isClientSide) {
+         Entity vehicle = player.getVehicle();
+         boolean canInteractWith = player.isPassenger()
+                 && vehicle != null
+                 && vehicle.getType() == this.canInteractWith;
+         if (canInteractWith) {
+            if(vehicle instanceof IToleratingMount){
+               IToleratingMount toleratingMount = (IToleratingMount) vehicle;
+               toleratingMount.addTolerance(this.consumeItemDamage * 20);
+               return useOnAStickItem(player, hand, onAStick);
+            }
+            if(vehicle instanceof IRideable){
+               IRideable irideable = (IRideable) vehicle;
+               if (irideable.boost()) {
+                  return useOnAStickItem(player, hand, onAStick);
                }
-
-               return ActionResult.success(itemstack);
             }
          }
-
          player.awardStat(Stats.ITEM_USED.get(this));
-         return ActionResult.pass(itemstack);
       }
+      return ActionResult.pass(onAStick);
+   }
+
+   private ActionResult<ItemStack> useOnAStickItem(PlayerEntity player, Hand hand, ItemStack onAStick) {
+      onAStick.hurtAndBreak(this.consumeItemDamage, player, (holder) -> {
+         holder.broadcastBreakEvent(hand);
+      });
+      if (onAStick.isEmpty()) {
+         ItemStack nothingOnAStick = new ItemStack(Items.FISHING_ROD);
+         nothingOnAStick.setTag(onAStick.getTag());
+         return ActionResult.success(nothingOnAStick);
+      }
+
+      return ActionResult.success(onAStick);
    }
 }
