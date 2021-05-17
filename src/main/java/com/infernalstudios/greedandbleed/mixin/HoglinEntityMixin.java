@@ -1,5 +1,6 @@
 package com.infernalstudios.greedandbleed.mixin;
 
+import com.infernalstudios.greedandbleed.GreedAndBleed;
 import com.infernalstudios.greedandbleed.common.entity.IToleratingMount;
 import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.entity.*;
@@ -211,7 +212,17 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     @Override
     public void setTolerance(int valueIn) {
-        this.entityData.set(DATA_TOLERANCE, Math.min(valueIn, this.getMaxTolerance()));
+        if(valueIn > this.getMaxTolerance()){
+            this.entityData.set(DATA_TOLERANCE, this.getMaxTolerance());
+            GreedAndBleed.LOGGER.info("Tried to set tolerance for {} as {} when max is {}", this.toString(), valueIn, this.getMaxTolerance());
+        }
+        else if(valueIn < 0){
+            this.entityData.set(DATA_TOLERANCE, 0);
+            GreedAndBleed.LOGGER.info("Tried to set tolerance for {} as {} which is below 0", this.toString(), valueIn);
+        }
+        else{
+            this.entityData.set(DATA_TOLERANCE, valueIn);
+        }
     }
 
     @Override

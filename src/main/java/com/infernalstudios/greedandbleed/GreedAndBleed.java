@@ -6,6 +6,7 @@ import com.infernalstudios.greedandbleed.server.registry.MemoryModuleTypeRegistr
 import com.infernalstudios.greedandbleed.server.registry.SensorTypeRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -24,6 +25,8 @@ public class GreedAndBleed
     public GreedAndBleed() {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         // Deferred Registers
         LOGGER.debug("Registering entity types");

@@ -31,7 +31,7 @@ public class GBHoglinModel<T extends MobEntity & IFlinging> extends AgeableModel
 		this.texWidth = 128;
 		this.texHeight = 128;
 
-		boolean useVanillaRots = false;
+		boolean useVanillaRots = true;
 		float vanillaHeadXRot = 0.87266463F;
 		float vanillaRightEarZRot = -0.6981317F;
 		float vanillaLeftEarZRot = -0.6981317F;
@@ -115,15 +115,18 @@ public class GBHoglinModel<T extends MobEntity & IFlinging> extends AgeableModel
 		this.rightEar.zRot = -0.6981317F - p_225597_3_ * MathHelper.sin(p_225597_2_);
 		this.leftEar.zRot = 0.6981317F + p_225597_3_ * MathHelper.sin(p_225597_2_);
 		this.head.yRot = p_225597_5_ * ((float)Math.PI / 180F);
-		int i = hoglin.getAttackAnimationRemainingTicks();
-		float f = 1.0F - (float)MathHelper.abs(10 - 2 * i) / 10.0F;
+		int attackAnimTicksLeft = hoglin.getAttackAnimationRemainingTicks();
+		float f = 1.0F - (float)MathHelper.abs(10 - 2 * attackAnimTicksLeft) / 10.0F;
 		this.head.xRot = MathHelper.lerp(f, 0.87266463F, -0.34906584F);
 		if (hoglin.isBaby()) {
-			this.head.y = MathHelper.lerp(f, 2.0F, 5.0F);
-			this.mane.z = -3.0F;
+			this.head.y = MathHelper.lerp(f,
+					0.0F, // was 2.0F
+					3.0F // was 5.0F
+			);
+			this.mane.z = -17.0F; // was -3.0F
 		} else {
-			this.head.y = 2.0F;
-			this.mane.z = -7.0F;
+			this.head.y = 0.0F; // was 2.0F
+			this.mane.z = -17.0F; // was -7.0F
 		}
 
 		float f1 = 1.2F;
