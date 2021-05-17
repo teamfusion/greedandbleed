@@ -22,27 +22,17 @@ public class GreedAndBleed
     public static final String MODID = "greedandbleed";
 
     public GreedAndBleed() {
-        // Register the setup method for modloading
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modEventBus.addListener(this::setup);
-        // Register the doClientStuff method for modloading
-        modEventBus.addListener(this::doClientStuff);
-
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
         // Deferred Registers
+        LOGGER.debug("Registering entity types");
         EntityTypeRegistry.ENTITY_TYPES.register(modEventBus);
+        LOGGER.debug("Registering items");
         ItemRegistry.ITEMS.register(modEventBus);
+        LOGGER.debug("Registering sensor types");
         SensorTypeRegistry.SENSOR_TYPES.register(modEventBus);
+        LOGGER.debug("Registering memory module types");
         MemoryModuleTypeRegistry.MEMORY_MODULE_TYPES.register(modEventBus);
-    }
-
-    private void setup(final FMLCommonSetupEvent event)
-    {
-    }
-
-    private void doClientStuff(final FMLClientSetupEvent event)
-    {
     }
 }
