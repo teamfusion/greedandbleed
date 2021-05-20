@@ -2,6 +2,7 @@ package com.infernalstudios.greedandbleed;
 
 import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
 import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
+import com.infernalstudios.greedandbleed.common.registry.LootModifierRegistry;
 import com.infernalstudios.greedandbleed.server.registry.MemoryModuleTypeRegistry;
 import com.infernalstudios.greedandbleed.server.registry.SensorTypeRegistry;
 import net.minecraftforge.common.MinecraftForge;
@@ -33,6 +34,8 @@ public class GreedAndBleed
         EntityTypeRegistry.ENTITY_TYPES.register(modEventBus);
         LOGGER.debug("Registering items");
         ItemRegistry.ITEMS.register(modEventBus);
+        LOGGER.debug("Registering loot modifiers");
+        LootModifierRegistry.LOOT_MODIFIERS.register(modEventBus);
         LOGGER.debug("Registering sensor types");
         SensorTypeRegistry.SENSOR_TYPES.register(modEventBus);
         LOGGER.debug("Registering memory module types");

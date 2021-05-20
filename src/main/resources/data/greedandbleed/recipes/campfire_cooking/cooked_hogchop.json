@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": {
+    "item": "greedandbleed:raw_hogchop"
+  },
+  "result": "greedandbleed:cooked_hogchop",
+  "experience": 0.35,
+  "cookingtime": 600
+}

@@ -40,7 +40,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity  implements I
 
         this.nextContainerCounter();
         SOpenHoglinWindowPacket sOpenHoglinWindowPacket = new SOpenHoglinWindowPacket(this.containerCounter, inventory.getContainerSize(), mount.getId());
-        GreedAndBleed.LOGGER.info("Sending open mount inventory for {} to client!", mount);
+        GreedAndBleed.LOGGER.debug("Sending open mount inventory for {} to client!", mount);
         NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> mount), sOpenHoglinWindowPacket);
         //this.connection.send(new SOpenHorseWindowPacket(this.containerCounter, inventory.getContainerSize(), mount.getId()));
         this.containerMenu = new HoglinInventoryContainer(this.containerCounter, this.inventory, inventory, mount);

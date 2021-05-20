@@ -21,11 +21,8 @@ public class PlayerControllerMixin {
 
     @Inject(at = @At("RETURN"), method = "isServerControlledInventory", cancellable = true)
     private void isMountInventory(CallbackInfoReturnable<Boolean> cir){
-        GreedAndBleed.LOGGER.info("Player {} is riding a mount with inventory? {}",
-                this.minecraft.player,
-                this.minecraft.player.getVehicle() instanceof IHasMountInventory);
         if(!cir.getReturnValue()){
-            GreedAndBleed.LOGGER.info("Player {} is riding a mount with inventory!", this.minecraft.player);
+            GreedAndBleed.LOGGER.debug("Player {} is riding a mount with inventory!", this.minecraft.player);
             cir.setReturnValue(this.minecraft.player.isPassenger()
                     && this.minecraft.player.getVehicle() instanceof IHasMountInventory
             );

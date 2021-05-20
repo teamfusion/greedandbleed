@@ -437,11 +437,11 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     public void setTolerance(int valueIn) {
         if(valueIn > this.getMaxTolerance()){
             this.entityData.set(DATA_TOLERANCE, this.getMaxTolerance());
-            GreedAndBleed.LOGGER.info("Tried to set tolerance for {} as {} when max is {}", this.toString(), valueIn, this.getMaxTolerance());
+            GreedAndBleed.LOGGER.debug("Tried to set tolerance for {} as {} when max is {}", this.toString(), valueIn, this.getMaxTolerance());
         }
         else if(valueIn < 0){
             this.entityData.set(DATA_TOLERANCE, 0);
-            GreedAndBleed.LOGGER.info("Tried to set tolerance for {} as {} which is below 0", this.toString(), valueIn);
+            GreedAndBleed.LOGGER.debug("Tried to set tolerance for {} as {} which is below 0", this.toString(), valueIn);
         }
         else{
             this.entityData.set(DATA_TOLERANCE, valueIn);
@@ -509,7 +509,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         if (!this.level.isClientSide
                 && (!this.isVehicle() || this.hasPassenger(player))
                 && player instanceof ICanOpenMountInventory) {
-            GreedAndBleed.LOGGER.info("Opening mount inventory for {}", this);
+            GreedAndBleed.LOGGER.debug("Opening mount inventory for {}", this);
             ((ICanOpenMountInventory)player).openMountInventory(this, this.inventory);
         }
     }

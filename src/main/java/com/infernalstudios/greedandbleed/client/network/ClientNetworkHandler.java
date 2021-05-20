@@ -24,7 +24,7 @@ public class ClientNetworkHandler {
                     entity = clientPlayer.level.getEntity(packet.getEntityId());
                 }
                 if (entity instanceof AnimalEntity) {
-                    GreedAndBleed.LOGGER.info("Client is opening mount inventory for {}", entity);
+                    GreedAndBleed.LOGGER.debug("Client is opening mount inventory for {}", entity);
                     AnimalEntity hoglin = (AnimalEntity)entity;
                     Inventory inventory = new Inventory(packet.getSize());
                     HoglinInventoryContainer hoglinInventoryContainer = new HoglinInventoryContainer(packet.getContainerId(), clientPlayer.inventory, inventory, hoglin);
