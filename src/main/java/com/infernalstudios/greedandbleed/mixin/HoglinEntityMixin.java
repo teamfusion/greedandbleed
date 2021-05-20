@@ -1,26 +1,37 @@
 package com.infernalstudios.greedandbleed.mixin;
 
 import com.infernalstudios.greedandbleed.GreedAndBleed;
+import com.infernalstudios.greedandbleed.common.entity.ICanOpenMountInventory;
+import com.infernalstudios.greedandbleed.common.entity.IHasMountArmor;
+import com.infernalstudios.greedandbleed.common.entity.IHasMountInventory;
 import com.infernalstudios.greedandbleed.common.entity.IToleratingMount;
+import com.infernalstudios.greedandbleed.common.item.HoglinArmorItem;
 import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
+import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.IInventoryChangedListener;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,14 +39,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 @Mixin(HoglinEntity.class)
-public abstract class HoglinEntityMixin extends AnimalEntity implements IRideable, IEquipable, IToleratingMount {
+public abstract class HoglinEntityMixin extends AnimalEntity implements IRideable, IEquipable, IToleratingMount, IInventoryChangedListener, IHasMountArmor, IHasMountInventory {
     private static final DataParameter<Boolean> DATA_SADDLE_ID = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> DATA_BOOST_TIME = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.INT);
     private final BoostHelper steering = new BoostHelper(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
 
     private static final DataParameter<Integer> DATA_TOLERANCE = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.INT);
+
+    private static final UUID ARMOR_MODIFIER_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
+    protected Inventory inventory;
+
+    private static final DataParameter<Boolean> DATA_ID_CHEST = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.BOOLEAN);
+
 
     protected HoglinEntityMixin(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
@@ -47,28 +65,95 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
      * Note that for these Mixins, I used the Minecraft Development plugin for IntelliJ
      */
 
+    @Inject(at = @At("RETURN"), method = "finishConversion")
+    private void dropInventoryWhenZombified(ServerWorld serverWorld, CallbackInfo ci){
+        this.dropEquipment();
+    }
+
+    @Inject(at = @At("TAIL"), method = "<init>")
+    private void setUpInventory(EntityType<? extends HoglinEntity> p_i231569_1_, World p_i231569_2_, CallbackInfo ci){
+        this.createInventory();
+    }
+
     @Inject(at = @At("RETURN"),
             method = "mobInteract", cancellable = true)
-    private void giveSaddle(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResultType> cir){
-        boolean food = this.isFood(player.getItemInHand(hand));
-        if (!food
-                && this.isSaddled()
-                && !this.isVehicle()
-                && !player.isSecondaryUseActive()
-                && isPacified(this)) {
-            if (!this.level.isClientSide) {
-                player.startRiding(this);
+    private void handleMountInteraction(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResultType> cir){
+        ItemStack heldItem = player.getItemInHand(hand);
+
+        // If this hoglin is an adult
+        if (!this.isBaby()) {
+            // Handle opening inventory with shift-key down during interaction
+            if (isPacified(this) && player.isSecondaryUseActive()) {
+                this.openInventory(player);
+                cir.setReturnValue(ActionResultType.sidedSuccess(this.level.isClientSide));
+                return;
             }
+
+            // Handle interacting with the hoglin as it is being ridden
+            if (this.isVehicle()) {
+                cir.setReturnValue(super.mobInteract(player, hand));
+                return;
+            }
+        }
+
+        // If the held item is not empty
+        if (!heldItem.isEmpty()) {
+
+            // Return early if this is food for the hoglin, the original method already handled it
+            if (this.isFood(heldItem)) {
+                //return this.fedFood(player, heldItem);
+                return;
+            }
+
+            // If the hoglin is pacified, it will accept a variety of interactions
+            if(isPacified(this)){
+
+                // Invoke interactLivingEntity on the ItemStack
+                ActionResultType actionresulttype = heldItem.interactLivingEntity(player, this, hand);
+
+                // If interactLivingEntity was successful, return
+                if (actionresulttype.consumesAction()) {
+                    cir.setReturnValue(actionresulttype);
+                    return;
+                }
+
+                // Handle equipping a chest and creating an inventory for the hoglin
+                if (!this.hasChest() && this.isChestStack(heldItem)) {
+                    this.setChest(true);
+                    this.playChestEquipsSound();
+                    if (!player.abilities.instabuild) {
+                        heldItem.shrink(1);
+                    }
+
+                    this.createInventory();
+                    cir.setReturnValue(ActionResultType.sidedSuccess(this.level.isClientSide));
+                    return;
+                }
+
+                // Handle opening the hoglin's inventory with a saddle or armor
+                boolean canGiveSaddle = !this.isBaby() && !this.isSaddled() && this.isSaddleStack(heldItem);
+                boolean canOpenInventoryWithItem = this.isArmor(heldItem) || canGiveSaddle;
+                if (canOpenInventoryWithItem) {
+                    this.openInventory(player);
+                    cir.setReturnValue(ActionResultType.sidedSuccess(this.level.isClientSide));
+                    return;
+                }
+            } else {
+                // Make the hoglin angry and reject the interaction
+                this.playSound(SoundEvents.HOGLIN_ANGRY, this.getSoundVolume(), this.getVoicePitch());
+                cir.setReturnValue(ActionResultType.sidedSuccess(this.level.isClientSide));
+                return;
+            }
+        }
+
+        // If this hoglin is a baby
+        if (this.isBaby()) {
+            // Handle interacting with a baby hoglin
+            cir.setReturnValue(super.mobInteract(player, hand));
+        } else if(isPacified(this)){
+            // Handle mounting the hoglin
+            player.startRiding(this);
             cir.setReturnValue(ActionResultType.sidedSuccess(this.level.isClientSide));
-        } else {
-            ActionResultType actionresulttype = cir.getReturnValue();
-            if (!actionresulttype.consumesAction()) {
-                ItemStack itemInHand = player.getItemInHand(hand);
-                cir.setReturnValue(
-                        itemInHand.getItem() == Items.SADDLE ?
-                        itemInHand.interactLivingEntity(player, this, hand) :
-                        ActionResultType.PASS);
-            }
         }
     }
 
@@ -78,6 +163,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         this.entityData.define(DATA_SADDLE_ID, false);
         this.entityData.define(DATA_BOOST_TIME, 0);
         this.entityData.define(DATA_TOLERANCE, 0);
+        this.entityData.define(DATA_ID_CHEST, false);
     }
 
     @Inject(at = @At("RETURN"),
@@ -85,6 +171,29 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     private void addSteeringData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
         this.steering.addAdditionalSaveData(compoundNBT);
         compoundNBT.putInt("Tolerance", this.getTolerance());
+
+        if (!this.inventory.getItem(0).isEmpty()) {
+            compoundNBT.put("SaddleItem", this.inventory.getItem(0).save(new CompoundNBT()));
+        }
+        if (!this.inventory.getItem(1).isEmpty()) {
+            compoundNBT.put("ArmorItem", this.inventory.getItem(1).save(new CompoundNBT()));
+        }
+        compoundNBT.putBoolean("ChestedHoglin", this.hasChest());
+        if (this.hasChest()) {
+            ListNBT listnbt = new ListNBT();
+
+            for(int i = 2; i < this.inventory.getContainerSize(); ++i) {
+                ItemStack itemstack = this.inventory.getItem(i);
+                if (!itemstack.isEmpty()) {
+                    CompoundNBT compoundnbt = new CompoundNBT();
+                    compoundnbt.putByte("Slot", (byte)i);
+                    itemstack.save(compoundnbt);
+                    listnbt.add(compoundnbt);
+                }
+            }
+
+            compoundNBT.put("Items", listnbt);
+        }
     }
 
     @Inject(at = @At("RETURN"),
@@ -92,6 +201,33 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     private void readSteeringData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
         this.steering.readAdditionalSaveData(compoundNBT);
         this.setTolerance(compoundNBT.getInt("Tolerance"));
+
+        if (compoundNBT.contains("SaddleItem", 10)) {
+            ItemStack itemstack = ItemStack.of(compoundNBT.getCompound("SaddleItem"));
+            if (this.isSaddleStack(itemstack)) {
+                this.inventory.setItem(0, itemstack);
+            }
+        }
+        if (compoundNBT.contains("ArmorItem", 10)) {
+            ItemStack itemstack = ItemStack.of(compoundNBT.getCompound("ArmorItem"));
+            if (!itemstack.isEmpty() && this.isArmor(itemstack)) {
+                this.inventory.setItem(1, itemstack);
+            }
+        }
+        this.setChest(compoundNBT.getBoolean("ChestedHoglin"));
+        if (this.hasChest()) {
+            ListNBT listnbt = compoundNBT.getList("Items", 10);
+            this.createInventory();
+
+            for(int i = 0; i < listnbt.size(); ++i) {
+                CompoundNBT compoundnbt = listnbt.getCompound(i);
+                int j = compoundnbt.getByte("Slot") & 255;
+                if (j >= 2 && j < this.inventory.getContainerSize()) {
+                    this.inventory.setItem(j, ItemStack.of(compoundnbt));
+                }
+            }
+        }
+        this.updateContainerEquipment();
     }
 
     @Inject(at = @At("HEAD"),
@@ -106,6 +242,29 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     private static boolean isPacified(AnimalEntity hoglin) {
         return hoglin.getBrain().hasMemoryValue(MemoryModuleType.PACIFIED);
+    }
+
+    private void setArmorEquipment(ItemStack stack) {
+        this.setArmor(stack);
+        if (!this.level.isClientSide) {
+            this.getAttribute(Attributes.ARMOR).removeModifier(ARMOR_MODIFIER_UUID);
+            if (this.isArmor(stack)) {
+                int i = ((HoglinArmorItem)stack.getItem()).getProtection();
+                if (i != 0) {
+                    this.getAttribute(Attributes.ARMOR).addTransientModifier(new AttributeModifier(ARMOR_MODIFIER_UUID, "Horse armor bonus", (double)i, AttributeModifier.Operation.ADDITION));
+                }
+            }
+        }
+    }
+
+    private void setArmor(ItemStack p_213805_1_) {
+        this.setItemSlot(EquipmentSlotType.CHEST, p_213805_1_);
+        this.setDropChance(EquipmentSlotType.CHEST, 0.0F);
+    }
+
+
+    private void playChestEquipsSound() {
+        this.playSound(SoundEvents.DONKEY_CHEST, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
     }
 
     // OVERRIDDEN METHODS
@@ -143,8 +302,57 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     @Override
     protected void dropEquipment() {
         super.dropEquipment();
-        if (this.isSaddled()) {
-            this.spawnAtLocation(Items.SADDLE);
+        if (this.inventory != null) {
+            for(int i = 0; i < this.inventory.getContainerSize(); ++i) {
+                ItemStack itemstack = this.inventory.getItem(i);
+                if (!itemstack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemstack)) {
+                    this.spawnAtLocation(itemstack);
+                }
+            }
+        }
+        if (this.hasChest()) {
+            if (!this.level.isClientSide) {
+                this.spawnAtLocation(this.getDefaultChestItem());
+            }
+
+            this.setChest(false);
+        }
+    }
+
+    @Override
+    public boolean setSlot(int slotId, ItemStack stackIn) {
+        if (slotId == 499) {
+            if (this.hasChest() && stackIn.isEmpty()) {
+                this.setChest(false);
+                this.createInventory();
+                return true;
+            }
+
+            if (!this.hasChest() && this.isChestStack(stackIn)) {
+                this.setChest(true);
+                this.createInventory();
+                return true;
+            }
+        }
+        int i = slotId - 400;
+        if (i >= 0 && i < 2 && i < this.inventory.getContainerSize()) {
+            if (i == 0 && !this.isSaddleStack(stackIn)) {
+                return false;
+            } else if (i != 1 || this.canWearArmor() && this.isArmor(stackIn)) {
+                this.inventory.setItem(i, stackIn);
+                this.updateContainerEquipment();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            int j = slotId - 500 + 2;
+            if (j >= 2 && j < this.inventory.getContainerSize()) {
+                this.inventory.setItem(j, stackIn);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -187,7 +395,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     @Override
     public void equipSaddle(@Nullable SoundCategory soundCategory) {
-        this.steering.setSaddle(true);
+        this.setSaddled(true);
         if (soundCategory != null) {
             this.level.playSound((PlayerEntity)null, this, SoundEvents.HORSE_SADDLE, soundCategory, 0.5F, 1.0F);
         }
@@ -198,7 +406,22 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         return this.steering.hasSaddle();
     }
 
+    private void setSaddled(boolean saddled){
+        this.steering.setSaddle(saddled);
+        this.inventory.setItem(0, saddled ? new ItemStack(this.getDefaultSaddleItem()) : ItemStack.EMPTY);
+    }
+
     // ITOLERATINGMOUNT METHODS
+
+    @Override
+    public boolean canAcceptSaddle() {
+        return this.isSaddleable() && isPacified(this);
+    }
+
+    @Override
+    public Item getDefaultSaddleItem(){
+        return ItemRegistry.HOGLIN_SADDLE.get();
+    }
 
     @Override
     public int getTolerance() {
@@ -240,4 +463,116 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     }
 
+    // INVENTORY
+
+    private int getInventorySize() {
+        return this.hasChest() ? 17 : 2;
+    }
+
+    private void createInventory() {
+        Inventory inventory = this.inventory;
+        this.inventory = new Inventory(this.getInventorySize());
+        if (inventory != null) {
+            inventory.removeListener(this);
+            int i = Math.min(inventory.getContainerSize(), this.inventory.getContainerSize());
+
+            for(int j = 0; j < i; ++j) {
+                ItemStack itemstack = inventory.getItem(j);
+                if (!itemstack.isEmpty()) {
+                    this.inventory.setItem(j, itemstack.copy());
+                }
+            }
+        }
+
+        this.inventory.addListener(this);
+        this.updateContainerEquipment();
+        this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.inventory));
+    }
+
+    private void updateContainerEquipment() {
+        if (!this.level.isClientSide) {
+            this.steering.setSaddle(!this.inventory.getItem(0).isEmpty());
+            this.setArmorEquipment(this.inventory.getItem(1));
+            this.setDropChance(EquipmentSlotType.CHEST, 0.0F);
+        }
+    }
+
+    // IHASMOUNTINVENTORY
+
+    @Override
+    public Item getDefaultChestItem() {
+        return Blocks.CHEST.asItem();
+    }
+
+    @Override
+    public void openInventory(PlayerEntity player) {
+        if (!this.level.isClientSide
+                && (!this.isVehicle() || this.hasPassenger(player))
+                && player instanceof ICanOpenMountInventory) {
+            GreedAndBleed.LOGGER.info("Opening mount inventory for {}", this);
+            ((ICanOpenMountInventory)player).openMountInventory(this, this.inventory);
+        }
+    }
+
+    @Override
+    public boolean hasChest() {
+        return this.entityData.get(DATA_ID_CHEST);
+    }
+
+    @Override
+    public void setChest(boolean p_110207_1_) {
+        this.entityData.set(DATA_ID_CHEST, p_110207_1_);
+    }
+
+    @Override
+    public int getInventoryColumns() {
+        return 5;
+    }
+
+    // IINVENTORYCHANGEDLISTENER METHODS
+
+    @Override
+    public void containerChanged(IInventory inventory) {
+        boolean wasSaddled = this.isSaddled();
+        this.updateContainerEquipment();
+        if (this.tickCount > 20 && !wasSaddled && this.isSaddled()) {
+            this.playSound(SoundEvents.HORSE_SADDLE, 0.5F, 1.0F);
+        }
+    }
+
+    // IHASARMOR METHODS
+    @Override
+    public ItemStack getArmor() {
+        return this.getItemBySlot(EquipmentSlotType.CHEST);
+    }
+
+    @Override
+    public boolean canWearArmor() {
+        return true;
+    }
+
+    @Override
+    public boolean isArmor(ItemStack stack) {
+        return stack.getItem() instanceof HoglinArmorItem;
+    }
+
+    // FORGE STUFF
+    private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
+
+    @Override
+    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.Direction facing) {
+        if (this.isAlive() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null)
+            return itemHandler.cast();
+        return super.getCapability(capability, facing);
+    }
+
+    @Override
+    protected void invalidateCaps() {
+        super.invalidateCaps();
+        if (itemHandler != null) {
+            net.minecraftforge.common.util.LazyOptional<?> oldHandler = itemHandler;
+            itemHandler = null;
+            oldHandler.invalidate();
+        }
+    }
 }

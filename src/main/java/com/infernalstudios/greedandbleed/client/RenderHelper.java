@@ -43,16 +43,16 @@ public class RenderHelper {
         int screenHeight = minecraft.getWindow().getGuiScaledHeight();
         int barYPos = screenHeight - 32 + 3;
 
-        int emptyBarTexOffs = 0;
+        int emptyBarTexOffsX = 0;
         int emptyBarTexOffsY = 84;
-        int fullBarTexOffs = 0;
+        int fullBarTexOffsX = 0;
         int fullTexOffsY = 89;
 
         IngameGui ingameGui = getIngameGui(minecraftChanged);
         if(ingameGui != null){
-            ingameGui.blit(mStack, barXPos, barYPos, emptyBarTexOffs, emptyBarTexOffsY, barLength, barHeight);
+            ingameGui.blit(mStack, barXPos, barYPos, emptyBarTexOffsX, emptyBarTexOffsY, barLength, barHeight);
             if (scaledToleranceProgress > 0) {
-                ingameGui.blit(mStack, barXPos, barYPos, fullBarTexOffs, fullTexOffsY, scaledToleranceProgress, barHeight);
+                ingameGui.blit(mStack, barXPos, barYPos, fullBarTexOffsX, fullTexOffsY, scaledToleranceProgress, barHeight);
             }
         } else{
             GreedAndBleed.LOGGER.error("Unable to render tolerance meter!");

@@ -6,7 +6,12 @@
   "refmap": "greedandbleed.refmap.json",
   "mixins": [
     "HoglinEntityMixin",
-    "NearestPlayersSensorMixin"
+    "NearestPlayersSensorMixin",
+    "ServerPlayerEntityMixin",
+    "ServerPlayNetHandlerMixin"
+  ],
+  "client": [
+    "PlayerControllerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

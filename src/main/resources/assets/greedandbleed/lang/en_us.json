@@ -1,4 +1,8 @@
 {
   "entity.greedandbleed.pigmy": "Pigmy",
-  "item.greedandbleed.crimson_fungus_on_a_stick": "Crimson Fungus on a Stick"
+
+  "item.greedandbleed.crimson_fungus_on_a_stick": "Crimson Fungus on a Stick",
+  "item.greedandbleed.hoglin_saddle": "Hoglin Saddle",
+  "item.greedandbleed.golden_hoglin_armor": "Golden Hoglin Armor",
+  "item.greedandbleed.netherite_hoglin_armor": "Netherite Hoglin Armor"
 }

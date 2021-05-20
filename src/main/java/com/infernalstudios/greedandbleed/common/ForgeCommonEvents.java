@@ -1,12 +1,7 @@
 package com.infernalstudios.greedandbleed.common;
 
 import com.infernalstudios.greedandbleed.common.entity.IToleratingMount;
-import net.minecraft.entity.IEquipable;
-import net.minecraft.entity.monster.HoglinEntity;
-import net.minecraft.item.Items;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.event.entity.living.LivingConversionEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -15,12 +10,17 @@ import net.minecraftforge.fml.common.Mod;
         bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeCommonEvents {
 
+    private static final int TICKS_PER_SECOND = 20;
+
     @SubscribeEvent
-    public static void onHoglinConvert(LivingConversionEvent event){
-        if(event.getEntityLiving() instanceof HoglinEntity
-                && event.getEntityLiving() instanceof IEquipable
-                && ((IEquipable) event.getEntityLiving()).isSaddled()){
-            event.getEntityLiving().spawnAtLocation(Items.SADDLE);
+    public static void onHoglinAttack(LivingAttackEvent event){
+        if(event.getSource().getDirectEntity() instanceof IToleratingMount
+            && !event.getEntityLiving().level.isClientSide){
+            IToleratingMount toleratingMount = (IToleratingMount) event.getSource().getDirectEntity();
+            int attackToleranceCost = 1 * TICKS_PER_SECOND;
+            if(toleratingMount.getTolerance() >= attackToleranceCost){
+                toleratingMount.addTolerance(-1 * attackToleranceCost);
+            }
         }
     }
 

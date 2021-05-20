@@ -1,9 +1,23 @@
 package com.infernalstudios.greedandbleed.common.entity;
 
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
 public interface IToleratingMount {
 
-    //@OnlyIn(Dist.CLIENT)
+    boolean canAcceptSaddle();
+
+    default boolean isSaddleStack(ItemStack stack){
+        return this.isSaddleItem(stack.getItem());
+    }
+
+    default boolean isSaddleItem(Item item){
+        return item == this.getDefaultSaddleItem();
+    }
+
+    Item getDefaultSaddleItem();
+
     void setTolerance(int valueIn);
 
     int getTolerance();
