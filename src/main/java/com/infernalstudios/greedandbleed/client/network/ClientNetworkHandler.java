@@ -34,5 +34,6 @@ public class ClientNetworkHandler {
                 }
             }
             );
+            ctx.get().setPacketHandled(true);
         }
     }

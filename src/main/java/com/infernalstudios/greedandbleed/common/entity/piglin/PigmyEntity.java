@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public class PigmyEntity extends InfernalPiglinEntity implements ICrossbowUser, IHasInventory {
+public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasInventory {
     protected Inventory inventory = new Inventory(8);
 
     public PigmyEntity(EntityType<? extends AbstractPiglinEntity> entityType, World world) {

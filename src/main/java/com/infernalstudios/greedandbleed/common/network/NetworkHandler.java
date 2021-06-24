@@ -22,7 +22,7 @@ public class NetworkHandler {
     public NetworkHandler() {
     }
 
-    public static void init() {
+    public static void register() {
         INSTANCE.registerMessage(
                 getPacketID(),
                 SOpenHoglinWindowPacket.class,

@@ -1,5 +1,6 @@
 package com.infernalstudios.greedandbleed;
 
+import com.infernalstudios.greedandbleed.common.registry.EnchantmentRegistry;
 import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
 import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
 import com.infernalstudios.greedandbleed.common.registry.LootModifierRegistry;
@@ -32,6 +33,8 @@ public class GreedAndBleed
         // Deferred Registers
         LOGGER.debug("Registering entity types");
         EntityTypeRegistry.ENTITY_TYPES.register(modEventBus);
+        LOGGER.debug("Registering enchantments");
+        EnchantmentRegistry.ENCHANTMENTS.register(modEventBus);
         LOGGER.debug("Registering items");
         ItemRegistry.ITEMS.register(modEventBus);
         LOGGER.debug("Registering loot modifiers");

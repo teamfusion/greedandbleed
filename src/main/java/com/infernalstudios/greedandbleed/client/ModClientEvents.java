@@ -3,6 +3,7 @@ package com.infernalstudios.greedandbleed.client;
 import com.infernalstudios.greedandbleed.GreedAndBleed;
 import com.infernalstudios.greedandbleed.client.renderer.GBHoglinRenderer;
 import com.infernalstudios.greedandbleed.client.renderer.PigmyRenderFactory;
+import com.infernalstudios.greedandbleed.client.renderer.SkeletalPiglinRenderer;
 import com.infernalstudios.greedandbleed.common.entity.piglin.PigmyEntity;
 import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.entity.EntityType;
@@ -25,6 +26,10 @@ public class ModClientEvents {
     public static void onClientSetup(final FMLClientSetupEvent event){
         RenderingRegistry.registerEntityRenderingHandler(
                 EntityTypeRegistry.PIGMY.get(), PIGMY_RENDER_FACTORY
+        );
+        RenderingRegistry.registerEntityRenderingHandler(
+                EntityTypeRegistry.SKELETAL_PIGLIN.get(),
+                SkeletalPiglinRenderer::new
         );
 
         // Ideally I would replace this with a Mixin into the original renderer

@@ -18,17 +18,17 @@ import net.minecraft.world.World;
 
 import java.util.UUID;
 
-public abstract class InfernalPiglinEntity extends AbstractPiglinEntity implements IHasTaskManager {
-    protected static final DataParameter<Boolean> DATA_BABY_ID = EntityDataManager.defineId(InfernalPiglinEntity.class, DataSerializers.BOOLEAN);
-    protected static final DataParameter<Boolean> DATA_IS_CHARGING_CROSSBOW = EntityDataManager.defineId(InfernalPiglinEntity.class, DataSerializers.BOOLEAN);
-    protected static final DataParameter<Boolean> DATA_IS_DANCING = EntityDataManager.defineId(InfernalPiglinEntity.class, DataSerializers.BOOLEAN);
+public abstract class GBPiglinEntity extends AbstractPiglinEntity implements IHasTaskManager {
+    protected static final DataParameter<Boolean> DATA_BABY_ID = EntityDataManager.defineId(GBPiglinEntity.class, DataSerializers.BOOLEAN);
+    protected static final DataParameter<Boolean> DATA_IS_CHARGING_CROSSBOW = EntityDataManager.defineId(GBPiglinEntity.class, DataSerializers.BOOLEAN);
+    protected static final DataParameter<Boolean> DATA_IS_DANCING = EntityDataManager.defineId(GBPiglinEntity.class, DataSerializers.BOOLEAN);
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     public static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", (double)0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
 
     protected boolean cannotHunt = false;
     protected ITaskManager<?> taskManager;
 
-    public InfernalPiglinEntity(EntityType<? extends AbstractPiglinEntity> entityType, World world) {
+    public GBPiglinEntity(EntityType<? extends AbstractPiglinEntity> entityType, World world) {
         super(entityType, world);
     }
 
