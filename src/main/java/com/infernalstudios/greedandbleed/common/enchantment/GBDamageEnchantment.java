@@ -1,11 +1,14 @@
 package com.infernalstudios.greedandbleed.common.enchantment;
 
 import com.infernalstudios.greedandbleed.common.entity.GBCreatureAttribute;
+import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.enchantment.DamageEnchantment;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
@@ -42,7 +45,7 @@ public class GBDamageEnchantment extends DamageEnchantment {
 
    @Override
    public float getDamageBonus(int level, CreatureAttribute creatureAttribute) {
-      return this.type == 3 && creatureAttribute == GBCreatureAttribute.PIGLIN ? (float)level * 2.5F : super.getDamageBonus(level, creatureAttribute);
+      return this.type == 3 && creatureAttribute == GBCreatureAttribute.SWINE ? (float)level * 2.5F : super.getDamageBonus(level, creatureAttribute);
    }
 
    @Override
@@ -60,12 +63,25 @@ public class GBDamageEnchantment extends DamageEnchantment {
    }
 
    /*
-   Can apply to either axes or swords via anvils
+   Can apply to either axes via anvils
     */
    @Override
    public boolean canEnchant(ItemStack stack) {
       return stack.getItem() instanceof AxeItem
-              || stack.getItem() instanceof SwordItem
               || super.canEnchant(stack);
+   }
+
+   /*
+   Inflicts weakness on pig mobs
+    */
+   @Override
+   public void doPostAttack(LivingEntity livingEntity, Entity entity, int level) {
+      if (entity instanceof LivingEntity) {
+         LivingEntity livingentity = (LivingEntity)entity;
+         if (livingentity.getMobType() == GBCreatureAttribute.SWINE) {
+            int i = 20 + livingEntity.getRandom().nextInt(10 * level);
+            livingentity.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, i, 3));
+         }
+      }
    }
 }

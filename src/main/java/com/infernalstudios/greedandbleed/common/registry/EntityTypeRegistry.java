@@ -1,7 +1,7 @@
 package com.infernalstudios.greedandbleed.common.registry;
 
 import com.infernalstudios.greedandbleed.GreedAndBleed;
-import com.infernalstudios.greedandbleed.common.entity.piglin.PigmyEntity;
+import com.infernalstudios.greedandbleed.common.entity.piglin.PygmyEntity;
 import com.infernalstudios.greedandbleed.common.entity.piglin.SkeletalPiglinEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -14,13 +14,13 @@ public class EntityTypeRegistry {
 
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, GreedAndBleed.MODID);
 
-    public static final RegistryObject<EntityType<PigmyEntity>> PIGMY =
-            ENTITY_TYPES.register("pigmy", () ->
-                    EntityType.Builder.of(PigmyEntity::new, EntityClassification.MONSTER)
+    public static final RegistryObject<EntityType<PygmyEntity>> PYGMY =
+            ENTITY_TYPES.register("pygmy", () ->
+                    EntityType.Builder.of(PygmyEntity::new, EntityClassification.MONSTER)
                             // pigmy is 14x24 pixels, piglin is 16x31(?)
                             .sized(0.6F, 1.5F)
                             .clientTrackingRange(8)
-                            .build(new ResourceLocation(GreedAndBleed.MODID, "pigmy").toString()));
+                            .build(new ResourceLocation(GreedAndBleed.MODID, "pygmy").toString()));
 
     public static final RegistryObject<EntityType<SkeletalPiglinEntity>> SKELETAL_PIGLIN = ENTITY_TYPES.register("skeletal_piglin",
             () -> EntityType.Builder.of(SkeletalPiglinEntity::new, EntityClassification.MONSTER)

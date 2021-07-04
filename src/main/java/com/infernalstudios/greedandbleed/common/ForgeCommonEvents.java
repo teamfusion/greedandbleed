@@ -1,14 +1,10 @@
 package com.infernalstudios.greedandbleed.common;
 
 import com.infernalstudios.greedandbleed.common.entity.IToleratingMount;
-import com.infernalstudios.greedandbleed.common.entity.piglin.PigmyEntity;
-import com.infernalstudios.greedandbleed.common.entity.piglin.SkeletalPiglinEntity;
 import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;

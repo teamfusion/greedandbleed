@@ -1,6 +1,7 @@
 package com.infernalstudios.greedandbleed.mixin;
 
 import com.infernalstudios.greedandbleed.GreedAndBleed;
+import com.infernalstudios.greedandbleed.common.entity.GBCreatureAttribute;
 import com.infernalstudios.greedandbleed.common.entity.ICanOpenMountInventory;
 import com.infernalstudios.greedandbleed.common.entity.IHasMountArmor;
 import com.infernalstudios.greedandbleed.common.entity.IHasMountInventory;
@@ -574,5 +575,10 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
             itemHandler = null;
             oldHandler.invalidate();
         }
+    }
+
+    @Override
+    public CreatureAttribute getMobType() {
+        return GBCreatureAttribute.SWINE;
     }
 }

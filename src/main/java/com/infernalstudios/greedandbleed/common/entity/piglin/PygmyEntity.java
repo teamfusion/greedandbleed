@@ -42,10 +42,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasInventory {
+public class PygmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasInventory {
     protected Inventory inventory = new Inventory(8);
 
-    public PigmyEntity(EntityType<? extends AbstractPiglinEntity> entityType, World world) {
+    public PygmyEntity(EntityType<? extends AbstractPiglinEntity> entityType, World world) {
         super(entityType, world);
     }
 
@@ -56,7 +56,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
                 .add(Attributes.ATTACK_DAMAGE, 5.0D);
     }
 
-    public static boolean checkPygmySpawnRules(EntityType<PigmyEntity> pygmy, IWorld blockState, SpawnReason spawnReason, BlockPos blockPos, Random random) {
+    public static boolean checkPygmySpawnRules(EntityType<PygmyEntity> pygmy, IWorld blockState, SpawnReason spawnReason, BlockPos blockPos, Random random) {
         return !blockState.getBlockState(blockPos.below()).is(Blocks.NETHER_WART_BLOCK);
     }
 
@@ -217,7 +217,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
         super.customServerAiStep();
     }
 
-    protected Brain.BrainCodec<PigmyEntity> brainProvider() {
+    protected Brain.BrainCodec<PygmyEntity> brainProvider() {
         return Brain.provider(PYGMY_MEMORY_TYPES, PYGMY_SENSOR_TYPES);
     }
 
@@ -227,8 +227,8 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
     }
 
     @Override
-    public Brain<PigmyEntity> getBrain() {
-        return (Brain<PigmyEntity>)super.getBrain();
+    public Brain<PygmyEntity> getBrain() {
+        return (Brain<PygmyEntity>)super.getBrain();
     }
 
     // SAVE DATA
@@ -318,8 +318,8 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
     // HAS TASK MASTER
 
     @Override
-    public TaskManager<PigmyEntity> createTaskManager(Dynamic<?> dynamic) {
-        return new PigmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
+    public TaskManager<PygmyEntity> createTaskManager(Dynamic<?> dynamic) {
+        return new PygmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
     }
 
     @Override
@@ -347,7 +347,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
 
     // SENSOR TYPES AND MEMORY MODULE TYPES
 
-    public static final List<SensorType<? extends Sensor<? super PigmyEntity>>> PYGMY_SENSOR_TYPES =
+    public static final List<SensorType<? extends Sensor<? super PygmyEntity>>> PYGMY_SENSOR_TYPES =
             Lists.newArrayList(
                     SensorType.NEAREST_LIVING_ENTITIES,
                     SensorType.NEAREST_PLAYERS,

@@ -7,6 +7,9 @@
   "mixins": [
     "AbstractPiglinEntityMixin",
     "HoglinEntityMixin",
+    "PigEntityMixin",
+    "ZombifiedPiglinEntityMixin",
+    "ZoglinEntityMixin",
     "NearestPlayersSensorMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetHandlerMixin"

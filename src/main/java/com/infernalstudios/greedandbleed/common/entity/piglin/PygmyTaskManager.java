@@ -33,14 +33,14 @@ import java.util.List;
 import java.util.Optional;
 
 /***
- * An extensible class for initializing and handling a Brain for an PiglinPygmyEntity.
+ * An extensible class for initializing and handling a Brain for an PiglinPigmyEntity.
  * This was based on the class PiglinTasks.
  * @author Thelnfamous1
- * @param <T> A class that extends PiglinPygmyEntity
+ * @param <T> A class that extends PiglinPigmyEntity
  */
-public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T> {
+public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T> {
 
-    public PigmyTaskManager(T pygmy, Brain<T> dynamicBrain) {
+    public PygmyTaskManager(T pygmy, Brain<T> dynamicBrain) {
         super(pygmy, dynamicBrain);
     }
 
@@ -148,12 +148,12 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
 
     @Override
     public void wasHurtBy(LivingEntity attacker) {
-        if (!(attacker instanceof PigmyEntity)) {
+        if (!(attacker instanceof PygmyEntity)) {
             if (isHoldingItemInOffHand(this.mob)) {
                 pigmyStopHoldingOffhandItem(this.mob, false);
             }
 
-            Brain<PigmyEntity> brain = this.mob.getBrain();
+            Brain<PygmyEntity> brain = this.mob.getBrain();
             brain.eraseMemory(MemoryModuleType.CELEBRATE_LOCATION);
             brain.eraseMemory(MemoryModuleType.DANCING);
             brain.eraseMemory(MemoryModuleType.ADMIRING_ITEM);
@@ -217,7 +217,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
                 new InteractWithDoorTask());
         coreTasks.add(babyAvoidNemesis());
         coreTasks.add(avoidZombified());
-        coreTasks.add(new FinishAdmiringItemTask<>(PigmyTaskManager::performPigmyBarter, TaskManager::canFinishAdmiringOffhandItem));
+        coreTasks.add(new FinishAdmiringItemTask<>(PygmyTaskManager::performPigmyBarter, TaskManager::canFinishAdmiringOffhandItem));
         coreTasks.add(new AdmiringItemTask<>(120, PiglinTaskManager::isPiglinLoved));
         coreTasks.add(new EndAttackTask(300, PiglinTaskManager::wantsToDance));
         coreTasks.add(
@@ -306,17 +306,17 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
                 avoidRepellent()
         );
         celebrateTasks.add(
-                new ForgetAttackTargetTask<PigmyEntity>(AbstractPiglinEntity::isAdult, TaskManager::findNearestValidAttackTargetFor)
+                new ForgetAttackTargetTask<PygmyEntity>(AbstractPiglinEntity::isAdult, TaskManager::findNearestValidAttackTargetFor)
                 );
         celebrateTasks.add(
-                new ForgetAttackTargetTask<PigmyEntity>(AbstractPiglinEntity::isAdult, TaskManager::findNearestValidAttackTargetFor)
+                new ForgetAttackTargetTask<PygmyEntity>(AbstractPiglinEntity::isAdult, TaskManager::findNearestValidAttackTargetFor)
                 );
 
         celebrateTasks.add(
-                new SupplementedTask<PigmyEntity>((pigmy) -> !pigmy.isDancing(), new HuntCelebrationTask<>(2, 1.0F))
+                new SupplementedTask<PygmyEntity>((pigmy) -> !pigmy.isDancing(), new HuntCelebrationTask<>(2, 1.0F))
                 );
         celebrateTasks.add(
-                new SupplementedTask<PigmyEntity>(PigmyEntity::isDancing, new HuntCelebrationTask<>(4, 0.6F))
+                new SupplementedTask<PygmyEntity>(PygmyEntity::isDancing, new HuntCelebrationTask<>(4, 0.6F))
                 );
         celebrateTasks.add(
                 new FirstShuffledTask<>(
@@ -341,7 +341,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
                 createIdleMovementBehaviors()
                 );
         avoidTasks.add(
-                new PredicateTask<PigmyEntity>(PiglinTaskManager::wantsToStopFleeing, MemoryModuleType.AVOID_TARGET)
+                new PredicateTask<PygmyEntity>(PiglinTaskManager::wantsToStopFleeing, MemoryModuleType.AVOID_TARGET)
         );
         return avoidTasks;
     }
@@ -359,7 +359,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
                 new SupplementedTask<>(Entity::isPassenger, createIdleLookBehaviors())
                 );
         rideTasks.add(
-                new StopRidingEntityTask<>(8, PigmyTaskManager::pigmyWantsToStopRiding)
+                new StopRidingEntityTask<>(8, PygmyTaskManager::pigmyWantsToStopRiding)
         );
         return rideTasks;
     }
@@ -372,18 +372,18 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
 
     // STATIC HELPER METHODS
 
-    public static void broadcastRetreatToPigmies(PigmyEntity pigmy, LivingEntity targetIn) {
+    public static void broadcastRetreatToPigmies(PygmyEntity pigmy, LivingEntity targetIn) {
         getVisibleAdultPiglins(pigmy)
                 .stream()
                 .filter(
-                        (visibleAdultPiglin) -> visibleAdultPiglin instanceof PigmyEntity)
+                        (visibleAdultPiglin) -> visibleAdultPiglin instanceof PygmyEntity)
                 .forEach(
                         (pygmy) -> retreatFromNearestTarget(pygmy, targetIn));
     }
 
-    public static boolean isPigmyAgeAppropriateRiding(PigmyEntity pigmy) {
+    public static boolean isPigmyAgeAppropriateRiding(PygmyEntity pigmy) {
         Entity vehicle = pigmy.getVehicle();
-        boolean ridingBabyPigmy = vehicle instanceof PigmyEntity && ((PigmyEntity) vehicle).isBaby();
+        boolean ridingBabyPigmy = vehicle instanceof PygmyEntity && ((PygmyEntity) vehicle).isBaby();
         boolean ridingBabyHoglin = vehicle instanceof HoglinEntity && ((HoglinEntity) vehicle).isBaby();
 
         boolean isBaby = pigmy.isBaby();
@@ -393,7 +393,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
             return vehicle instanceof HoglinEntity && ((HoglinEntity)vehicle).isAdult();
         }
     }
-    public static void pigmyStopHoldingOffhandItem(PigmyEntity pigmy, boolean doBarter) {
+    public static void pigmyStopHoldingOffhandItem(PygmyEntity pigmy, boolean doBarter) {
         ItemStack itemstack = pigmy.getItemInHand(Hand.OFF_HAND);
         pigmy.setItemInHand(Hand.OFF_HAND, ItemStack.EMPTY);
         if (pigmy.isAdult()) {
@@ -421,23 +421,23 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
         }
     }
 
-    public static <T extends PigmyEntity> Void performPigmyBarter(T piglin) {
+    public static <T extends PygmyEntity> Void performPigmyBarter(T piglin) {
         pigmyStopHoldingOffhandItem(piglin, true);
         return null;
     }
 
-    public static List<ItemStack> getPigmyBarterResponseItems(PigmyEntity pigmy) {
+    public static List<ItemStack> getPigmyBarterResponseItems(PygmyEntity pigmy) {
         LootTable loottable = pigmy.level.getServer().getLootTables().get(GreedAndBleedLootTables.PIGMY_BARTERING);
         return loottable.getRandomItems((new LootContext.Builder((ServerWorld)pigmy.level)).withParameter(LootParameters.THIS_ENTITY, pigmy).withRandom(pigmy.level.random).create(LootParameterSets.PIGLIN_BARTER));
     }
 
-    public static boolean pigmyWantsToStopRiding(PigmyEntity pigmy, Entity vehicle) {
+    public static boolean pigmyWantsToStopRiding(PygmyEntity pigmy, Entity vehicle) {
         if (!(vehicle instanceof MobEntity)) {
             return false;
         } else {
             boolean isBaby = pigmy.isBaby();
             MobEntity mobVehicle = (MobEntity)vehicle;
-            boolean ridingWalkingPigmy = mobVehicle instanceof PigmyEntity
+            boolean ridingWalkingPigmy = mobVehicle instanceof PygmyEntity
                     && mobVehicle.getVehicle() == null;
             if(isBaby){
                 return !mobVehicle.isBaby()
