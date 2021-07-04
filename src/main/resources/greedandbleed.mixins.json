@@ -7,12 +7,12 @@
   "mixins": [
     "AbstractPiglinEntityMixin",
     "HoglinEntityMixin",
-    "PigEntityMixin",
-    "ZombifiedPiglinEntityMixin",
-    "ZoglinEntityMixin",
     "NearestPlayersSensorMixin",
+    "PigEntityMixin",
     "ServerPlayerEntityMixin",
-    "ServerPlayNetHandlerMixin"
+    "ServerPlayNetHandlerMixin",
+    "ZombifiedPiglinEntityMixin",
+    "ZoglinEntityMixin"
   ],
   "client": [
     "PlayerControllerMixin"

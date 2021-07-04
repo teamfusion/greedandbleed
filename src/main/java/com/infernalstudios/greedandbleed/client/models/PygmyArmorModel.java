@@ -4,13 +4,13 @@ import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.MobEntity;
 
-public class PigmyArmorModel<T extends MobEntity> extends BipedModel<T> {
+public class PygmyArmorModel<T extends MobEntity> extends BipedModel<T> {
 
-    public PigmyArmorModel(float modelSize) {
+    public PygmyArmorModel(float modelSize) {
         this(modelSize, 64, 32);
     }
 
-    public PigmyArmorModel(float modelSize, int texWidthIn, int textHeightIn) {
+    public PygmyArmorModel(float modelSize, int texWidthIn, int textHeightIn) {
         super(modelSize);
         this.texWidth = texWidthIn;
         this.texHeight = textHeightIn;

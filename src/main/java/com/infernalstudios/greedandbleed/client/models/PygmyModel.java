@@ -14,7 +14,7 @@ import net.minecraft.entity.monster.piglin.PiglinEntity;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 
-public class PigmyModel<T extends MobEntity> extends BipedModel<T> {
+public class PygmyModel<T extends MobEntity> extends BipedModel<T> {
 	public final ModelRenderer earLeft;
 	public final ModelRenderer earRight;
 	private final ModelRenderer bodyDefault;
@@ -22,11 +22,11 @@ public class PigmyModel<T extends MobEntity> extends BipedModel<T> {
 	private final ModelRenderer leftArmDefault;
 	private final ModelRenderer rightArmDefault;
 
-	public PigmyModel(float modelSize){
+	public PygmyModel(float modelSize){
 		this(modelSize, 64, 64);
 	}
 
-	public PigmyModel(float modelSize, int texWidthIn, int textHeightIn) {
+	public PygmyModel(float modelSize, int texWidthIn, int textHeightIn) {
 		super(modelSize);
 		this.texWidth = texWidthIn;
 		this.texHeight = textHeightIn;

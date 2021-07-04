@@ -116,7 +116,7 @@ public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T
         }
 
         this.mob.setAggressive(this.dynamicBrain.hasMemoryValue(MemoryModuleType.ATTACK_TARGET));
-        if (!this.dynamicBrain.hasMemoryValue(MemoryModuleType.RIDE_TARGET) && isPigmyAgeAppropriateRiding(this.mob)) {
+        if (!this.dynamicBrain.hasMemoryValue(MemoryModuleType.RIDE_TARGET) && isPygmyAgeAppropriateRiding(this.mob)) {
             this.mob.stopRiding();
         }
 
@@ -150,7 +150,7 @@ public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T
     public void wasHurtBy(LivingEntity attacker) {
         if (!(attacker instanceof PygmyEntity)) {
             if (isHoldingItemInOffHand(this.mob)) {
-                pigmyStopHoldingOffhandItem(this.mob, false);
+                pygmyStopHoldingOffhandItem(this.mob, false);
             }
 
             Brain<PygmyEntity> brain = this.mob.getBrain();
@@ -175,7 +175,7 @@ public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T
 
             } else if (attacker instanceof HoglinEntity && hoglinsOutnumberPiglins(this.mob)) {
                 setAvoidTargetAndDontHuntForAWhile(this.mob, attacker);
-                broadcastRetreatToPigmies(this.mob, attacker);
+                broadcastRetreatToPygmies(this.mob, attacker);
             } else {
                 maybeRetaliate(this.mob, attacker);
             }
@@ -235,7 +235,7 @@ public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T
                         TaskManager::findNearestValidAttackTargetFor
                 ));
 
-        // TODO: What do Pigmies hunt?
+        // TODO: What do Pygmies hunt?
         /*
         idleTasks.add(
                 new SupplementedTask<>(PiglinReflectionHelper::reflectCanHunt, new PiglinsHuntHoglinsTask<>())
@@ -278,7 +278,7 @@ public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T
                 new AttackTargetTask(20)
         );
         fightTasks.add(new ShootTargetTask<>());
-        // TODO: What do Pigmies hunt?
+        // TODO: What do Pygmies hunt?
         //fightTasks.add(new FinishHuntingTask<>(EntityType.HOGLIN, PiglinTaskManager::dontKillAnyMoreHoglinsForAWhile));
         fightTasks.add(new PredicateTask<>(PiglinTaskManager::isNearZombified, MemoryModuleType.ATTACK_TARGET));
         return fightTasks;
@@ -313,7 +313,7 @@ public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T
                 );
 
         celebrateTasks.add(
-                new SupplementedTask<PygmyEntity>((pigmy) -> !pigmy.isDancing(), new HuntCelebrationTask<>(2, 1.0F))
+                new SupplementedTask<PygmyEntity>((pygmy) -> !pygmy.isDancing(), new HuntCelebrationTask<>(2, 1.0F))
                 );
         celebrateTasks.add(
                 new SupplementedTask<PygmyEntity>(PygmyEntity::isDancing, new HuntCelebrationTask<>(4, 0.6F))
@@ -359,7 +359,7 @@ public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T
                 new SupplementedTask<>(Entity::isPassenger, createIdleLookBehaviors())
                 );
         rideTasks.add(
-                new StopRidingEntityTask<>(8, PygmyTaskManager::pigmyWantsToStopRiding)
+                new StopRidingEntityTask<>(8, PygmyTaskManager::pygmyWantsToStopRiding)
         );
         return rideTasks;
     }
@@ -372,8 +372,8 @@ public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T
 
     // STATIC HELPER METHODS
 
-    public static void broadcastRetreatToPigmies(PygmyEntity pigmy, LivingEntity targetIn) {
-        getVisibleAdultPiglins(pigmy)
+    public static void broadcastRetreatToPygmies(PygmyEntity pygmyIn, LivingEntity targetIn) {
+        getVisibleAdultPiglins(pygmyIn)
                 .stream()
                 .filter(
                         (visibleAdultPiglin) -> visibleAdultPiglin instanceof PygmyEntity)
@@ -381,74 +381,74 @@ public class PygmyTaskManager<T extends PygmyEntity> extends PiglinTaskManager<T
                         (pygmy) -> retreatFromNearestTarget(pygmy, targetIn));
     }
 
-    public static boolean isPigmyAgeAppropriateRiding(PygmyEntity pigmy) {
-        Entity vehicle = pigmy.getVehicle();
+    public static boolean isPygmyAgeAppropriateRiding(PygmyEntity pygmy) {
+        Entity vehicle = pygmy.getVehicle();
         boolean ridingBabyPigmy = vehicle instanceof PygmyEntity && ((PygmyEntity) vehicle).isBaby();
         boolean ridingBabyHoglin = vehicle instanceof HoglinEntity && ((HoglinEntity) vehicle).isBaby();
 
-        boolean isBaby = pigmy.isBaby();
+        boolean isBaby = pygmy.isBaby();
         if(isBaby){
             return ridingBabyPigmy || ridingBabyHoglin;
         } else{
             return vehicle instanceof HoglinEntity && ((HoglinEntity)vehicle).isAdult();
         }
     }
-    public static void pigmyStopHoldingOffhandItem(PygmyEntity pigmy, boolean doBarter) {
-        ItemStack itemstack = pigmy.getItemInHand(Hand.OFF_HAND);
-        pigmy.setItemInHand(Hand.OFF_HAND, ItemStack.EMPTY);
-        if (pigmy.isAdult()) {
+    public static void pygmyStopHoldingOffhandItem(PygmyEntity pygmy, boolean doBarter) {
+        ItemStack itemstack = pygmy.getItemInHand(Hand.OFF_HAND);
+        pygmy.setItemInHand(Hand.OFF_HAND, ItemStack.EMPTY);
+        if (pygmy.isAdult()) {
             boolean isPiglinBarter = isBarteringItem(itemstack);
             if (doBarter && isPiglinBarter) {
-                throwItems(pigmy, getPigmyBarterResponseItems(pigmy));
+                throwItems(pygmy, getPygmyBarterResponseItems(pygmy));
             } else if (!isPiglinBarter) {
-                boolean didEquip = pigmy.equipItemIfPossible(itemstack);
+                boolean didEquip = pygmy.equipItemIfPossible(itemstack);
                 if (!didEquip) {
-                    putInInventory(pigmy, itemstack);
+                    putInInventory(pygmy, itemstack);
                 }
             }
         } else {
-            boolean didEquip = pigmy.equipItemIfPossible(itemstack);
+            boolean didEquip = pygmy.equipItemIfPossible(itemstack);
             if (!didEquip) {
-                ItemStack mainHandItem = pigmy.getMainHandItem();
+                ItemStack mainHandItem = pygmy.getMainHandItem();
                 if (isLovedItem(mainHandItem.getItem())) {
-                    putInInventory(pigmy, mainHandItem);
+                    putInInventory(pygmy, mainHandItem);
                 } else {
-                    throwItems(pigmy, Collections.singletonList(mainHandItem));
+                    throwItems(pygmy, Collections.singletonList(mainHandItem));
                 }
 
-                pigmy.holdInMainHand(itemstack);
+                pygmy.holdInMainHand(itemstack);
             }
         }
     }
 
     public static <T extends PygmyEntity> Void performPigmyBarter(T piglin) {
-        pigmyStopHoldingOffhandItem(piglin, true);
+        pygmyStopHoldingOffhandItem(piglin, true);
         return null;
     }
 
-    public static List<ItemStack> getPigmyBarterResponseItems(PygmyEntity pigmy) {
-        LootTable loottable = pigmy.level.getServer().getLootTables().get(GreedAndBleedLootTables.PIGMY_BARTERING);
-        return loottable.getRandomItems((new LootContext.Builder((ServerWorld)pigmy.level)).withParameter(LootParameters.THIS_ENTITY, pigmy).withRandom(pigmy.level.random).create(LootParameterSets.PIGLIN_BARTER));
+    public static List<ItemStack> getPygmyBarterResponseItems(PygmyEntity pygmy) {
+        LootTable loottable = pygmy.level.getServer().getLootTables().get(GreedAndBleedLootTables.PIGMY_BARTERING);
+        return loottable.getRandomItems((new LootContext.Builder((ServerWorld)pygmy.level)).withParameter(LootParameters.THIS_ENTITY, pygmy).withRandom(pygmy.level.random).create(LootParameterSets.PIGLIN_BARTER));
     }
 
-    public static boolean pigmyWantsToStopRiding(PygmyEntity pigmy, Entity vehicle) {
+    public static boolean pygmyWantsToStopRiding(PygmyEntity pygmy, Entity vehicle) {
         if (!(vehicle instanceof MobEntity)) {
             return false;
         } else {
-            boolean isBaby = pigmy.isBaby();
+            boolean isBaby = pygmy.isBaby();
             MobEntity mobVehicle = (MobEntity)vehicle;
             boolean ridingWalkingPigmy = mobVehicle instanceof PygmyEntity
                     && mobVehicle.getVehicle() == null;
             if(isBaby){
                 return !mobVehicle.isBaby()
                         || !mobVehicle.isAlive()
-                        || wasHurtRecently(pigmy)
+                        || wasHurtRecently(pygmy)
                         || wasHurtRecently(mobVehicle)
                         || ridingWalkingPigmy;
             } else{
                 return mobVehicle.isBaby()
                         || !mobVehicle.isAlive()
-                        || wasHurtRecently(pigmy)
+                        || wasHurtRecently(pygmy)
                         || wasHurtRecently(mobVehicle)
                         || ridingWalkingPigmy;
             }
