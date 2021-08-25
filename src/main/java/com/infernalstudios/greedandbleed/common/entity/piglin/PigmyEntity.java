@@ -1,8 +1,8 @@
 package com.infernalstudios.greedandbleed.common.entity.piglin;
 
 import com.google.common.collect.Lists;
-import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
 import com.infernalstudios.greedandbleed.api.IHasInventory;
+import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
 import com.infernalstudios.greedandbleed.api.TaskManager;
 import com.infernalstudios.greedandbleed.common.registry.ItemRegistry;
 import com.infernalstudios.greedandbleed.server.registry.MemoryModuleTypeRegistry;
@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
+@SuppressWarnings({ "NullableProblems", "unused" })
 public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasInventory {
     protected Inventory inventory = new Inventory(8);
 
@@ -52,7 +53,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
     public static AttributeModifierMap.MutableAttribute createAttributes() {
         return MonsterEntity.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 16.0D)
-                .add(Attributes.MOVEMENT_SPEED, (double)0.35F)
+                .add(Attributes.MOVEMENT_SPEED, 0.35F)
                 .add(Attributes.ATTACK_DAMAGE, 5.0D);
     }
 
@@ -100,15 +101,17 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
             }
         } else if ((double) serverWorld.getRandom().nextFloat() < 0.05D) {
             HoglinEntity hoglin = EntityType.HOGLIN.create(this.level);
-            hoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.yRot, 0.0F);
-            hoglin.finalizeSpawn(serverWorld, difficultyInstance, SpawnReason.JOCKEY, (ILivingEntityData)null, (CompoundNBT)null);
-            hoglin.setBaby(false);
-            //hoglin.setChickenJockey(true);
-            if(hoglin instanceof IEquipable && ((IEquipable)hoglin).isSaddleable()){
-                ((IEquipable)hoglin).equipSaddle((SoundCategory) null);
-                this.startRiding(hoglin);
-                serverWorld.addFreshEntity(hoglin);
-                return true;
+            if (hoglin != null) {
+                hoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.yRot, 0.0F);
+                hoglin.finalizeSpawn(serverWorld, difficultyInstance, SpawnReason.JOCKEY, null, null);
+                hoglin.setBaby(false);
+                //hoglin.setChickenJockey(true);
+                if (hoglin instanceof IEquipable && ((IEquipable) hoglin).isSaddleable()) {
+                    ((IEquipable) hoglin).equipSaddle(null);
+                    this.startRiding(hoglin);
+                    serverWorld.addFreshEntity(hoglin);
+                    return true;
+                }
             }
         }
         return false;
@@ -136,6 +139,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
 
     }
 
+    @Override
     public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
         ActionResultType actionresulttype = super.mobInteract(player, hand);
         if (actionresulttype.consumesAction()) {
@@ -209,6 +213,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
     }
 
     // BRAIN
+    @Override
     protected void customServerAiStep() {
         this.level.getProfiler().push("piglinPygmyBrain");
         this.getBrain().tick((ServerWorld)this.level, this);
@@ -217,18 +222,21 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
         super.customServerAiStep();
     }
 
+    @Override
     protected Brain.BrainCodec<PigmyEntity> brainProvider() {
         return Brain.provider(PYGMY_MEMORY_TYPES, PYGMY_SENSOR_TYPES);
     }
 
+    @Override
     protected Brain<?> makeBrain(Dynamic<?> dynamic) {
         this.taskManager = this.createTaskManager(dynamic);
         return this.taskManager.getBrain();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Brain<PigmyEntity> getBrain() {
-        return (Brain<PigmyEntity>)super.getBrain();
+        return (Brain<PigmyEntity>) super.getBrain();
     }
 
     // SAVE DATA

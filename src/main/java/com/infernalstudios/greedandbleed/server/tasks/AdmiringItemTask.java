@@ -8,8 +8,10 @@ import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.world.server.ServerWorld;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
+@SuppressWarnings("NullableProblems")
 public class AdmiringItemTask<E extends LivingEntity> extends Task<E> {
    private final int admireDuration;
    private final Predicate<ItemEntity> itemPredicate;
@@ -20,11 +22,14 @@ public class AdmiringItemTask<E extends LivingEntity> extends Task<E> {
       this.itemPredicate = itemPredicateIn;
    }
 
+   @Override
    protected boolean checkExtraStartConditions(ServerWorld serverWorld, E entity) {
-      ItemEntity itementity = entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM).get();
-      return itemPredicate.test(itementity);
+      Optional<ItemEntity> itemOpt = entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM);
+      return itemOpt.filter(itemPredicate).isPresent();
+
    }
 
+   @Override
    protected void start(ServerWorld serverWorld, E entity, long gameTime) {
       entity.getBrain().setMemoryWithExpiry(MemoryModuleType.ADMIRING_ITEM, true, (long)this.admireDuration);
    }

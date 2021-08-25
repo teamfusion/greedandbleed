@@ -10,7 +10,8 @@ import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.BrainUtil;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
-import net.minecraft.entity.ai.brain.task.*;
+import net.minecraft.entity.ai.brain.task.FirstShuffledTask;
+import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,7 +22,10 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.vector.Vector3d;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /***
  * An extensible class for initializing and handling a Brain for a LivingEntity.
@@ -29,6 +33,7 @@ import java.util.*;
  * @author Thelnfamous1
  * @param <T> A class that extends LivingEntity
  */
+@SuppressWarnings({ "unused", "BooleanMethodIsAlwaysInverted" })
 public abstract class TaskManager<T extends LivingEntity & IHasTaskManager> implements ITaskManager<T> {
     protected final T mob;
     protected final Brain<T> dynamicBrain;
@@ -83,7 +88,7 @@ public abstract class TaskManager<T extends LivingEntity & IHasTaskManager> impl
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      * @param memoryModuleType The MemoryModuleType to remove data from when the Activity is stopped
      */
-    protected void initActivityAndRemoveMemoryWhenStopped(List<? extends Task<? super T>> taskList, Activity activity, int priorityStart, MemoryModuleType memoryModuleType) {
+    protected void initActivityAndRemoveMemoryWhenStopped(List<? extends Task<? super T>> taskList, Activity activity, int priorityStart, MemoryModuleType<?> memoryModuleType) {
         ImmutableList<Task<? super T>> immutableTaskList =
                 ImmutableList.copyOf(taskList);
         this.dynamicBrain.addActivityAndRemoveMemoryWhenStopped(

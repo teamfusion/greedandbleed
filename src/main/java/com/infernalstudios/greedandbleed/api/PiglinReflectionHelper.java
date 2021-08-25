@@ -20,23 +20,6 @@ public class PiglinReflectionHelper {
     private static Method canReplaceCurrentItem;
 
     /**
-     * Equivalent to AbstractPiglinEntity#canHunt
-     * @param piglin The AbstractPiglinEntity to invoke canHunt on
-     * @return Whether or not the piglin can hunt
-     */
-    public static boolean reflectCanHunt(AbstractPiglinEntity piglin) {
-        if(canHunt == null){
-            canHunt = ObfuscationReflectionHelper.findMethod(AbstractPiglinEntity.class, CAN_HUNT_METHOD_NAME);
-        }
-        try {
-            return (boolean) canHunt.invoke(piglin);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            GreedAndBleed.LOGGER.error("Reflection error for method canHunt in AbstractPiglinEntity! Used method name {} on {}", CAN_HUNT_METHOD_NAME, piglin.toString());
-        }
-        return false;
-    }
-
-    /**
      * Equivalent to MobEntity#canReplaceCurrentItem
      * @param mob The MobEntity to invoke canReplaceCurrentItem on
      * @param replacementItem The ItemStack that is considered as a replacement

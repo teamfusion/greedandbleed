@@ -14,9 +14,8 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class ClientNetworkHandler {
-
-        public static void handleHoglinScreenOpen(SOpenHoglinWindowPacket packet, Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(() -> {
+    public static void handleHoglinScreenOpen(SOpenHoglinWindowPacket packet, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
                 Minecraft minecraft = Minecraft.getInstance();
                 ClientPlayerEntity clientPlayer = minecraft.player;
                 Entity entity = null;
@@ -33,7 +32,7 @@ public class ClientNetworkHandler {
                     minecraft.setScreen(hoglinInventoryScreen);
                 }
             }
-            );
-            ctx.get().setPacketHandled(true);
-        }
+        );
+        ctx.get().setPacketHandled(true);
     }
+}

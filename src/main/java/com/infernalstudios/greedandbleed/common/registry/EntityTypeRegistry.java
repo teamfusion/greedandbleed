@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class EntityTypeRegistry {
 
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, GreedAndBleed.MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, GreedAndBleed.MOD_ID);
 
     public static final RegistryObject<EntityType<PigmyEntity>> PIGMY =
             ENTITY_TYPES.register("pigmy", () ->
@@ -20,10 +20,10 @@ public class EntityTypeRegistry {
                             // pigmy is 14x24 pixels, piglin is 16x31(?)
                             .sized(0.6F, 1.5F)
                             .clientTrackingRange(8)
-                            .build(new ResourceLocation(GreedAndBleed.MODID, "pigmy").toString()));
+                            .build(new ResourceLocation(GreedAndBleed.MOD_ID, "pigmy").toString()));
 
     public static final RegistryObject<EntityType<SkeletalPiglinEntity>> SKELETAL_PIGLIN = ENTITY_TYPES.register("skeletal_piglin",
             () -> EntityType.Builder.of(SkeletalPiglinEntity::new, EntityClassification.MONSTER)
                     .sized(0.6f, 1.95f) // Hitbox Size
-                    .build(new ResourceLocation(GreedAndBleed.MODID, "skeletal_piglin").toString()));
+                    .build(new ResourceLocation(GreedAndBleed.MOD_ID, "skeletal_piglin").toString()));
 }

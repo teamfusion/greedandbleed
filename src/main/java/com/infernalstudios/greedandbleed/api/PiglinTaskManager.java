@@ -1,5 +1,7 @@
 package com.infernalstudios.greedandbleed.api;
 
+import com.infernalstudios.greedandbleed.mixin.AbstractPiglinEntityInvoker;
+import com.infernalstudios.greedandbleed.mixin.MobEntityInvoker;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -7,7 +9,9 @@ import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.BrainUtil;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
-import net.minecraft.entity.ai.brain.task.*;
+import net.minecraft.entity.ai.brain.task.PiglinIdleActivityTask;
+import net.minecraft.entity.ai.brain.task.RunAwayTask;
+import net.minecraft.entity.ai.brain.task.RunSometimesTask;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.monster.ZoglinEntity;
@@ -19,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.*;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.RangedInteger;
@@ -35,6 +40,7 @@ import java.util.*;
  * @author Thelnfamous1
  * @param <T> A class that extends AbstractPiglinEntity
  */
+@SuppressWarnings("unused")
 public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTaskManager> extends TaskManager<T> {
 
     protected static final Set<Item> FOOD_ITEMS = new HashSet<>(Arrays.asList(Items.PORKCHOP, Items.COOKED_PORKCHOP));
@@ -81,11 +87,13 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
     public static boolean isNearZombified(AbstractPiglinEntity piglin) {
         Brain<?> brain = piglin.getBrain();
         if (brain.hasMemoryValue(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED)) {
-            LivingEntity livingentity = brain.getMemory(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED).get();
-            return piglin.closerThan(livingentity, 6.0D);
-        } else {
-            return false;
+            Optional<LivingEntity> entity = brain.getMemory(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED);
+            if (entity.isPresent()) {
+                return piglin.closerThan(entity.get(), 6.0D);
+            }
         }
+
+        return false;
     }
 
     public static boolean wantsToDance(LivingEntity livingEntity, LivingEntity targetIn) {
@@ -110,8 +118,8 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
         piglin.getBrain().eraseMemory(MemoryModuleType.ANGRY_AT);
         piglin.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
         piglin.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
-        piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.AVOID_TARGET, targetIn, (long)RETREAT_DURATION.randomValue(piglin.level.random));
-        setHuntedRecently(piglin, (long)TIME_BETWEEN_HUNTS.randomValue(piglin.level.random));
+        piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.AVOID_TARGET, targetIn, RETREAT_DURATION.randomValue(piglin.level.random));
+        setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.randomValue(piglin.level.random));
     }
 
     public static void maybeRetaliate(AbstractPiglinEntity piglin, LivingEntity targetIn) {
@@ -134,7 +142,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
     public static void broadcastAngerTarget(AbstractPiglinEntity piglin, LivingEntity targetIn) {
         getAdultPiglins(piglin).forEach((adultPiglin) -> {
             if (!(targetIn instanceof HoglinEntity)
-                    || PiglinReflectionHelper.reflectCanHunt(adultPiglin)
+                    || ((AbstractPiglinEntityInvoker) adultPiglin).canHunt()
                     && ((HoglinEntity)targetIn).canBeHunted()) {
                 setAngerTargetIfCloserThanCurrent(adultPiglin, targetIn);
             }
@@ -142,19 +150,15 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
     }
 
     public static void broadcastUniversalAnger(AbstractPiglinEntity piglin) {
-        getAdultPiglins(piglin).forEach((adultPiglin) -> {
-            getNearestVisibleTargetablePlayer(adultPiglin).ifPresent((player) -> {
-                setAngerTarget(adultPiglin, player);
-            });
-        });
+        getAdultPiglins(piglin).forEach((adultPiglin) -> getNearestVisibleTargetablePlayer(adultPiglin).ifPresent((player) -> setAngerTarget(adultPiglin, player)));
     }
 
     public static void setAngerTarget(AbstractPiglinEntity piglin, LivingEntity targetIn) {
         if (isAttackAllowed(targetIn)) {
             piglin.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
             piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, targetIn.getUUID(), 600L);
-            if (targetIn instanceof HoglinEntity && PiglinReflectionHelper.reflectCanHunt(piglin)) {
-                setHuntedRecently(piglin, (long)TIME_BETWEEN_HUNTS.randomValue(piglin.level.random));
+            if (targetIn instanceof HoglinEntity && ((AbstractPiglinEntityInvoker) piglin).canHunt()) {
+                setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.randomValue(piglin.level.random));
             }
 
             if (targetIn instanceof PlayerEntity && piglin.level.getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
@@ -204,9 +208,8 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
         }
     }
 
-    public static Void dontKillAnyMoreHoglinsForAWhile(AbstractPiglinEntity piglin) {
-        TaskManager.setHuntedRecently(piglin, (long)TIME_BETWEEN_HUNTS.randomValue(piglin.level.random));
-        return null;
+    public static void dontKillAnyMoreHoglinsForAWhile(AbstractPiglinEntity piglin) {
+        TaskManager.setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.randomValue(piglin.level.random));
     }
 
     public static void broadcastDontKillAnyMoreHoglinsForAWhile(AbstractPiglinEntity piglin) {
@@ -252,8 +255,13 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
     }
 
     public static List<ItemStack> getBarterResponseItems(AbstractPiglinEntity piglin) {
-        LootTable loottable = piglin.level.getServer().getLootTables().get(LootTables.PIGLIN_BARTERING);
-        return loottable.getRandomItems((new LootContext.Builder((ServerWorld)piglin.level)).withParameter(LootParameters.THIS_ENTITY, piglin).withRandom(piglin.level.random).create(LootParameterSets.PIGLIN_BARTER));
+        MinecraftServer server = piglin.level.getServer();
+        if (server != null) {
+            LootTable loottable = server.getLootTables().get(LootTables.PIGLIN_BARTERING);
+            return loottable.getRandomItems(new LootContext.Builder((ServerWorld) piglin.level).withParameter(LootParameters.THIS_ENTITY, piglin).withRandom(piglin.level.random).create(LootParameterSets.PIGLIN_BARTER));
+        }
+
+        return new ArrayList<>();
     }
 
     public static <T extends AbstractPiglinEntity & IHasInventory & IHasTaskManager>void pickUpItem(T piglin, ItemEntity itemEntity) {
@@ -283,9 +291,8 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
         }
     }
 
-    public static <T extends AbstractPiglinEntity & IHasInventory & IHasTaskManager> Void performBarter(T piglin) {
+    public static <T extends AbstractPiglinEntity & IHasInventory & IHasTaskManager> void performBarter(T piglin) {
         PiglinTaskManager.stopHoldingOffHandItem(piglin, true);
-        return null;
     }
 
     public static boolean wantsToStopFleeing(AbstractPiglinEntity piglinEntity) {
@@ -293,15 +300,18 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
         if (!brain.hasMemoryValue(MemoryModuleType.AVOID_TARGET)) {
             return true;
         } else {
-            LivingEntity avoidTarget = brain.getMemory(MemoryModuleType.AVOID_TARGET).get();
-            if (avoidTarget instanceof HoglinEntity) {
-                return piglinsEqualOrOutnumberHoglins(piglinEntity);
-            } else if (isZombified(avoidTarget)) {
-                return !brain.isMemoryValue(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, avoidTarget);
-            } else {
-                return false;
+            Optional<LivingEntity> avoidTargetOpt = brain.getMemory(MemoryModuleType.AVOID_TARGET);
+            if (avoidTargetOpt.isPresent()) {
+                LivingEntity avoidTarget = avoidTargetOpt.get();
+                if (avoidTarget instanceof HoglinEntity) {
+                    return piglinsEqualOrOutnumberHoglins(piglinEntity);
+                } else if (isZombified(avoidTarget)) {
+                    return !brain.isMemoryValue(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, avoidTarget);
+                }
             }
         }
+
+        return false;
     }
 
     public static boolean wantsToStopRiding(AbstractPiglinEntity piglin, Entity vehicle) {
@@ -333,8 +343,8 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
 
     public static boolean isNearAvoidTarget(LivingEntity livingEntity) {
         Brain<?> brain = livingEntity.getBrain();
-        return brain.hasMemoryValue(MemoryModuleType.AVOID_TARGET)
-                && brain.getMemory(MemoryModuleType.AVOID_TARGET).get().closerThan(livingEntity, 12.0D);
+        Optional<LivingEntity> avoidTarget = brain.getMemory(MemoryModuleType.AVOID_TARGET);
+        return avoidTarget.isPresent() && avoidTarget.get().closerThan(livingEntity, 12.0D);
     }
 
     public static <T extends AbstractPiglinEntity & IHasInventory> boolean wantsToPickup(T piglin, ItemStack stack) {
@@ -352,7 +362,6 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
             } else if (isFood(stack)) {
                 return !hasEatenRecently(piglin) && canAddToInventory;
             } else if (!isLovedItem(stack)) {
-                // MobEntity#canReplaceCurrentItem is protected, need it to be public
                 return canReplaceCurrentItem(piglin, stack);
             } else {
                 return isNotHoldingLovedItemInOffHand(piglin) && canAddToInventory;
@@ -363,7 +372,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
     public static boolean canReplaceCurrentItem(MobEntity mob, ItemStack replacementItem) {
         EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(replacementItem);
         ItemStack currentItem = mob.getItemBySlot(equipmentslottype);
-        return PiglinReflectionHelper.reflectCanReplaceCurrentItem(mob, replacementItem, currentItem);
+        return ((MobEntityInvoker) mob).canReplaceCurrentItem(replacementItem, currentItem);
     }
 
     public static boolean isZombified(LivingEntity livingEntity) {

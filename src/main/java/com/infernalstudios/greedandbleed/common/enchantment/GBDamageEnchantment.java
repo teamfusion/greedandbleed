@@ -4,15 +4,12 @@ import com.infernalstudios.greedandbleed.common.entity.GBCreatureAttribute;
 import net.minecraft.enchantment.DamageEnchantment;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.CreatureAttribute;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 
+@SuppressWarnings({ "NullableProblems", "unused" })
 public class GBDamageEnchantment extends DamageEnchantment {
    private static final String[] NAMES = new String[]{"all", "undead", "arthropods", "piglins"};
    private static final int[] GB_MIN_COST = new int[]{1, 5, 5, 5};

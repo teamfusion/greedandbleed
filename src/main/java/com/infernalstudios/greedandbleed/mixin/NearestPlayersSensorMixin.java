@@ -19,13 +19,9 @@ public class NearestPlayersSensorMixin {
 
     // MIXINS
 
-    /**
-     * Note that for these Mixins, I used the Minecraft Development plugin for IntelliJ
-     */
-
     @Redirect(at = @At(value = "INVOKE",
             target = "Ljava/util/stream/Stream;findFirst()Ljava/util/Optional;"),
-            method = "doTick")
+            method = "doTick", remap = false)
     private Optional<PlayerEntity> accountForTolerance(Stream<PlayerEntity> stream, ServerWorld serverWorld, LivingEntity sensorMob){
         return stream
                 .filter(notToleratedPassenger(sensorMob))

@@ -10,12 +10,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.HorseInventoryContainer;
 import net.minecraft.inventory.container.IContainerListener;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.network.play.server.SOpenHorseWindowPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -50,7 +45,4 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity  implements I
 
     @Shadow
     public abstract void nextContainerCounter();
-
-    @Shadow
-    public abstract void closeContainer();
 }

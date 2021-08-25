@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class SensorTypeRegistry {
 
-    public static final DeferredRegister<SensorType<?>> SENSOR_TYPES = DeferredRegister.create(ForgeRegistries.SENSOR_TYPES, GreedAndBleed.MODID);
+    public static final DeferredRegister<SensorType<?>> SENSOR_TYPES = DeferredRegister.create(ForgeRegistries.SENSOR_TYPES, GreedAndBleed.MOD_ID);
 
     public static final RegistryObject<SensorType<PigmySpecificSensor>> PIGMY_SPECIFIC_SENSOR = SENSOR_TYPES.register(
             "pigmy_specific_sensor", () ->

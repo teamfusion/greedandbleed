@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class NetworkHandler {
     public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder.named(
-            new ResourceLocation(GreedAndBleed.MODID, "network"))
+            new ResourceLocation(GreedAndBleed.MOD_ID, "network"))
             .clientAcceptedVersions("1"::equals)
             .serverAcceptedVersions("1"::equals)
             .networkProtocolVersion(() -> "1")

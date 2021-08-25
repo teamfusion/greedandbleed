@@ -18,12 +18,13 @@ import net.minecraft.world.World;
 
 import java.util.UUID;
 
+@SuppressWarnings("NullableProblems")
 public abstract class GBPiglinEntity extends AbstractPiglinEntity implements IHasTaskManager {
     protected static final DataParameter<Boolean> DATA_BABY_ID = EntityDataManager.defineId(GBPiglinEntity.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Boolean> DATA_IS_CHARGING_CROSSBOW = EntityDataManager.defineId(GBPiglinEntity.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Boolean> DATA_IS_DANCING = EntityDataManager.defineId(GBPiglinEntity.class, DataSerializers.BOOLEAN);
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
-    public static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", (double)0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
+    public static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
 
     protected boolean cannotHunt = false;
     protected ITaskManager<?> taskManager;
@@ -56,6 +57,7 @@ public abstract class GBPiglinEntity extends AbstractPiglinEntity implements IHa
         return !this.isPersistenceRequired();
     }
 
+    @Override
     public boolean hurt(DamageSource damageSource, float amount) {
         boolean isHurt = super.hurt(damageSource, amount);
         if (this.level.isClientSide) {
@@ -72,7 +74,7 @@ public abstract class GBPiglinEntity extends AbstractPiglinEntity implements IHa
     @Override
     protected SoundEvent getAmbientSound() {
         return this.level.isClientSide ?
-                null : this.taskManager.getSoundForCurrentActivity().orElse((SoundEvent)null);
+                null : this.taskManager.getSoundForCurrentActivity().orElse(null);
     }
 
     @Override
@@ -84,10 +86,12 @@ public abstract class GBPiglinEntity extends AbstractPiglinEntity implements IHa
     public void setBaby(boolean baby) {
         this.getEntityData().set(DATA_BABY_ID, baby);
         if (!this.level.isClientSide) {
-            ModifiableAttributeInstance modifiableattributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
-            modifiableattributeinstance.removeModifier(SPEED_MODIFIER_BABY);
-            if (baby) {
-                modifiableattributeinstance.addTransientModifier(SPEED_MODIFIER_BABY);
+            ModifiableAttributeInstance movementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED);
+            if (movementSpeed != null) {
+                movementSpeed.removeModifier(SPEED_MODIFIER_BABY);
+                if (baby) {
+                    movementSpeed.addTransientModifier(SPEED_MODIFIER_BABY);
+                }
             }
         }
     }

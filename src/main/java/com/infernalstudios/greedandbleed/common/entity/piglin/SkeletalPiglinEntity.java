@@ -26,6 +26,7 @@ import java.time.temporal.ChronoField;
 import java.util.Random;
 import java.util.UUID;
 
+@SuppressWarnings("NullableProblems")
 public class SkeletalPiglinEntity extends MonsterEntity implements IAngerable {
 
     private static final RangedInteger RANGED_INT = TickRangeConverter.rangeOfSeconds(20, 39);
@@ -44,6 +45,7 @@ public class SkeletalPiglinEntity extends MonsterEntity implements IAngerable {
                 .add(Attributes.MOVEMENT_SPEED, 0.5D);
     }
 
+    @SuppressWarnings("unused")
     public static boolean checkSkeletalPiglinSpawnRules(EntityType<SkeletalPiglinEntity> p_234351_0_, IWorld p_234351_1_, SpawnReason p_234351_2_, BlockPos p_234351_3_, Random p_234351_4_) {
         return p_234351_1_.getDifficulty() != Difficulty.PEACEFUL && p_234351_1_.getBlockState(p_234351_3_.below()).getBlock() != Blocks.NETHER_WART_BLOCK;
     }

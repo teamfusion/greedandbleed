@@ -1,7 +1,6 @@
 package com.infernalstudios.greedandbleed.server.network.packet;
 
 import com.infernalstudios.greedandbleed.client.network.ClientNetworkHandler;
-import net.minecraft.client.network.play.IClientPlayNetHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -10,9 +9,9 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class SOpenHoglinWindowPacket {
-    private int containerId;
-    private int size;
-    private int entityId;
+    private final int containerId;
+    private final int size;
+    private final int entityId;
 
     public SOpenHoglinWindowPacket(int containerIdIn, int sizeIdIn, int entityIdIn) {
         this.containerId = containerIdIn;

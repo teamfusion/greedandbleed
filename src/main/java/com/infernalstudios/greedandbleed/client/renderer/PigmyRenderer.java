@@ -15,9 +15,10 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Map;
 
+@SuppressWarnings("NullableProblems")
 public class PigmyRenderer extends BipedRenderer<MobEntity, PigmyModel<MobEntity>> {
     private static final Map<EntityType<?>, ResourceLocation> resourceLocations = ImmutableMap.of(
-            EntityTypeRegistry.PIGMY.get(), new ResourceLocation(GreedAndBleed.MODID, "textures/entity/piglin/pigmy.png"));
+            EntityTypeRegistry.PIGMY.get(), new ResourceLocation(GreedAndBleed.MOD_ID, "textures/entity/piglin/pigmy.png"));
 
     public PigmyRenderer(EntityRendererManager entityRendererManager, boolean zombified) {
         super(entityRendererManager, createModel(zombified), 0.5F, 1.0019531F, 1.0F, 1.0019531F);

@@ -10,10 +10,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+@SuppressWarnings("NullableProblems")
 @OnlyIn(Dist.CLIENT)
 public class GBHoglinRenderer extends MobRenderer<HoglinEntity, GBHoglinModelComplete<HoglinEntity>> {
    private static final ResourceLocation GB_HOGLIN_TEXTURE =
-           new ResourceLocation(GreedAndBleed.MODID,
+           new ResourceLocation(GreedAndBleed.MOD_ID,
                    "textures/entity/hoglin/hoglin_with_saddle.png");
 
    public GBHoglinRenderer(EntityRendererManager entityRendererManager) {
@@ -21,10 +22,12 @@ public class GBHoglinRenderer extends MobRenderer<HoglinEntity, GBHoglinModelCom
       this.addLayer(new HoglinArmorLayer(this));
    }
 
+   @Override
    public ResourceLocation getTextureLocation(HoglinEntity hoglinEntity) {
       return GB_HOGLIN_TEXTURE;
    }
 
+   @Override
    protected boolean isShaking(HoglinEntity hoglinEntity) {
       return hoglinEntity.isConverting();
    }

@@ -4,20 +4,24 @@ import com.infernalstudios.greedandbleed.GreedAndBleed;
 import com.infernalstudios.greedandbleed.common.item.GBOnAStickItem;
 import com.infernalstudios.greedandbleed.common.item.HoglinArmorItem;
 import com.infernalstudios.greedandbleed.common.item.HoglinSaddleItem;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.*;
+import net.minecraft.item.Food;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+@SuppressWarnings({ "unused", "NullableProblems" })
 public class ItemRegistry {
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GreedAndBleed.MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GreedAndBleed.MOD_ID);
 
-    public static final ItemGroup TAB_GREED_AND_BLEED = new ItemGroup( "greedAndBleed") {
+    public static final ItemGroup TAB_GREED_AND_BLEED = new ItemGroup( GreedAndBleed.MOD_ID + ".item_group") {
+        @Override
         @OnlyIn(Dist.CLIENT)
         public ItemStack makeIcon() {
             return new ItemStack(HOGLIN_SADDLE.get());

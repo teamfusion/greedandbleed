@@ -17,9 +17,10 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 // COPIED FROM INFERNAL EXPANSION
+@SuppressWarnings("unused")
 public class LootModifierRegistry {
 
-    public static final DeferredRegister<GlobalLootModifierSerializer<?>> LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.LOOT_MODIFIER_SERIALIZERS, GreedAndBleed.MODID);
+    public static final DeferredRegister<GlobalLootModifierSerializer<?>> LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.LOOT_MODIFIER_SERIALIZERS, GreedAndBleed.MOD_ID);
 
     public static final RegistryObject<GlobalLootModifierSerializer<HoglinLootModifier>> HOGLIN_LOOT_MODIFIER = LOOT_MODIFIERS.register("hoglin_loot_modifier", HoglinLootSerializer::new);
 

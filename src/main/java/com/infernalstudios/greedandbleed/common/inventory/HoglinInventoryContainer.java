@@ -9,18 +9,18 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+@SuppressWarnings("NullableProblems")
 public class HoglinInventoryContainer extends Container {
    private final IInventory hoglinContainer;
    private final AnimalEntity hoglin;
 
    public HoglinInventoryContainer(int containerId, PlayerInventory playerInventory, IInventory inventory, final AnimalEntity hoglin) {
-      super((ContainerType<?>)null, containerId);
+      super(null, containerId);
       this.hoglinContainer = inventory;
       if(!(hoglin instanceof IEquipable)
               || !(hoglin instanceof IHasMountArmor)
@@ -28,31 +28,34 @@ public class HoglinInventoryContainer extends Container {
          throw new IllegalArgumentException("This entity type " + hoglin.getType() + " is not valid for HoglinInventoryContainer!");
       }
       this.hoglin = hoglin;
-      int i = 3;
       inventory.startOpen(playerInventory.player);
-      int j = -18;
       this.addSlot(new Slot(inventory, 0, 8, 18) {
+         @Override
          public boolean mayPlace(ItemStack stack) {
             return ((IToleratingMount) hoglin).isSaddleStack(stack)
                     && !this.hasItem()
                     && ((IEquipable) hoglin).isSaddleable();
          }
 
+         @Override
          @OnlyIn(Dist.CLIENT)
          public boolean isActive() {
             return ((IEquipable)hoglin).isSaddleable();
          }
       });
       this.addSlot(new Slot(inventory, 1, 8, 36) {
+         @Override
          public boolean mayPlace(ItemStack stack) {
             return ((IHasMountArmor)hoglin).isArmor(stack);
          }
 
+         @Override
          @OnlyIn(Dist.CLIENT)
          public boolean isActive() {
             return ((IHasMountArmor)hoglin).canWearArmor();
          }
 
+         @Override
          public int getMaxStackSize() {
             return 1;
          }
@@ -67,7 +70,7 @@ public class HoglinInventoryContainer extends Container {
 
       for(int i1 = 0; i1 < 3; ++i1) {
          for(int k1 = 0; k1 < 9; ++k1) {
-            this.addSlot(new Slot(playerInventory, k1 + i1 * 9 + 9, 8 + k1 * 18, 102 + i1 * 18 + -18));
+            this.addSlot(new Slot(playerInventory, k1 + i1 * 9 + 9, 8 + k1 * 18, 102 + i1 * 18 - 18));
          }
       }
 
@@ -77,10 +80,12 @@ public class HoglinInventoryContainer extends Container {
 
    }
 
+   @Override
    public boolean stillValid(PlayerEntity player) {
       return this.hoglinContainer.stillValid(player) && this.hoglin.isAlive() && this.hoglin.distanceTo(player) < 8.0F;
    }
 
+   @Override
    public ItemStack quickMoveStack(PlayerEntity player, int slotIndex) {
       ItemStack itemstack = ItemStack.EMPTY;
       Slot slot = this.slots.get(slotIndex);
@@ -107,7 +112,7 @@ public class HoglinInventoryContainer extends Container {
                if (!this.moveItemStackTo(itemstack1, i, j, false)) {
                   return ItemStack.EMPTY;
                }
-            } else if (slotIndex >= i && slotIndex < j) {
+            } else if (slotIndex < j) {
                if (!this.moveItemStackTo(itemstack1, j, k, false)) {
                   return ItemStack.EMPTY;
                }
@@ -128,6 +133,7 @@ public class HoglinInventoryContainer extends Container {
       return itemstack;
    }
 
+   @Override
    public void removed(PlayerEntity player) {
       super.removed(player);
       this.hoglinContainer.stopOpen(player);

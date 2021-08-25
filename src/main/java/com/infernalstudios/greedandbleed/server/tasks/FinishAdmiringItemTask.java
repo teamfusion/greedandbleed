@@ -10,19 +10,23 @@ import net.minecraft.world.server.ServerWorld;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+@SuppressWarnings("NullableProblems")
 public class FinishAdmiringItemTask<E extends LivingEntity> extends Task<E> {
    private final Function<E, Void> finishFunction;
    private final Predicate<E> extraStartPredicate;
+
    public FinishAdmiringItemTask(Function<E, Void> finishFunctionIn, Predicate<E> extraStartPredicateIn) {
       super(ImmutableMap.of(MemoryModuleType.ADMIRING_ITEM, MemoryModuleStatus.VALUE_ABSENT));
       this.finishFunction = finishFunctionIn;
       this.extraStartPredicate = extraStartPredicateIn;
    }
 
+   @Override
    protected boolean checkExtraStartConditions(ServerWorld serverWorld, E entity) {
       return this.extraStartPredicate.test(entity);
    }
 
+   @Override
    protected void start(ServerWorld serverWorld, E entity, long gameTime) {
       this.finishFunction.apply(entity);
    }

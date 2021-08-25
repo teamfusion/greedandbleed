@@ -3,10 +3,6 @@ package com.infernalstudios.greedandbleed.server.sensor;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
 import com.infernalstudios.greedandbleed.server.registry.MemoryModuleTypeRegistry;
 import net.minecraft.block.BlockState;
@@ -21,14 +17,19 @@ import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.monster.WitherSkeletonEntity;
 import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
-import net.minecraft.entity.monster.piglin.PiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+@SuppressWarnings("NullableProblems")
 public class PigmySpecificSensor extends Sensor<LivingEntity> {
+   @Override
    public Set<MemoryModuleType<?>> requires() {
       return ImmutableSet.of(
               MemoryModuleType.VISIBLE_LIVING_ENTITIES,
@@ -45,9 +46,10 @@ public class PigmySpecificSensor extends Sensor<LivingEntity> {
               MemoryModuleType.NEAREST_REPELLENT);
    }
 
-   protected void doTick(ServerWorld serverWorld, LivingEntity sensorMob) {
+   @Override
+   protected void doTick(ServerWorld world, LivingEntity sensorMob) {
       Brain<?> brain = sensorMob.getBrain();
-      brain.setMemory(MemoryModuleType.NEAREST_REPELLENT, findNearestRepellent(serverWorld, sensorMob));
+      brain.setMemory(MemoryModuleType.NEAREST_REPELLENT, findNearestRepellent(world, sensorMob));
       Optional<MobEntity> nearVisibleNemesis = Optional.empty();
       Optional<HoglinEntity> nearVisibleAdultHoglin = Optional.empty();
       Optional<HoglinEntity> nearVisibleBabyHoglin = Optional.empty();
@@ -112,13 +114,13 @@ public class PigmySpecificSensor extends Sensor<LivingEntity> {
       brain.setMemory(MemoryModuleType.VISIBLE_ADULT_HOGLIN_COUNT, adultHoglinCounter);
    }
 
-   private static Optional<BlockPos> findNearestRepellent(ServerWorld serverWorld, LivingEntity sensorMob) {
+   private static Optional<BlockPos> findNearestRepellent(ServerWorld world, LivingEntity sensorMob) {
       return BlockPos.findClosestMatch(sensorMob.blockPosition(), 8, 4,
-              (p_234125_1_) -> isValidRepellent(serverWorld, p_234125_1_));
+              (pos) -> isValidRepellent(world, pos));
    }
 
-   private static boolean isValidRepellent(ServerWorld serverWorld, BlockPos blockPos) {
-      BlockState blockstate = serverWorld.getBlockState(blockPos);
+   private static boolean isValidRepellent(ServerWorld world, BlockPos blockPos) {
+      BlockState blockstate = world.getBlockState(blockPos);
       boolean flag = blockstate.is(BlockTags.PIGLIN_REPELLENTS);
       return flag && blockstate.is(Blocks.SOUL_CAMPFIRE) ? CampfireBlock.isLitCampfire(blockstate) : flag;
    }

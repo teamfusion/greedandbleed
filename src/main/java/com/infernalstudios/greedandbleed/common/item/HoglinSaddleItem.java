@@ -10,12 +10,14 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 
+@SuppressWarnings("NullableProblems")
 public class HoglinSaddleItem extends SaddleItem {
 
     public HoglinSaddleItem(Properties properties) {
         super(properties);
     }
 
+    @Override
     public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity player, LivingEntity interactTarget, Hand hand) {
         if (interactTarget instanceof IEquipable
                 && interactTarget instanceof IToleratingMount

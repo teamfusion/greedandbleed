@@ -2,10 +2,14 @@ package com.infernalstudios.greedandbleed.common.entity.piglin;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.infernalstudios.greedandbleed.api.*;
+import com.infernalstudios.greedandbleed.api.PiglinTaskManager;
+import com.infernalstudios.greedandbleed.api.TaskManager;
 import com.infernalstudios.greedandbleed.server.loot.GreedAndBleedLootTables;
 import com.infernalstudios.greedandbleed.server.registry.MemoryModuleTypeRegistry;
-import com.infernalstudios.greedandbleed.server.tasks.*;
+import com.infernalstudios.greedandbleed.server.tasks.AdmiringItemTask;
+import com.infernalstudios.greedandbleed.server.tasks.FinishAdmiringItemTask;
+import com.infernalstudios.greedandbleed.server.tasks.ForgetAdmiringItemTask;
+import com.infernalstudios.greedandbleed.server.tasks.IgnoreAdmiringItemTask;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -17,20 +21,21 @@ import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
 import net.minecraft.entity.ai.brain.task.*;
 import net.minecraft.entity.monster.HoglinEntity;
-import net.minecraft.entity.monster.piglin.*;
+import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.*;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootParameters;
+import net.minecraft.loot.LootTable;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.server.ServerWorld;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /***
  * An extensible class for initializing and handling a Brain for an PiglinPygmyEntity.
@@ -89,7 +94,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
     @Override
     public void initMemories() {
         int i = TIME_BETWEEN_HUNTS.randomValue(this.mob.level.random);
-        this.dynamicBrain.setMemoryWithExpiry(MemoryModuleType.HUNTED_RECENTLY, true, (long)i);
+        this.dynamicBrain.setMemoryWithExpiry(MemoryModuleType.HUNTED_RECENTLY, true, i);
     }
 
     @Override
@@ -108,9 +113,9 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
 
     @Override
     public void updateActivity() {
-        Activity activity = this.dynamicBrain.getActiveNonCoreActivity().orElse((Activity)null);
+        Activity activity = this.dynamicBrain.getActiveNonCoreActivity().orElse(null);
         this.dynamicBrain.setActiveActivityToFirstValid(ImmutableList.of(Activity.ADMIRE_ITEM, Activity.FIGHT, Activity.AVOID, Activity.CELEBRATE, Activity.RIDE, Activity.IDLE));
-        Activity activity1 = this.dynamicBrain.getActiveNonCoreActivity().orElse((Activity)null);
+        Activity activity1 = this.dynamicBrain.getActiveNonCoreActivity().orElse(null);
         if (activity != activity1) {
             this.getSoundForCurrentActivity().ifPresent(this.mob::playSound);
         }
@@ -230,7 +235,7 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
         List<Task<? super T>> idleTasks = super.getIdleTasks();
         idleTasks.add(new LookAtEntityTask(PiglinTaskManager::isPlayerHoldingLovedItem, 14.0F));
         idleTasks.add(
-                new ForgetAttackTargetTask<T>(
+                new ForgetAttackTargetTask<>(
                         AbstractPiglinEntity::isAdult,
                         TaskManager::findNearestValidAttackTargetFor
                 ));
@@ -427,8 +432,13 @@ public class PigmyTaskManager<T extends PigmyEntity> extends PiglinTaskManager<T
     }
 
     public static List<ItemStack> getPigmyBarterResponseItems(PigmyEntity pigmy) {
-        LootTable loottable = pigmy.level.getServer().getLootTables().get(GreedAndBleedLootTables.PIGMY_BARTERING);
-        return loottable.getRandomItems((new LootContext.Builder((ServerWorld)pigmy.level)).withParameter(LootParameters.THIS_ENTITY, pigmy).withRandom(pigmy.level.random).create(LootParameterSets.PIGLIN_BARTER));
+        MinecraftServer server = pigmy.level.getServer();
+        if (server != null) {
+            LootTable loottable = server.getLootTables().get(GreedAndBleedLootTables.PIGMY_BARTERING);
+            return loottable.getRandomItems((new LootContext.Builder((ServerWorld) pigmy.level)).withParameter(LootParameters.THIS_ENTITY, pigmy).withRandom(pigmy.level.random).create(LootParameterSets.PIGLIN_BARTER));
+        }
+
+        return new ArrayList<>();
     }
 
     public static boolean pigmyWantsToStopRiding(PigmyEntity pigmy, Entity vehicle) {

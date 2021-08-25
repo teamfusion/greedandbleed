@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 
 public class RenderHelper {
-    public static final ResourceLocation TOLERANCE_METER_LOCATION = new ResourceLocation(GreedAndBleed.MODID, "textures/gui/tolerance_meter.png");
+    public static final ResourceLocation TOLERANCE_METER_LOCATION = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/tolerance_meter.png");
     public static final String GUI_FIELD_NAME = "field_71456_v";
     private static IngameGui ingameGui;
     private static Minecraft minecraft;

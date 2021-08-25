@@ -12,6 +12,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.monster.HoglinEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -22,13 +23,15 @@ import net.minecraft.inventory.IInventoryChangedListener;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -41,6 +44,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
+@SuppressWarnings("NullableProblems")
 @Mixin(HoglinEntity.class)
 public abstract class HoglinEntityMixin extends AnimalEntity implements IRideable, IEquipable, IToleratingMount, IInventoryChangedListener, IHasMountArmor, IHasMountInventory {
     private static final DataParameter<Boolean> DATA_SADDLE_ID = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.BOOLEAN);
@@ -54,29 +58,24 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     private static final DataParameter<Boolean> DATA_ID_CHEST = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.BOOLEAN);
 
-
-    protected HoglinEntityMixin(EntityType<? extends AnimalEntity> entityType, World world) {
+    private HoglinEntityMixin(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
     }
 
     // MIXINS
 
-    /**
-     * Note that for these Mixins, I used the Minecraft Development plugin for IntelliJ
-     */
-
-    @Inject(at = @At("RETURN"), method = "finishConversion")
+    @Inject(at = @At("RETURN"), method = "finishConversion", remap = false)
     private void dropInventoryWhenZombified(ServerWorld serverWorld, CallbackInfo ci){
         this.dropEquipment();
     }
 
-    @Inject(at = @At("TAIL"), method = "<init>")
+    @Inject(at = @At("TAIL"), method = "<init>", remap = false)
     private void setUpInventory(EntityType<? extends HoglinEntity> p_i231569_1_, World p_i231569_2_, CallbackInfo ci){
         this.createInventory();
     }
 
     @Inject(at = @At("RETURN"),
-            method = "mobInteract", cancellable = true)
+            method = "mobInteract", cancellable = true, remap = false)
     private void handleMountInteraction(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResultType> cir){
         ItemStack heldItem = player.getItemInHand(hand);
 
@@ -158,7 +157,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     }
 
     @Inject(at = @At("RETURN"),
-            method = "defineSynchedData")
+            method = "defineSynchedData", remap = false)
     private void defineSteeringData(CallbackInfo callbackInfo){
         this.entityData.define(DATA_SADDLE_ID, false);
         this.entityData.define(DATA_BOOST_TIME, 0);
@@ -167,7 +166,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     }
 
     @Inject(at = @At("RETURN"),
-            method = "addAdditionalSaveData")
+            method = "addAdditionalSaveData", remap = false)
     private void addSteeringData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
         this.steering.addAdditionalSaveData(compoundNBT);
         compoundNBT.putInt("Tolerance", this.getTolerance());
@@ -197,7 +196,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     }
 
     @Inject(at = @At("RETURN"),
-            method = "readAdditionalSaveData")
+            method = "readAdditionalSaveData", remap = false)
     private void readSteeringData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
         this.steering.readAdditionalSaveData(compoundNBT);
         this.setTolerance(compoundNBT.getInt("Tolerance"));
@@ -231,7 +230,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     }
 
     @Inject(at = @At("HEAD"),
-            method = "doHurtTarget")
+            method = "doHurtTarget", remap = false)
     private void removeRidersIfTargetingThem(Entity target, CallbackInfoReturnable<Boolean> cir) {
         if(this.getPassengers().contains(target)){
             this.ejectPassengers();
@@ -247,11 +246,14 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     private void setArmorEquipment(ItemStack stack) {
         this.setArmor(stack);
         if (!this.level.isClientSide) {
-            this.getAttribute(Attributes.ARMOR).removeModifier(ARMOR_MODIFIER_UUID);
-            if (this.isArmor(stack)) {
-                int i = ((HoglinArmorItem)stack.getItem()).getProtection();
-                if (i != 0) {
-                    this.getAttribute(Attributes.ARMOR).addTransientModifier(new AttributeModifier(ARMOR_MODIFIER_UUID, "Horse armor bonus", (double)i, AttributeModifier.Operation.ADDITION));
+            ModifiableAttributeInstance armor = this.getAttribute(Attributes.ARMOR);
+            if (armor != null) {
+                armor.removeModifier(ARMOR_MODIFIER_UUID);
+                if (this.isArmor(stack)) {
+                    int i = ((HoglinArmorItem) stack.getItem()).getProtection();
+                    if (i != 0) {
+                        armor.addTransientModifier(new AttributeModifier(ARMOR_MODIFIER_UUID, "Horse armor bonus", i, AttributeModifier.Operation.ADDITION));
+                    }
                 }
             }
         }
@@ -277,6 +279,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
         super.onSyncedDataUpdated(dataParameter);
     }
 
+    @Override
     @Nullable
     public Entity getControllingPassenger() {
         return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
@@ -397,7 +400,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     public void equipSaddle(@Nullable SoundCategory soundCategory) {
         this.setSaddled(true);
         if (soundCategory != null) {
-            this.level.playSound((PlayerEntity)null, this, SoundEvents.HORSE_SADDLE, soundCategory, 0.5F, 1.0F);
+            this.level.playSound(null, this, SoundEvents.HORSE_SADDLE, soundCategory, 0.5F, 1.0F);
         }
     }
 

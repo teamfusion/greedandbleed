@@ -24,29 +24,30 @@ public class HoglinArmorLayer extends LayerRenderer<HoglinEntity, GBHoglinModelC
       super(entityRenderer);
    }
 
-   public void render(MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int p_225628_3_, HoglinEntity hoglin, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_) {
-      ItemStack itemstack = hoglin instanceof IHasMountArmor ? ((IHasMountArmor)hoglin).getArmor() : ItemStack.EMPTY;
+   @Override
+   public void render(MatrixStack matrices, IRenderTypeBuffer renderTypeBuffer, int light, HoglinEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+      ItemStack itemstack = entity instanceof IHasMountArmor ? ((IHasMountArmor)entity).getArmor() : ItemStack.EMPTY;
       if (itemstack.getItem() instanceof HoglinArmorItem) {
          HoglinArmorItem hoglinArmorItem = (HoglinArmorItem)itemstack.getItem();
          this.getParentModel().copyPropertiesTo(this.model);
-         this.model.prepareMobModel(hoglin, p_225628_5_, p_225628_6_, p_225628_7_);
-         this.model.setupAnim(hoglin, p_225628_5_, p_225628_6_, p_225628_8_, p_225628_9_, p_225628_10_);
-         float f;
-         float f1;
-         float f2;
+         this.model.prepareMobModel(entity, limbAngle, limbDistance, tickDelta);
+         this.model.setupAnim(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
+         float r;
+         float g;
+         float b;
          if (hoglinArmorItem instanceof DyeableHoglinArmorItem) {
             int i = ((DyeableHoglinArmorItem)hoglinArmorItem).getColor(itemstack);
-            f = (float)(i >> 16 & 255) / 255.0F;
-            f1 = (float)(i >> 8 & 255) / 255.0F;
-            f2 = (float)(i & 255) / 255.0F;
+            r = (float)(i >> 16 & 255) / 255.0F;
+            g = (float)(i >> 8 & 255) / 255.0F;
+            b = (float)(i & 255) / 255.0F;
          } else {
-            f = 1.0F;
-            f1 = 1.0F;
-            f2 = 1.0F;
+            r = 1.0F;
+            g = 1.0F;
+            b = 1.0F;
          }
 
          IVertexBuilder ivertexbuilder = renderTypeBuffer.getBuffer(RenderType.entityCutoutNoCull(hoglinArmorItem.getTexture()));
-         this.model.renderToBuffer(matrixStack, ivertexbuilder, p_225628_3_, OverlayTexture.NO_OVERLAY, f, f1, f2, 1.0F);
+         this.model.renderToBuffer(matrices, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, r, g, b, 1.0F);
       }
    }
 }

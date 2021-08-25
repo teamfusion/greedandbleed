@@ -7,8 +7,8 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 
+@SuppressWarnings("NullableProblems")
 public class SkeletalPiglinModel<T extends SkeletalPiglinEntity> extends PlayerModel<T> {
-
     private final ModelRenderer Body;
     private final ModelRenderer Head;
     private final ModelRenderer LeftEar;

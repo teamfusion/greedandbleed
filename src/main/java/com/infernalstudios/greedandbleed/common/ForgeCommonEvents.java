@@ -1,14 +1,10 @@
 package com.infernalstudios.greedandbleed.common;
 
 import com.infernalstudios.greedandbleed.common.entity.IToleratingMount;
-import com.infernalstudios.greedandbleed.common.entity.piglin.PigmyEntity;
-import com.infernalstudios.greedandbleed.common.entity.piglin.SkeletalPiglinEntity;
 import com.infernalstudios.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -19,15 +15,13 @@ import net.minecraftforge.fml.common.Mod;
         bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeCommonEvents {
 
-    private static final int TICKS_PER_SECOND = 20;
-
     @SubscribeEvent
     public static void onHoglinAttack(LivingAttackEvent event){
         if(event.getSource().getDirectEntity() instanceof IToleratingMount
             && !event.getEntityLiving().level.isClientSide){
             IToleratingMount toleratingMount = (IToleratingMount) event.getSource().getDirectEntity();
-            int attackToleranceCost = 1 * TICKS_PER_SECOND;
-            if(toleratingMount.getTolerance() >= attackToleranceCost){
+            int attackToleranceCost = 20;
+            if (toleratingMount.getTolerance() >= attackToleranceCost){
                 toleratingMount.addTolerance(-1 * attackToleranceCost);
             }
         }

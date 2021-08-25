@@ -16,9 +16,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+@SuppressWarnings({ "deprecation", "NullableProblems" })
 @OnlyIn(Dist.CLIENT)
 public class HoglinInventoryScreen extends ContainerScreen<HoglinInventoryContainer> {
-   private static final ResourceLocation HOGLIN_INVENTORY_LOCATION = new ResourceLocation(GreedAndBleed.MODID, "textures/gui/container/hoglin.png");
+   private static final ResourceLocation HOGLIN_INVENTORY_LOCATION = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/container/hoglin.png");
    private final AnimalEntity hoglin;
    private float xMouse;
    private float yMouse;
@@ -34,9 +35,10 @@ public class HoglinInventoryScreen extends ContainerScreen<HoglinInventoryContai
       this.passEvents = false;
    }
 
+   @Override
    protected void renderBg(MatrixStack matrixStack, float p_230450_2_, int p_230450_3_, int p_230450_4_) {
       RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-      this.minecraft.getTextureManager().bind(HOGLIN_INVENTORY_LOCATION);
+      if (this.minecraft != null) this.minecraft.getTextureManager().bind(HOGLIN_INVENTORY_LOCATION);
       int i = (this.width - this.imageWidth) / 2;
       int j = (this.height - this.imageHeight) / 2;
       this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
@@ -60,6 +62,7 @@ public class HoglinInventoryScreen extends ContainerScreen<HoglinInventoryContai
       InventoryScreen.renderEntityInInventory(i + 51, j + 60, 17, (float)(i + 51) - this.xMouse, (float)(j + 75 - 50) - this.yMouse, this.hoglin);
    }
 
+   @Override
    public void render(MatrixStack matrixStack, int xMouseIn, int yMouseIn, float p_230430_4_) {
       this.renderBackground(matrixStack);
       this.xMouse = (float)xMouseIn;

@@ -16,6 +16,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 // PigEntity is used as a placeholder parameter for OnAStickItem
+@SuppressWarnings("NullableProblems")
 public class GBOnAStickItem extends OnAStickItem<PigEntity> {
    private final EntityType<?> canInteractWith;
    private final int consumeItemDamage;
@@ -53,9 +54,7 @@ public class GBOnAStickItem extends OnAStickItem<PigEntity> {
    }
 
    private ActionResult<ItemStack> useOnAStickItem(PlayerEntity player, Hand hand, ItemStack onAStick) {
-      onAStick.hurtAndBreak(this.consumeItemDamage, player, (holder) -> {
-         holder.broadcastBreakEvent(hand);
-      });
+      onAStick.hurtAndBreak(this.consumeItemDamage, player, (holder) -> holder.broadcastBreakEvent(hand));
       if (onAStick.isEmpty()) {
          ItemStack nothingOnAStick = new ItemStack(Items.FISHING_ROD);
          nothingOnAStick.setTag(onAStick.getTag());
