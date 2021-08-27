@@ -5,10 +5,7 @@ import com.infernalstudios.greedandbleed.common.item.GBOnAStickItem;
 import com.infernalstudios.greedandbleed.common.item.HoglinArmorItem;
 import com.infernalstudios.greedandbleed.common.item.HoglinSaddleItem;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.RegistryObject;
@@ -66,4 +63,7 @@ public class ItemRegistry {
 
     public static final RegistryObject<Item> COOKED_HOGCHOP = ITEMS.register("cooked_hogchop", () -> new Item(new Item.Properties().tab(TAB_GREED_AND_BLEED)
             .food(new Food.Builder().nutrition(10).saturationMod(0.8F).meat().build())));
+
+    public static final RegistryObject<Item> SKELETAL_PIGLIN_SPAWN_EGG = ITEMS.register("skeletal_piglin_spawn_egg", () -> new SpawnEggItem(EntityTypeRegistry.SKELETAL_PIGLIN_TYPE, 12698049, 4802889, new Item.Properties().tab(TAB_GREED_AND_BLEED)));
+    public static final RegistryObject<Item> PIGMY_SPAWN_EGG = ITEMS.register("pigmy_spawn_egg", () -> new SpawnEggItem(EntityTypeRegistry.PIGMY_TYPE, 10051392, 16380836, new Item.Properties().tab(TAB_GREED_AND_BLEED)));
 }
