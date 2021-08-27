@@ -4,8 +4,10 @@ package com.infernalstudios.greedandbleed.common.entity.piglin;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.PanicGoal;
@@ -16,6 +18,9 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
@@ -28,7 +33,9 @@ import java.util.UUID;
 
 @SuppressWarnings("NullableProblems")
 public class SkeletalPiglinEntity extends MonsterEntity implements IAngerable {
-
+    private static final DataParameter<Boolean> DATA_BABY_ID = EntityDataManager.defineId(SkeletalPiglinEntity.class, DataSerializers.BOOLEAN);
+    private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
+    private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", (double) 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
     private static final RangedInteger RANGED_INT = TickRangeConverter.rangeOfSeconds(20, 39);
     private int angerTime;
     private UUID angerTarget;
@@ -36,6 +43,18 @@ public class SkeletalPiglinEntity extends MonsterEntity implements IAngerable {
 
     public SkeletalPiglinEntity(EntityType<? extends MonsterEntity> type, World worldIn) {
         super(type, worldIn);
+    }
+
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_BABY_ID, false);
+    }
+
+    public void onSyncedDataUpdated(DataParameter<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (DATA_BABY_ID.equals(data)) {
+            this.refreshDimensions();
+        }
     }
 
     // ATTRIBUTES
@@ -157,6 +176,30 @@ public class SkeletalPiglinEntity extends MonsterEntity implements IAngerable {
     @Override
     public void startPersistentAngerTimer() {
         this.setRemainingPersistentAngerTime(RANGED_INT.randomValue(this.rand));
+    }
+
+    protected float getStandingEyeHeight(Pose p_213348_1_, EntitySize p_213348_2_) {
+        return this.isBaby() ? 0.93F : 1.74F;
+    }
+
+    public double getPassengersRidingOffset() {
+        return (double) this.getBbHeight() * 0.92D;
+    }
+
+    public void setBaby(boolean baby) {
+        this.getEntityData().set(DATA_BABY_ID, baby);
+        if (!this.level.isClientSide) {
+            ModifiableAttributeInstance modifiableattributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
+            modifiableattributeinstance.removeModifier(SPEED_MODIFIER_BABY);
+            if (baby) {
+                modifiableattributeinstance.addTransientModifier(SPEED_MODIFIER_BABY);
+            }
+        }
+
+    }
+
+    public boolean isBaby() {
+        return this.getEntityData().get(DATA_BABY_ID);
     }
 
     @Override
