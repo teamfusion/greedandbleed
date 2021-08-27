@@ -1,6 +1,7 @@
 package com.infernalstudios.greedandbleed.api;
 
-import com.infernalstudios.greedandbleed.common.entity.piglin.GBPiglinEntity;
+import com.infernalstudios.greedandbleed.mixin.AbstractPiglinEntityInvoker;
+import com.infernalstudios.greedandbleed.mixin.MobEntityInvoker;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -17,6 +18,7 @@ import net.minecraft.entity.monster.ZoglinEntity;
 import net.minecraft.entity.monster.ZombifiedPiglinEntity;
 import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -140,7 +142,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
     public static void broadcastAngerTarget(AbstractPiglinEntity piglin, LivingEntity targetIn) {
         getAdultPiglins(piglin).forEach((adultPiglin) -> {
             if (!(targetIn instanceof HoglinEntity)
-                    || piglin instanceof GBPiglinEntity && ((GBPiglinEntity) piglin).canHunt()
+                    || ((AbstractPiglinEntityInvoker) adultPiglin).canHunt()
                     && ((HoglinEntity) targetIn).canBeHunted()) {
                 setAngerTargetIfCloserThanCurrent(adultPiglin, targetIn);
             }
@@ -155,7 +157,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
         if (isAttackAllowed(targetIn)) {
             piglin.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
             piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, targetIn.getUUID(), 600L);
-            if (targetIn instanceof HoglinEntity && piglin instanceof GBPiglinEntity && ((GBPiglinEntity) piglin).canHunt()) {
+            if (targetIn instanceof HoglinEntity && ((AbstractPiglinEntityInvoker) piglin).canHunt()) {
                 setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.randomValue(piglin.level.random));
             }
 
@@ -367,9 +369,10 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
         }
     }
 
-    public static boolean canReplaceCurrentItem(AbstractPiglinEntity mob, ItemStack replacementItem) {
-        //Is This manager only use new piglin? I think This manager only use new piglin
-        return mob instanceof GBPiglinEntity && ((GBPiglinEntity) mob).canReplaceCurrentItem(replacementItem);
+    public static boolean canReplaceCurrentItem(MobEntity mob, ItemStack replacementItem) {
+        EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(replacementItem);
+        ItemStack currentItem = mob.getItemBySlot(equipmentslottype);
+        return ((MobEntityInvoker) mob).canReplaceCurrentItem(replacementItem, currentItem);
     }
 
     public static boolean isZombified(LivingEntity livingEntity) {

@@ -4,14 +4,11 @@ import com.infernalstudios.greedandbleed.api.IHasTaskManager;
 import com.infernalstudios.greedandbleed.api.ITaskManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -42,7 +39,7 @@ public abstract class GBPiglinEntity extends AbstractPiglinEntity implements IHa
     }
 
     @Override
-    public boolean canHunt() {
+    protected boolean canHunt() {
         return !this.cannotHunt;
     }
 
@@ -113,12 +110,6 @@ public abstract class GBPiglinEntity extends AbstractPiglinEntity implements IHa
 
     public void setChargingCrossbow(boolean chargingCrossbow) {
         this.entityData.set(DATA_IS_CHARGING_CROSSBOW, chargingCrossbow);
-    }
-
-    public boolean canReplaceCurrentItem(ItemStack stack) {
-        EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(stack);
-        ItemStack itemstack = this.getItemBySlot(equipmentslottype);
-        return this.canReplaceCurrentItem(stack, itemstack);
     }
 
     // HAS TASK MASTER
