@@ -8,11 +8,9 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.PanicGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -83,9 +81,12 @@ public class SkeletalPiglinEntity extends MonsterEntity implements IAngerable {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new PanicGoal(this, 0.6D));
-        this.goalSelector.addGoal(1, new WaterAvoidingRandomWalkingGoal(this, 0.5d));
-        this.goalSelector.addGoal(2, new LookAtGoal(this, PlayerEntity.class, 8.0f));
-        this.goalSelector.addGoal(3, new LookRandomlyGoal(this));
+        this.goalSelector.addGoal(2, new RestrictSunGoal(this));
+        this.goalSelector.addGoal(3, new FleeSunGoal(this, 0.6D));
+        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, WolfEntity.class, 6.0F, 0.55D, 0.6D));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 0.5d));
+        this.goalSelector.addGoal(5, new LookAtGoal(this, PlayerEntity.class, 8.0f));
+        this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
         //this.goalSelector.addGoal(4, new AvoidEntityGoal(this, EmbodyEntity.class, 16.0F, 0.85D, 1.1D));
     }
 
