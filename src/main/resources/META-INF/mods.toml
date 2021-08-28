@@ -1,8 +1,8 @@
 modLoader="javafml"
 loaderVersion="[36,)"
 
-license="All rights reserved"
-issueTrackerURL="https://github.com/infernalexp/Greed-Bleed/issues"
+license="MIT; Assets licensed as All Rights Reserved"
+issueTrackerURL="https://github.com/teamfusion/greedandbleed/issues"
 
 [[mods]]
 modId="greedandbleed"
@@ -15,7 +15,7 @@ version="${file.jarVersion}"
 #logoFile="examplemod.png"
 
 #credits="Thanks for this example mod goes to Java"
-authors="Infernal Studios"
+authors="Team Fusion"
 
 description='''
 This is a long form description of the mod. You can write whatever you want here

@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.infernalstudios.greedandbleed.mixin",
+  "package": "com.github.teamfusion.greedandbleed.mixin",
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "refmap": "greedandbleed.refmap.json",
