@@ -38,14 +38,14 @@ public abstract class PiglinEntityMixin extends AbstractPiglinEntity {
 		this.entityData.define(DATA_ON_SOUL_FIRE, false);
 	}
 
-	@Inject(at = @At("RETURN"),
+	@Inject(at = @At("TAIL"),
 			method = "addAdditionalSaveData", remap = false)
 	private void addAdditionalData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
 		compoundNBT.putBoolean("OnSoulFire", this.isOnSoulFire());
 
 	}
 
-	@Inject(at = @At("RETURN"),
+	@Inject(at = @At("TAIL"),
 			method = "readAdditionalSaveData", remap = false)
 	private void readAdditionalData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
 		this.setOnSoulFire(compoundNBT.getBoolean("OnSoulFire"));
