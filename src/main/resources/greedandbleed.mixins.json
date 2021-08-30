@@ -5,11 +5,9 @@
   "minVersion": "0.8",
   "refmap": "greedandbleed.refmap.json",
   "mixins": [
-    "AbstractPiglinEntityInvoker",
     "AbstractPiglinEntityMixin",
     "HoglinEntityMixin",
     "PiglinEntityMixin",
-    "MobEntityInvoker",
     "NearestPlayersSensorMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetHandlerMixin"

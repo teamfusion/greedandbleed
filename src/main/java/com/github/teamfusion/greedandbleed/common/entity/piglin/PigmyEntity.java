@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.api.IHasInventory;
-import com.github.teamfusion.greedandbleed.api.PiglinTaskManager;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.PigmyTaskManager;
 import com.github.teamfusion.greedandbleed.api.TaskManager;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.server.registry.MemoryModuleTypeRegistry;
@@ -147,7 +147,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
         } else if (!this.level.isClientSide) {
             return this.taskManager.mobInteract(player, hand);
         } else {
-			boolean canAdmire = PiglinTaskManager.canPiglinAdmire(this, player.getItemInHand(hand)) && this.getArmPose() != PiglinAction.ADMIRING_ITEM;
+			boolean canAdmire = PigmyTaskManager.canPiglinAdmire(this, player.getItemInHand(hand)) && this.getArmPose() != PiglinAction.ADMIRING_ITEM;
             return canAdmire ? ActionResultType.SUCCESS : ActionResultType.PASS;
         }
     }
@@ -156,7 +156,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
     public PiglinAction getArmPose() {
 		if (this.isDancing()) {
 			return PiglinAction.DANCING;
-		} else if (PiglinTaskManager.isLovedItem(this.getOffhandItem().getItem())) {
+		} else if (PigmyTaskManager.isLovedItem(this.getOffhandItem().getItem())) {
 			return PiglinAction.ADMIRING_ITEM;
 		} else if (this.isAggressive() && this.isHoldingMeleeWeapon()) {
 			return PiglinAction.ATTACKING_WITH_MELEE_WEAPON;
@@ -171,13 +171,13 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
     public boolean wantsToPickUp(ItemStack stack) {
 		return this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
 				&& this.canPickUpLoot()
-				&& PiglinTaskManager.wantsToPickup(this, stack);
+				&& PigmyTaskManager.wantsToPickup(this, stack);
     }
 
     @Override
     protected void pickUpItem(ItemEntity itemEntity) {
 		this.onItemPickup(itemEntity);
-		PiglinTaskManager.pickUpItem(this, itemEntity);
+		PigmyTaskManager.pickUpItem(this, itemEntity);
     }
 
     @Override
@@ -185,8 +185,8 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
         if (EnchantmentHelper.hasBindingCurse(currentItem)) {
             return false;
         } else {
-			boolean desirableReplacement = PiglinTaskManager.isLovedItem(replacementItem.getItem()) || replacementItem.getItem() instanceof CrossbowItem;
-			boolean desirableCurrent = PiglinTaskManager.isLovedItem(currentItem.getItem()) || currentItem.getItem() instanceof CrossbowItem;
+			boolean desirableReplacement = PigmyTaskManager.isLovedItem(replacementItem.getItem()) || replacementItem.getItem() instanceof CrossbowItem;
+			boolean desirableCurrent = PigmyTaskManager.isLovedItem(currentItem.getItem()) || currentItem.getItem() instanceof CrossbowItem;
 			if (desirableReplacement && !desirableCurrent) {
 				return true;
 			} else if (!desirableReplacement && desirableCurrent) {
@@ -201,7 +201,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
 
     @Override
     protected void finishConversion(ServerWorld serverWorld) {
-		PiglinTaskManager.cancelAdmiring(this);
+		PigmyTaskManager.cancelAdmiring(this);
 		this.removeAllItemsFromInventory(this::spawnAtLocation);
         super.finishConversion(serverWorld);
     }
@@ -337,7 +337,7 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
 
     @Override
     public void holdInOffHand(ItemStack stack) {
-		if (PiglinTaskManager.isBarteringItem(stack)) {
+		if (PigmyTaskManager.isBarteringItem(stack)) {
 			this.setItemSlot(EquipmentSlotType.OFFHAND, stack);
 			this.setGuaranteedDrop(EquipmentSlotType.OFFHAND);
 		} else {
