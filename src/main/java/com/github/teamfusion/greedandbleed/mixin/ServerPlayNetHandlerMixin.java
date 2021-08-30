@@ -18,8 +18,8 @@ public class ServerPlayNetHandlerMixin {
     public ServerPlayerEntity player;
 
     @Inject(at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/network/play/client/CEntityActionPacket;getAction()Lnet/minecraft/network/play/client/CEntityActionPacket$Action;"),
-            method = "handlePlayerCommand", remap = false)
+			target = "Lnet/minecraft/network/play/client/CEntityActionPacket;getAction()Lnet/minecraft/network/play/client/CEntityActionPacket$Action;"),
+			method = "handlePlayerCommand")
     private void handleOpenMountInventory(CEntityActionPacket actionPacket, CallbackInfo ci){
         if (actionPacket.getAction() == CEntityActionPacket.Action.OPEN_INVENTORY
                 && this.player.getVehicle() instanceof IHasMountInventory) {

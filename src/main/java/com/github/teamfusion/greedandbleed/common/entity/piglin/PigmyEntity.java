@@ -1,7 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.api.IHasInventory;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.PigmyTaskManager;
 import com.github.teamfusion.greedandbleed.api.TaskManager;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.server.registry.MemoryModuleTypeRegistry;
@@ -181,17 +180,17 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
     }
 
     @Override
-    protected boolean canReplaceCurrentItem(ItemStack replacementItem, ItemStack currentItem) {
+    public boolean canReplaceCurrentItem(ItemStack replacementItem, ItemStack currentItem) {
         if (EnchantmentHelper.hasBindingCurse(currentItem)) {
             return false;
         } else {
-			boolean desirableReplacement = PigmyTaskManager.isLovedItem(replacementItem.getItem()) || replacementItem.getItem() instanceof CrossbowItem;
-			boolean desirableCurrent = PigmyTaskManager.isLovedItem(currentItem.getItem()) || currentItem.getItem() instanceof CrossbowItem;
-			if (desirableReplacement && !desirableCurrent) {
-				return true;
-			} else if (!desirableReplacement && desirableCurrent) {
-				return false;
-			} else {
+            boolean desirableReplacement = PigmyTaskManager.isLovedItem(replacementItem.getItem()) || replacementItem.getItem() instanceof CrossbowItem;
+            boolean desirableCurrent = PigmyTaskManager.isLovedItem(currentItem.getItem()) || currentItem.getItem() instanceof CrossbowItem;
+            if (desirableReplacement && !desirableCurrent) {
+                return true;
+            } else if (!desirableReplacement && desirableCurrent) {
+                return false;
+            } else {
 				boolean notReplacingCrossbow = !(replacementItem.getItem() instanceof CrossbowItem) && currentItem.getItem() instanceof CrossbowItem;
 				return (!this.isAdult() || !notReplacingCrossbow)
 						&& super.canReplaceCurrentItem(replacementItem, currentItem);

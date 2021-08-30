@@ -18,7 +18,7 @@ public class PlayerControllerMixin {
     @Shadow
     private Minecraft minecraft;
 
-    @Inject(at = @At("RETURN"), method = "isServerControlledInventory", cancellable = true, remap = false)
+    @Inject(at = @At("RETURN"), method = "isServerControlledInventory", cancellable = true)
     private void isMountInventory(CallbackInfoReturnable<Boolean> cir){
         if(!cir.getReturnValue() && this.minecraft.player != null) {
             GreedAndBleed.LOGGER.debug("Player {} is riding a mount with inventory!", this.minecraft.player);

@@ -20,8 +20,8 @@ public class NearestPlayersSensorMixin {
     // MIXINS
 
     @Redirect(at = @At(value = "INVOKE",
-            target = "Ljava/util/stream/Stream;findFirst()Ljava/util/Optional;"),
-            method = "doTick", remap = false)
+			target = "Ljava/util/stream/Stream;findFirst()Ljava/util/Optional;"),
+			method = "doTick")
     private Optional<PlayerEntity> accountForTolerance(Stream<PlayerEntity> stream, ServerWorld serverWorld, LivingEntity sensorMob){
         return stream
                 .filter(notToleratedPassenger(sensorMob))
