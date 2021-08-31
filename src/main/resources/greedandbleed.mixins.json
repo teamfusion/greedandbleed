@@ -8,6 +8,7 @@
     "AbstractPiglinEntityMixin",
     "HoglinEntityMixin",
     "PiglinEntityMixin",
+    "AbstractFireBlockMixin",
     "NearestPlayersSensorMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetHandlerMixin"
