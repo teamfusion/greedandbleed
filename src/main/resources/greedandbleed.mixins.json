@@ -9,6 +9,7 @@
     "AbstractPiglinEntityMixin",
     "HoglinEntityMixin",
     "PiglinEntityMixin",
+    "AbstractFireBlockMixin",
     "MobEntityInvoker",
     "NearestPlayersSensorMixin",
     "ServerPlayerEntityMixin",
