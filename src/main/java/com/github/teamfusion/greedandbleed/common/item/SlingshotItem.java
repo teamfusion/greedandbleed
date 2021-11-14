@@ -41,7 +41,7 @@ public class SlingshotItem extends ShootableItem implements IVanishable {
 					boolean flag1 = playerentity.abilities.instabuild;
 					if (!world.isClientSide) {
 						ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(world, living);
-						itemEntity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F, f * 3.0F, 1.0F);
+						itemEntity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F, f, 1.0F);
 						itemEntity.setItem(itemstack2);
 
 						itemEntity.setBaseDamage(3.0F);
@@ -73,7 +73,7 @@ public class SlingshotItem extends ShootableItem implements IVanishable {
 					boolean flag1 = playerentity.abilities.instabuild;
 					if (!world.isClientSide) {
 						ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(world, living);
-						itemEntity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F, f, 1.0F);
+						itemEntity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F, f * 1.15F, 1.0F);
 						itemEntity.setItem(itemstack);
 
 						if (itemstack.getItem() == Items.EGG || itemstack.getItem() == Items.SNOWBALL) {
