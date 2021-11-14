@@ -2,8 +2,6 @@ package com.github.teamfusion.greedandbleed.common.item;
 
 import com.github.teamfusion.greedandbleed.common.entity.projectile.ThrownDamageableEntity;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.enchantment.IVanishable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,7 +27,7 @@ public class SlingshotItem extends ShootableItem implements IVanishable {
 	public void releaseUsing(ItemStack stack, World world, LivingEntity living, int usingTime) {
 		if (living instanceof PlayerEntity) {
 			PlayerEntity playerentity = (PlayerEntity) living;
-			boolean flag = playerentity.abilities.instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
+			boolean flag = playerentity.abilities.instabuild;
 			ItemStack itemstack = playerentity.getProjectile(stack);
 			ItemStack itemstack2 = playerentity.getItemInHand(Hand.OFF_HAND);
 
@@ -66,7 +64,7 @@ public class SlingshotItem extends ShootableItem implements IVanishable {
 				playerentity.awardStat(Stats.ITEM_USED.get(this));
 			} else if (!itemstack.isEmpty() || flag) {
 				//normal slingshot mechanic here
-				if (itemstack.isEmpty()) {
+				if (itemstack.isEmpty() || itemstack.getItem() == Items.ARROW) {
 					itemstack = new ItemStack(ItemRegistry.PEBBLE.get());
 				}
 
