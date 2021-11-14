@@ -33,20 +33,20 @@ public abstract class PiglinEntityMixin extends AbstractPiglinEntity {
 	}
 
 	@Inject(at = @At("TAIL"),
-			method = "defineSynchedData", remap = false)
+			method = "defineSynchedData")
 	private void defineSynchedData(CallbackInfo callbackInfo) {
 		this.entityData.define(DATA_ON_SOUL_FIRE, false);
 	}
 
 	@Inject(at = @At("TAIL"),
-			method = "addAdditionalSaveData", remap = false)
+			method = "addAdditionalSaveData")
 	private void addAdditionalData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
 		compoundNBT.putBoolean("OnSoulFire", this.isOnSoulFire());
 
 	}
 
 	@Inject(at = @At("TAIL"),
-			method = "readAdditionalSaveData", remap = false)
+			method = "readAdditionalSaveData")
 	private void readAdditionalData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
 		this.setOnSoulFire(compoundNBT.getBoolean("OnSoulFire"));
 	}

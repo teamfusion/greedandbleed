@@ -2,13 +2,17 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.api.IHasTaskManager;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.monster.piglin.AbstractPiglinEntity;
+import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -39,12 +43,16 @@ public abstract class GBPiglinEntity extends AbstractPiglinEntity implements IHa
     }
 
     @Override
-    protected boolean canHunt() {
+    public boolean canHunt() {
         return !this.cannotHunt;
     }
 
     protected void setCannotHunt(boolean cannotHunt) {
         this.cannotHunt = cannotHunt;
+    }
+
+    public boolean canReplaceCurrentItem(ItemStack p_208003_1_, ItemStack p_208003_2_) {
+        return super.canReplaceCurrentItem(p_208003_1_, p_208003_2_);
     }
 
     @Override

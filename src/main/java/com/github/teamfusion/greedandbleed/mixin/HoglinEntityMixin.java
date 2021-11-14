@@ -64,18 +64,18 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     // MIXINS
 
-    @Inject(at = @At("RETURN"), method = "finishConversion", remap = false)
+    @Inject(at = @At("RETURN"), method = "finishConversion")
     private void dropInventoryWhenZombified(ServerWorld serverWorld, CallbackInfo ci){
         this.dropEquipment();
     }
 
-    @Inject(at = @At("TAIL"), method = "<init>", remap = false)
+    @Inject(at = @At("TAIL"), method = "<init>")
     private void setUpInventory(EntityType<? extends HoglinEntity> p_i231569_1_, World p_i231569_2_, CallbackInfo ci){
         this.createInventory();
     }
 
     @Inject(at = @At("RETURN"),
-            method = "mobInteract", cancellable = true, remap = false)
+            method = "mobInteract", cancellable = true)
     private void handleMountInteraction(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResultType> cir){
         ItemStack heldItem = player.getItemInHand(hand);
 
@@ -157,7 +157,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     }
 
     @Inject(at = @At("RETURN"),
-            method = "defineSynchedData", remap = false)
+            method = "defineSynchedData")
     private void defineSteeringData(CallbackInfo callbackInfo){
         this.entityData.define(DATA_SADDLE_ID, false);
         this.entityData.define(DATA_BOOST_TIME, 0);
@@ -166,7 +166,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     }
 
     @Inject(at = @At("RETURN"),
-            method = "addAdditionalSaveData", remap = false)
+            method = "addAdditionalSaveData")
     private void addSteeringData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
         this.steering.addAdditionalSaveData(compoundNBT);
         compoundNBT.putInt("Tolerance", this.getTolerance());
@@ -196,7 +196,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     }
 
     @Inject(at = @At("RETURN"),
-            method = "readAdditionalSaveData", remap = false)
+            method = "readAdditionalSaveData")
     private void readSteeringData(CompoundNBT compoundNBT, CallbackInfo callbackInfo) {
         this.steering.readAdditionalSaveData(compoundNBT);
         this.setTolerance(compoundNBT.getInt("Tolerance"));
@@ -230,7 +230,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     }
 
     @Inject(at = @At("HEAD"),
-            method = "doHurtTarget", remap = false)
+            method = "doHurtTarget")
     private void removeRidersIfTargetingThem(Entity target, CallbackInfoReturnable<Boolean> cir) {
         if(this.getPassengers().contains(target)){
             this.ejectPassengers();

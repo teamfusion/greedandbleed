@@ -1,7 +1,6 @@
 package com.github.teamfusion.greedandbleed.api;
 
-import com.github.teamfusion.greedandbleed.mixin.AbstractPiglinEntityInvoker;
-import com.github.teamfusion.greedandbleed.mixin.MobEntityInvoker;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPiglinEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -142,7 +141,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
     public static void broadcastAngerTarget(AbstractPiglinEntity piglin, LivingEntity targetIn) {
         getAdultPiglins(piglin).forEach((adultPiglin) -> {
             if (!(targetIn instanceof HoglinEntity)
-                    || ((AbstractPiglinEntityInvoker) adultPiglin).canHunt()
+                    || adultPiglin instanceof GBPiglinEntity && ((GBPiglinEntity) adultPiglin).canHunt()
                     && ((HoglinEntity) targetIn).canBeHunted()) {
                 setAngerTargetIfCloserThanCurrent(adultPiglin, targetIn);
             }
@@ -157,7 +156,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
         if (isAttackAllowed(targetIn)) {
             piglin.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
             piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, targetIn.getUUID(), 600L);
-            if (targetIn instanceof HoglinEntity && ((AbstractPiglinEntityInvoker) piglin).canHunt()) {
+            if (targetIn instanceof HoglinEntity && piglin instanceof GBPiglinEntity && ((GBPiglinEntity) piglin).canHunt()) {
                 setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.randomValue(piglin.level.random));
             }
 
@@ -372,7 +371,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglinEntity & IHasTas
     public static boolean canReplaceCurrentItem(MobEntity mob, ItemStack replacementItem) {
         EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(replacementItem);
         ItemStack currentItem = mob.getItemBySlot(equipmentslottype);
-        return ((MobEntityInvoker) mob).canReplaceCurrentItem(replacementItem, currentItem);
+        return mob instanceof GBPiglinEntity && ((GBPiglinEntity) mob).canReplaceCurrentItem(replacementItem, currentItem);
     }
 
     public static boolean isZombified(LivingEntity livingEntity) {
