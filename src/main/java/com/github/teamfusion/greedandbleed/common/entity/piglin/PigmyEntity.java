@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.api.IHasInventory;
+import com.github.teamfusion.greedandbleed.api.IHogEquipable;
 import com.github.teamfusion.greedandbleed.api.TaskManager;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.server.registry.MemoryModuleTypeRegistry;
@@ -105,8 +106,8 @@ public class PigmyEntity extends GBPiglinEntity implements ICrossbowUser, IHasIn
                 hoglin.finalizeSpawn(serverWorld, difficultyInstance, SpawnReason.JOCKEY, null, null);
                 hoglin.setBaby(false);
                 //hoglin.setChickenJockey(true);
-                if (hoglin instanceof IEquipable && ((IEquipable) hoglin).isSaddleable()) {
-                    ((IEquipable) hoglin).equipSaddle(null);
+                if (hoglin instanceof IHogEquipable && ((IHogEquipable) hoglin).isHogSaddleable()) {
+                    ((IHogEquipable) hoglin).equipHogSaddle(null);
                     this.startRiding(hoglin);
                     serverWorld.addFreshEntity(hoglin);
                     return true;

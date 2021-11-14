@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.mixin;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
+import com.github.teamfusion.greedandbleed.api.IHogEquipable;
 import com.github.teamfusion.greedandbleed.common.entity.ICanOpenMountInventory;
 import com.github.teamfusion.greedandbleed.common.entity.IHasMountArmor;
 import com.github.teamfusion.greedandbleed.common.entity.IHasMountInventory;
@@ -9,7 +10,10 @@ import com.github.teamfusion.greedandbleed.common.item.HoglinArmorItem;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.*;
+import net.minecraft.entity.BoostHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.IRideable;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -46,7 +50,7 @@ import java.util.UUID;
 
 @SuppressWarnings("NullableProblems")
 @Mixin(HoglinEntity.class)
-public abstract class HoglinEntityMixin extends AnimalEntity implements IRideable, IEquipable, IToleratingMount, IInventoryChangedListener, IHasMountArmor, IHasMountInventory {
+public abstract class HoglinEntityMixin extends AnimalEntity implements IRideable, IHogEquipable, IToleratingMount, IInventoryChangedListener, IHasMountArmor, IHasMountInventory {
     private static final DataParameter<Boolean> DATA_SADDLE_ID = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> DATA_BOOST_TIME = EntityDataManager.defineId(HoglinEntity.class, DataSerializers.INT);
     private final BoostHelper steering = new BoostHelper(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
@@ -130,7 +134,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
                 }
 
                 // Handle opening the hoglin's inventory with a saddle or armor
-                boolean canGiveSaddle = !this.isBaby() && !this.isSaddled() && this.isSaddleStack(heldItem);
+                boolean canGiveSaddle = !this.isBaby() && !this.isHogSaddled() && this.isSaddleStack(heldItem);
                 boolean canOpenInventoryWithItem = this.isArmor(heldItem) || canGiveSaddle;
                 if (canOpenInventoryWithItem) {
                     this.openInventory(player);
@@ -392,12 +396,12 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     // IEQUIPABLE METHODS
 
     @Override
-    public boolean isSaddleable() {
+    public boolean isHogSaddleable() {
         return this.isAlive() && !this.isBaby();
     }
 
     @Override
-    public void equipSaddle(@Nullable SoundCategory soundCategory) {
+    public void equipHogSaddle(@Nullable SoundCategory soundCategory) {
         this.setSaddled(true);
         if (soundCategory != null) {
             this.level.playSound(null, this, SoundEvents.HORSE_SADDLE, soundCategory, 0.5F, 1.0F);
@@ -405,7 +409,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
     }
 
     @Override
-    public boolean isSaddled() {
+    public boolean isHogSaddled() {
         return this.steering.hasSaddle();
     }
 
@@ -418,7 +422,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     @Override
     public boolean canAcceptSaddle() {
-        return this.isSaddleable() && isPacified(this);
+        return this.isHogSaddleable() && isPacified(this);
     }
 
     @Override
@@ -453,7 +457,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     @Override
     public boolean canPerformMountAction() {
-        return this.isSaddled() & this.isTolerating();
+        return this.isHogSaddled() & this.isTolerating();
     }
 
     @Override
@@ -536,9 +540,9 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
 
     @Override
     public void containerChanged(IInventory inventory) {
-        boolean wasSaddled = this.isSaddled();
+        boolean wasSaddled = this.isHogSaddled();
         this.updateContainerEquipment();
-        if (this.tickCount > 20 && !wasSaddled && this.isSaddled()) {
+        if (this.tickCount > 20 && !wasSaddled && this.isHogSaddled()) {
             this.playSound(SoundEvents.HORSE_SADDLE, 0.5F, 1.0F);
         }
     }

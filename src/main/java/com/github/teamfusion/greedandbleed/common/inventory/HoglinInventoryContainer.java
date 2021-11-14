@@ -1,9 +1,9 @@
 package com.github.teamfusion.greedandbleed.common.inventory;
 
+import com.github.teamfusion.greedandbleed.api.IHogEquipable;
 import com.github.teamfusion.greedandbleed.common.entity.IHasMountArmor;
 import com.github.teamfusion.greedandbleed.common.entity.IHasMountInventory;
 import com.github.teamfusion.greedandbleed.common.entity.IToleratingMount;
-import net.minecraft.entity.IEquipable;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,9 +22,9 @@ public class HoglinInventoryContainer extends Container {
    public HoglinInventoryContainer(int containerId, PlayerInventory playerInventory, IInventory inventory, final AnimalEntity hoglin) {
       super(null, containerId);
       this.hoglinContainer = inventory;
-      if(!(hoglin instanceof IEquipable)
+      if (!(hoglin instanceof IHogEquipable)
               || !(hoglin instanceof IHasMountArmor)
-              || !(hoglin instanceof IToleratingMount)){
+              || !(hoglin instanceof IToleratingMount)) {
          throw new IllegalArgumentException("This entity type " + hoglin.getType() + " is not valid for HoglinInventoryContainer!");
       }
       this.hoglin = hoglin;
@@ -34,13 +34,13 @@ public class HoglinInventoryContainer extends Container {
          public boolean mayPlace(ItemStack stack) {
             return ((IToleratingMount) hoglin).isSaddleStack(stack)
                     && !this.hasItem()
-                    && ((IEquipable) hoglin).isSaddleable();
+                    && ((IHogEquipable) hoglin).isHogSaddleable();
          }
 
          @Override
          @OnlyIn(Dist.CLIENT)
          public boolean isActive() {
-            return ((IEquipable)hoglin).isSaddleable();
+            return ((IHogEquipable) hoglin).isHogSaddleable();
          }
       });
       this.addSlot(new Slot(inventory, 1, 8, 36) {

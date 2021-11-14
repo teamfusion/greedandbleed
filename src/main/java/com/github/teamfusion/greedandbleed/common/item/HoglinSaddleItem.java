@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.item;
 
+import com.github.teamfusion.greedandbleed.api.IHogEquipable;
 import com.github.teamfusion.greedandbleed.common.entity.IToleratingMount;
-import net.minecraft.entity.IEquipable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -19,14 +19,14 @@ public class HoglinSaddleItem extends SaddleItem {
 
     @Override
     public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity player, LivingEntity interactTarget, Hand hand) {
-        if (interactTarget instanceof IEquipable
+        if (interactTarget instanceof IHogEquipable
                 && interactTarget instanceof IToleratingMount
                 && interactTarget.isAlive()) {
-            IEquipable iequipable = (IEquipable)interactTarget;
-            IToleratingMount toleratingMount = (IToleratingMount)interactTarget;
-            if (!iequipable.isSaddled() && toleratingMount.canAcceptSaddle()) {
+            IHogEquipable iequipable = (IHogEquipable) interactTarget;
+            IToleratingMount toleratingMount = (IToleratingMount) interactTarget;
+            if (!iequipable.isHogSaddled() && toleratingMount.canAcceptSaddle()) {
                 if (!interactTarget.level.isClientSide) {
-                    iequipable.equipSaddle(SoundCategory.NEUTRAL);
+                    iequipable.equipHogSaddle(SoundCategory.NEUTRAL);
                     stack.shrink(1);
                 }
                 return ActionResultType.sidedSuccess(interactTarget.level.isClientSide);

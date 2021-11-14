@@ -1,9 +1,9 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
+import com.github.teamfusion.greedandbleed.api.IHogEquipable;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.entity.model.AgeableModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.IEquipable;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.monster.IFlinging;
 import net.minecraft.util.math.MathHelper;
@@ -131,16 +131,16 @@ public class GBHoglinModel<T extends MobEntity & IFlinging> extends AgeableModel
         }
 
         this.frontRightLeg.xRot = MathHelper.cos(p_225597_2_) * 1.2F * p_225597_3_;
-        this.frontLeftLeg.xRot = MathHelper.cos(p_225597_2_ + (float)Math.PI) * 1.2F * p_225597_3_;
+        this.frontLeftLeg.xRot = MathHelper.cos(p_225597_2_ + (float) Math.PI) * 1.2F * p_225597_3_;
         this.backRightLeg.xRot = this.frontLeftLeg.xRot;
         this.backLeftLeg.xRot = this.frontRightLeg.xRot;
 
         // SADDLE
-        if(hoglin instanceof IEquipable){
-            IEquipable equipable = (IEquipable) hoglin;
-            saddle.visible = equipable.isSaddled();
-            headHarness.visible = equipable.isSaddled();
-        } else{
+        if (hoglin instanceof IHogEquipable) {
+            IHogEquipable equipable = (IHogEquipable) hoglin;
+            saddle.visible = equipable.isHogSaddled();
+            headHarness.visible = equipable.isHogSaddled();
+        } else {
             saddle.visible = false;
             headHarness.visible = false;
         }

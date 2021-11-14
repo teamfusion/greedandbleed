@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.client.screen;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
+import com.github.teamfusion.greedandbleed.api.IHogEquipable;
 import com.github.teamfusion.greedandbleed.common.entity.IHasMountArmor;
 import com.github.teamfusion.greedandbleed.common.entity.IHasMountInventory;
 import com.github.teamfusion.greedandbleed.common.inventory.HoglinInventoryContainer;
@@ -8,7 +9,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.entity.IEquipable;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -26,9 +26,9 @@ public class HoglinInventoryScreen extends ContainerScreen<HoglinInventoryContai
 
    public HoglinInventoryScreen(HoglinInventoryContainer hoglinInventoryContainer, PlayerInventory playerInventory, AnimalEntity hoglin) {
       super(hoglinInventoryContainer, playerInventory, hoglin.getDisplayName());
-      if(!(hoglin instanceof IEquipable)
+      if (!(hoglin instanceof IHogEquipable)
               || !(hoglin instanceof IHasMountArmor)
-              || !(hoglin instanceof IHasMountInventory)){
+              || !(hoglin instanceof IHasMountInventory)) {
          throw new IllegalArgumentException("This entity type " + hoglin.getType() + " is not valid for HoglinInventoryScreen!");
       }
       this.hoglin = hoglin;
@@ -47,7 +47,7 @@ public class HoglinInventoryScreen extends ContainerScreen<HoglinInventoryContai
          this.blit(matrixStack, i + 79, j + 17, 0, this.imageHeight, chestedHoglin.getInventoryColumns() * 18, 54);
       }
 
-      if (((IEquipable)this.hoglin).isSaddleable()) {
+      if (((IHogEquipable) this.hoglin).isHogSaddleable()) {
          this.blit(matrixStack, i + 7, j + 35 - 18, 18, this.imageHeight + 54, 18, 18);
       }
 
