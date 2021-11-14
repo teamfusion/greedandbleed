@@ -31,7 +31,7 @@ public abstract class AbstractFireBlockMixin extends Block {
 	@Inject(at = @At("HEAD"),
 			method = "entityInside", remap = false, cancellable = true)
 	public void entityInside(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_, CallbackInfo callbackInfo) {
-		if (!p_196262_4_.fireImmune() && (this != Blocks.SOUL_FIRE || p_196262_4_ instanceof MobEntity && ((MobEntity) p_196262_4_).getMobType() != CreatureAttribute.UNDEAD)) {
+		if (!p_196262_4_.fireImmune() && (this != Blocks.SOUL_FIRE || !(p_196262_4_ instanceof MobEntity) || ((MobEntity) p_196262_4_).getMobType() != CreatureAttribute.UNDEAD)) {
 			p_196262_4_.setRemainingFireTicks(p_196262_4_.getRemainingFireTicks() + 1);
 			if (p_196262_4_.getRemainingFireTicks() == 0) {
 				p_196262_4_.setSecondsOnFire(8);
