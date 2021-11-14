@@ -4,6 +4,7 @@ import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.item.GBOnAStickItem;
 import com.github.teamfusion.greedandbleed.common.item.HoglinArmorItem;
 import com.github.teamfusion.greedandbleed.common.item.HoglinSaddleItem;
+import com.github.teamfusion.greedandbleed.common.item.SlingshotItem;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.*;
 import net.minecraftforge.api.distmarker.Dist;
@@ -57,7 +58,9 @@ public class ItemRegistry {
 									.tab(TAB_GREED_AND_BLEED))
 	);
 
-	public static final RegistryObject<Item> SLINGSHOT = ITEMS.register("slingshot", () -> new Item(new Item.Properties().tab(TAB_GREED_AND_BLEED)));
+	public static final RegistryObject<Item> SLINGSHOT = ITEMS.register("slingshot", () -> new SlingshotItem(new Item.Properties().tab(TAB_GREED_AND_BLEED)));
+
+	public static final RegistryObject<Item> PEBBLE = ITEMS.register("pebble", () -> new Item(new Item.Properties().tab(TAB_GREED_AND_BLEED)));
 
 	// COPIED FROM INFERNAL EXPANSION
 	public static final RegistryObject<Item> RAW_HOGCHOP = ITEMS.register("raw_hogchop", () -> new Item(new Item.Properties().tab(TAB_GREED_AND_BLEED)

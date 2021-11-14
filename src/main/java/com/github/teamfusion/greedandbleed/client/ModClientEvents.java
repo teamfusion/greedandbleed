@@ -6,6 +6,8 @@ import com.github.teamfusion.greedandbleed.client.renderer.PigmyRenderFactory;
 import com.github.teamfusion.greedandbleed.client.renderer.SkeletalPiglinRenderer;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.PigmyEntity;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,7 +24,9 @@ public class ModClientEvents {
     public static final PigmyRenderFactory<PigmyEntity> PIGMY_RENDER_FACTORY = new PigmyRenderFactory<>(false);
 
     @SubscribeEvent
-    public static void onClientSetup(final FMLClientSetupEvent event){
+    public static void onClientSetup(final FMLClientSetupEvent event) {
+        ItemRenderer itemRenderer = event.getMinecraftSupplier().get().getItemRenderer();
+
         RenderingRegistry.registerEntityRenderingHandler(
                 EntityTypeRegistry.PIGMY.get(), PIGMY_RENDER_FACTORY
         );
@@ -35,6 +39,10 @@ public class ModClientEvents {
         // However, couldn't figure out how to call super in the injection into the constructor
         RenderingRegistry.registerEntityRenderingHandler(
                 EntityType.HOGLIN, GBHoglinRenderer::new
+        );
+
+        RenderingRegistry.registerEntityRenderingHandler(
+                EntityTypeRegistry.THROWN_DAMAGEABLE.get(), m -> new SpriteRenderer<>(m, itemRenderer)
         );
     }
 }

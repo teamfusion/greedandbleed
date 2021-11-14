@@ -1,8 +1,9 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglinEntity;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.PigmyEntity;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglinEntity;
+import com.github.teamfusion.greedandbleed.common.entity.projectile.ThrownDamageableEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
@@ -26,4 +27,11 @@ public class EntityTypeRegistry {
             .build(new ResourceLocation(GreedAndBleed.MOD_ID, "skeletal_piglin").toString());
     public static final RegistryObject<EntityType<SkeletalPiglinEntity>> SKELETAL_PIGLIN = ENTITY_TYPES.register("skeletal_piglin",
             () -> SKELETAL_PIGLIN_TYPE);
+
+    //PROJECTILE
+    public static final EntityType<ThrownDamageableEntity> THROWN_DAMAGEABLE_TYPE = EntityType.Builder.<ThrownDamageableEntity>of(ThrownDamageableEntity::new, EntityClassification.MISC)
+            .sized(0.25f, 0.25f) // Hitbox Size
+            .build(new ResourceLocation(GreedAndBleed.MOD_ID, "thrown_damageable").toString());
+    public static final RegistryObject<EntityType<ThrownDamageableEntity>> THROWN_DAMAGEABLE = ENTITY_TYPES.register("thrown_damageable",
+            () -> THROWN_DAMAGEABLE_TYPE);
 }
