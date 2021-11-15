@@ -57,13 +57,13 @@ public class GBHoglinModelComplete<T extends MobEntity & IFlinging> extends Agea
         tusks.setPos(-1.0F, 24.0F, 8.5F);
         head.addChild(tusks);
         tusks.texOffs(1, 13).addBox(6.0F, -31.25F, -22.5F, 2.0F, 11.0F, 2.0F, modelSize, false);
-        tusks.texOffs(120, 0).addBox(-8.0F, -28.25F, -22.5F, 2.0F, 5.0F, 2.0F, modelSize + 0.25F, true);
+        tusks.texOffs(10, 13).addBox(-8.0F, -31.25F, -22.5F, 2.0F, 11.0F, 2.0F, modelSize, false);
 
         tusksHarness = new ModelRenderer(this);
         tusksHarness.setPos(0.0F, 0.0F, 0.0F);
         tusks.addChild(tusksHarness);
         tusksHarness.texOffs(120, 0).addBox(6.0F, -28.25F, -22.5F, 2.0F, 5.0F, 2.0F, modelSize + 0.25F, false);
-        tusksHarness.texOffs(10, 13).addBox(-8.0F, -31.25F, -22.5F, 2.0F, 11.0F, 2.0F, modelSize, false);
+        tusksHarness.texOffs(120, 0).addBox(-8.0F, -28.25F, -22.5F, 2.0F, 5.0F, 2.0F, modelSize + 0.25F, true);
 
         leftEar = new ModelRenderer(this);
         leftEar.setPos(6.0F, -1.25F, -5.0F);
