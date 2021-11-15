@@ -144,7 +144,7 @@ public abstract class HoglinEntityMixin extends AnimalEntity implements IRideabl
             } else {
                 // Make the hoglin angry and reject the interaction
                 this.playSound(SoundEvents.HOGLIN_ANGRY, this.getSoundVolume(), this.getVoicePitch());
-                cir.setReturnValue(ActionResultType.sidedSuccess(this.level.isClientSide));
+                cir.setReturnValue(ActionResultType.FAIL);
                 return;
             }
         }
