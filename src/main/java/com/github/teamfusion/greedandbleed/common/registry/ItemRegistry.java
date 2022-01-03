@@ -71,4 +71,5 @@ public class ItemRegistry {
 
 	public static final RegistryObject<Item> SKELETAL_PIGLIN_SPAWN_EGG = ITEMS.register("skeletal_piglin_spawn_egg", () -> new SpawnEggItem(EntityTypeRegistry.SKELETAL_PIGLIN_TYPE, 12698049, 4802889, new Item.Properties().tab(TAB_GREED_AND_BLEED)));
 	public static final RegistryObject<Item> PIGMY_SPAWN_EGG = ITEMS.register("pigmy_spawn_egg", () -> new SpawnEggItem(EntityTypeRegistry.PIGMY_TYPE, 10051392, 16380836, new Item.Properties().tab(TAB_GREED_AND_BLEED)));
+	public static final RegistryObject<Item> HOGLET_SPAWN_EGG = ITEMS.register("hoglet_spawn_egg", () -> new SpawnEggItem(EntityTypeRegistry.HOGLET_TYPE, 10051392, 16380836, new Item.Properties().tab(TAB_GREED_AND_BLEED)));
 }

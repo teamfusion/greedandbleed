@@ -1,8 +1,9 @@
 package com.github.teamfusion.greedandbleed.common;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglinEntity;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.HogletEntity;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.PigmyEntity;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglinEntity;
 import com.github.teamfusion.greedandbleed.common.network.NetworkHandler;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.SpawnPlacementRegistry;
@@ -18,6 +19,7 @@ public class ModCommonEvents {
     public static void onAttributeCreation(EntityAttributeCreationEvent event){
         event.put(EntityTypeRegistry.PIGMY.get(), PigmyEntity.createAttributes().build());
         event.put(EntityTypeRegistry.SKELETAL_PIGLIN.get(), SkeletalPiglinEntity.setCustomAttributes().build());
+        event.put(EntityTypeRegistry.HOGLET.get(), HogletEntity.setCustomAttributes().build());
     }
 
     @SubscribeEvent
