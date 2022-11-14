@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "greedandbleed",
+  "version": "${version}",
+  "name": "Greed and Bleed",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Team Fusion"
+  ],
+  "contact": {
+    "sources": "https://github.com/teamfusion/greedandbleed/"
+  },
+  "license": "MIT; Assets licensed as All Rights Reserved",
+  "icon": "assets/greedandbleed/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.github.teamfusion.greedandbleed.fabric.GreedAndBleedFabric"
+    ]
+  },
+  "mixins": [
+    "greedandbleed.mixins.json",
+    "greedandbleed-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.18.2"
+  }
+}

@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[40,)"
+
+license = "Insert License Here"
+issueTrackerURL = "https://github.com/teamfusion/greedandbleed/issues"
+
+[[mods]]
+modId = "greedandbleed"
+displayName = "Greed and Bleed"
+
+version = "${version}"
+authors = "Team Fusion"
+
+description = '''
+This is an example description! Tell everyone what your mod is about!
+'''
+#logoFile = ""
+
+[[dependencies.greedandbleed]]
+modId = "forge"
+mandatory = true
+versionRange = "[40,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.greedandbleed]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.18.2,)"
+ordering = "NONE"
+side = "BOTH"
