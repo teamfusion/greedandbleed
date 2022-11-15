@@ -16,6 +16,9 @@
   "entrypoints": {
     "main": [
       "com.github.teamfusion.greedandbleed.fabric.GreedAndBleedFabric"
+    ],
+    "fabric-datagen": [
+      "com.github.teamfusion.greedandbleed.data.DataGeneration"
     ]
   },
   "mixins": [

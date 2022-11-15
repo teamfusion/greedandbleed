@@ -9,7 +9,20 @@ architectury {
 
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
+
+    runs {
+        datagenClient {
+            inherit client
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${project(":common").file("src/main/generated")}"
+
+            runDir "build/datagen"
+        }
+    }
 }
+
+sourceSets.main.resources.srcDirs += project(":common").file("src/main/generated")
 
 configurations {
     common
