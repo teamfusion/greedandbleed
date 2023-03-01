@@ -116,8 +116,8 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
     @Override
     public void aiStep() {
         if (this.isAlive()) {
-            boolean flag = this.shouldBurnInDay() && this.isSunBurnTick();
-            if (flag) {
+            boolean shouldApplySunburn = this.shouldBurnInDay() && this.isSunBurnTick();
+            if (shouldApplySunburn) {
                 ItemStack stack = this.getItemBySlot(EquipmentSlot.HEAD);
                 if (!stack.isEmpty()) {
                     if (stack.isDamageableItem()) {
@@ -128,10 +128,10 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
                         }
                     }
 
-                    flag = false;
+                    shouldApplySunburn = false;
                 }
 
-                if (flag) {
+                if (shouldApplySunburn) {
                     this.setSecondsOnFire(8);
                 }
             }
@@ -239,17 +239,17 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
 
     @Nullable @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
-        float multiplier = difficulty.getSpecialMultiplier();
-        this.setCanPickUpLoot(this.rand.nextFloat() < 0.55F * multiplier);
+        float difficultyMultiplier = difficulty.getSpecialMultiplier();
+        this.setCanPickUpLoot(this.rand.nextFloat() < 0.55F * difficultyMultiplier);
 
         this.populateDefaultEquipmentSlots(difficulty);
         this.populateDefaultEquipmentEnchantments(difficulty);
 
         if (this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
             LocalDate date = LocalDate.now();
-            int day = date.get(ChronoField.DAY_OF_MONTH);
-            int month = date.get(ChronoField.MONTH_OF_YEAR);
-            if (month == 10 && day == 31 && this.rand.nextFloat() < 0.25F) {
+            int currentDay = date.get(ChronoField.DAY_OF_MONTH);
+            int currentMonth = date.get(ChronoField.MONTH_OF_YEAR);
+            if (currentMonth == 10 && currentDay == 31 && this.rand.nextFloat() < 0.25F) {
                 this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(this.random.nextFloat() < 0.1F ? Blocks.JACK_O_LANTERN : Blocks.CARVED_PUMPKIN));
                 this.armorDropChances[EquipmentSlot.HEAD.getIndex()] = 0.0F;
             }
