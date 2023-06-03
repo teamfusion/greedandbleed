@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class PlayerMixin {
     @Inject(method = "hurt", at = @At("HEAD"))
     private void $hurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        CommonSetup.onHoglinAttack((Player)(Object)this, source);
+        CommonSetup.onHoglinAttack((Player) (Object) this, source);
     }
+
 }

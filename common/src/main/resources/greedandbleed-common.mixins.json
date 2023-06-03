@@ -12,6 +12,7 @@
     "HoglinMixin",
     "LivingEntityMixin",
     "PlayerMixin",
+    "ServerPlayerMixin",
     "PlayerSensorMixin",
     "ServerGamePacketListenerImplMixin"
   ],
