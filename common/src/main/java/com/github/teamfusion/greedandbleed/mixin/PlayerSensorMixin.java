@@ -14,7 +14,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @Mixin(PlayerSensor.class)
-public class PlayerSensorMixin {
+public class
+PlayerSensorMixin {
     // MIXINS
     @Redirect(method = "doTick", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;findFirst()Ljava/util/Optional;"))
     private Optional<Player> gb$accountForTolerance(Stream<Player> instance, ServerLevel level, LivingEntity entity) {

@@ -1,6 +1,5 @@
 package com.github.teamfusion.greedandbleed.platform.common.worldgen;
 
-import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -30,7 +29,7 @@ public abstract class BiomeWriter {
 
     public abstract BiomeContext context();
 
-    public abstract void addFeature(GenerationStep.Decoration step, Holder<PlacedFeature> feature);
+    public abstract void addFeature(GenerationStep.Decoration step, ResourceKey<PlacedFeature> feature);
 
     public abstract void addSpawn(MobCategory category, EntityType<?> type, int weight, int minGroup, int maxGroup);
 }

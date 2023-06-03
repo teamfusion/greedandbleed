@@ -16,17 +16,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerListener;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ItemBasedSteering;
-import net.minecraft.world.entity.ItemSteerable;
-import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.*;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -274,23 +265,25 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
         super.onSyncedDataUpdated(data);
     }
 
-    @Nullable @Override
-    public Entity getControllingPassenger() {
-        return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
-    }
-
     @Override
-    public boolean canBeControlledByRider() {
-        Entity entity = this.getControllingPassenger();
+    public LivingEntity getControllingPassenger() {
+        if (!this.isTolerating()) {
+            return null;
+        }
+        Entity entity = this.getFirstPassenger();
         if (entity instanceof Player player) {
             if (!this.isTolerating()) {
-                return false;
+                return null;
+            } else if (player.getMainHandItem().is(ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get()) || player.getOffhandItem().is(ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get())) {
+                return player;
             }
 
-            return player.getMainHandItem().is(ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get()) || player.getOffhandItem().is(ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get());
-        } else {
-            return false;
+        } else if (entity instanceof LivingEntity living) {
+            return living;
         }
+
+
+        return null;
     }
 
     @Override
@@ -389,28 +382,29 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
 
     @Override
     public boolean boost() {
-        //return this.steering.boost(this.getRandom());
-        return false;
+        return this.steering.boost(this.getRandom());
+    }
+
+    protected void tickRidden(LivingEntity livingEntity, Vec3 vec3) {
+        this.setRot(livingEntity.getYRot(), livingEntity.getXRot() * 0.5F);
+        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
+        this.steering.tickBoost();
+        super.tickRidden(livingEntity, vec3);
     }
 
     @Override
-    public void travelWithInput(Vec3 movementInput) {
-        super.travel(movementInput);
+    protected Vec3 getRiddenInput(LivingEntity livingEntity, Vec3 vec3) {
+        return new Vec3(0.0, 0.0, 1.0);
     }
 
     @Override
-    public void travel(Vec3 movementInput) {
-        this.travel(this, this.steering, movementInput);
-    }
-
-    @Override
-    public float getSteeringSpeed() {
+    protected float getRiddenSpeed(LivingEntity livingEntity) {
         float toleranceProgress = this.getToleranceProgress();
         float minSpeedFactor = 0.4F;
         float midSpeedFactor = minSpeedFactor * 1.75F;
         float maxSpeedFactor = minSpeedFactor * 2.5F;
         float speedFactor = toleranceProgress > 0.66F ? maxSpeedFactor : toleranceProgress > 0.33F ? midSpeedFactor : maxSpeedFactor;
-        return (float)this.getAttributeValue(Attributes.MOVEMENT_SPEED) * speedFactor;
+        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * speedFactor;
     }
 
     // SADDLEABLE METHODS

@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModificationContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
-import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -50,8 +49,8 @@ public class BiomeManagerImpl {
         }
 
         @Override
-        public void addFeature(GenerationStep.Decoration step, Holder<PlacedFeature> feature) {
-            this.modifier.getGenerationSettings().addBuiltInFeature(step, feature.value());
+        public void addFeature(GenerationStep.Decoration step, ResourceKey<PlacedFeature> feature) {
+            this.modifier.getGenerationSettings().addFeature(step, feature);
         }
 
         @Override
