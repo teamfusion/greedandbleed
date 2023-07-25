@@ -3,6 +3,7 @@ package com.github.teamfusion.greedandbleed.common;
 import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
+import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeManager;
@@ -17,6 +18,7 @@ public class CommonSetup {
 
     public static void onInitialized() {
         BiomeManager.setup();
+        GreedAndBleedNetwork.registerReceivers();
     }
 
     public static void onHoglinAttack(LivingEntity entity, DamageSource source) {

@@ -7,31 +7,18 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.NeutralMob;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.world.entity.ai.goal.FleeSunGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RestrictSunGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -42,7 +29,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
@@ -142,9 +128,10 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
 
     // EXPERIENCE POINTS
     @Override
-    protected int getExperienceReward(Player player) {
+    public int getExperienceReward() {
         return 2 + this.level.random.nextInt(2);
     }
+
 
     @Nullable @Override
     protected SoundEvent getAmbientSound() {
@@ -220,8 +207,9 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
         return this.getEntityData().get(DATA_BABY_ID);
     }
 
+
     @Override
-    protected void populateDefaultEquipmentSlots(DifficultyInstance instance) {
+    protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance instance) {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SHOVEL));
     }
 
@@ -242,8 +230,8 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
         float difficultyMultiplier = difficulty.getSpecialMultiplier();
         this.setCanPickUpLoot(this.rand.nextFloat() < 0.55F * difficultyMultiplier);
 
-        this.populateDefaultEquipmentSlots(difficulty);
-        this.populateDefaultEquipmentEnchantments(difficulty);
+        this.populateDefaultEquipmentSlots(random, difficulty);
+        this.populateDefaultEquipmentEnchantments(random, difficulty);
 
         if (this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
             LocalDate date = LocalDate.now();

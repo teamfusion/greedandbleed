@@ -1,14 +1,14 @@
 package com.github.teamfusion.greedandbleed.data.client;
 
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.model.ModelLocationUtils;
 
 public class ModelGenerator extends FabricModelProvider {
-    public ModelGenerator(FabricDataGenerator dataGenerator) {
+    public ModelGenerator(FabricDataOutput dataGenerator) {
         super(dataGenerator);
     }
 

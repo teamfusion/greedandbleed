@@ -13,7 +13,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +33,7 @@ public abstract class GBPiglin extends AbstractPiglin implements HasTaskManager 
     }
 
     @Override
-    protected int getExperienceReward(Player player) {
+    public int getExperienceReward() {
         return this.xpReward;
     }
 

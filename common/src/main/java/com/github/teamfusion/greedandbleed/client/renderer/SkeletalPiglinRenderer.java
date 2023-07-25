@@ -17,7 +17,7 @@ public class SkeletalPiglinRenderer extends HumanoidMobRenderer<Mob, SkeletalPig
 
     public SkeletalPiglinRenderer(EntityRendererProvider.Context context) {
         super(context, new SkeletalPiglinModel<>(context.bakeLayer(MAIN)), 0.7F, 1.0019531F, 1.0F, 1.0019531F);
-        this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(OUTER_ARMOR))));
+        this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(OUTER_ARMOR)), context.getModelManager()));
     }
 
     @Override

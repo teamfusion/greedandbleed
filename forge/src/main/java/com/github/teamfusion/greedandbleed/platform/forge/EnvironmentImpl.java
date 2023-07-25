@@ -1,15 +1,13 @@
 package com.github.teamfusion.greedandbleed.platform.forge;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-
 public class EnvironmentImpl {
-    public static CreativeModeTab createTab(ResourceLocation location, ItemStack icon) {
+    //TODO Rewrite to 1.19.4
+    /*public static CreativeModeTab createTab(ResourceLocation location, ItemStack icon) {
         return new CreativeModeTab(location.toString().replace(":", ".")) {
-            @Override public ItemStack makeIcon() {
+            @Override
+            public ItemStack getIconItem() {
                 return icon;
             }
         };
-    }
+    }*/
 }

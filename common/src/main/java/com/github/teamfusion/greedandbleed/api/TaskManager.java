@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.Behavior;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.behavior.RunOne;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -301,11 +302,11 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
         return new ArrayList<>();
     }
 
-    protected List<Pair<Behavior<? super T>, Integer>> getIdleLookBehaviors(){
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleLookBehaviors() {
         return new ArrayList<>();
     }
 
-    protected List<Pair<Behavior<? super T>, Integer>> getIdleMovementBehaviors(){
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
         return new ArrayList<>();
     }
 

@@ -5,12 +5,14 @@
   "client": [
     "client.MultiPlayerGameModeMixin",
     "client.RemotePlayerMixin",
-    "client.LocalPlayerMixin"
+    "client.LocalPlayerMixin",
+    "client.HoglinRendererMixin"
   ],
   "mixins": [
     "HoglinMixin",
     "LivingEntityMixin",
     "PlayerMixin",
+    "ServerPlayerMixin",
     "PlayerSensorMixin",
     "ServerGamePacketListenerImplMixin"
   ],

@@ -1,28 +1,15 @@
 package com.github.teamfusion.greedandbleed.platform.common.worldgen.forge;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeContext;
-import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeManager;
-import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeWriter;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = GreedAndBleed.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BiomeManagerImpl {
-    public static void setup() {}
+    public static void setup() {
+    }
 
-    @SubscribeEvent
+    //TODO Rewrite to 1.19.4
+    /*@SubscribeEvent
     public static void event(BiomeLoadingEvent event) {
         BiomeManager.INSTANCE.register(new ForgeBiomeWriter(event));
     }
@@ -58,5 +45,5 @@ public class BiomeManagerImpl {
         public void addSpawn(MobCategory category, EntityType<?> type, int weight, int minGroup, int maxGroup) {
             this.event.getSpawns().addSpawn(category, new MobSpawnSettings.SpawnerData(type, weight, minGroup, maxGroup));
         }
-    }
+    }*/
 }

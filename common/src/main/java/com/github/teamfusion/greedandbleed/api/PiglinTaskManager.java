@@ -1,22 +1,15 @@
 package com.github.teamfusion.greedandbleed.api;
 
 import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPiglin;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
-import net.minecraft.world.entity.ai.behavior.CopyMemoryWithExpiry;
-import net.minecraft.world.entity.ai.behavior.RunSometimes;
-import net.minecraft.world.entity.ai.behavior.SetWalkTargetAwayFrom;
+import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Zoglin;
@@ -25,11 +18,7 @@ import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -37,14 +26,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManager> extends TaskManager<T> {
     protected static final Set<Item> FOOD_ITEMS = new HashSet<>(Arrays.asList(Items.PORKCHOP, Items.COOKED_PORKCHOP));
@@ -70,20 +52,23 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
 
     // STATIC TASKS
 
-    protected static RunSometimes<AbstractPiglin> babySometimesRideBabyHoglin() {
-        return new RunSometimes<>(new CopyMemoryWithExpiry<>(AbstractPiglin::isBaby, MemoryModuleType.NEAREST_VISIBLE_BABY_HOGLIN, MemoryModuleType.RIDE_TARGET, RIDE_DURATION), RIDE_START_INTERVAL);
+    protected static BehaviorControl<LivingEntity> babySometimesRideBabyHoglin() {
+        SetEntityLookTargetSometimes.Ticker ticker = new SetEntityLookTargetSometimes.Ticker(RIDE_START_INTERVAL);
+        return CopyMemoryWithExpiry.create((livingEntity) -> {
+            return livingEntity.isBaby() && ticker.tickDownAndCheck(livingEntity.level.random);
+        }, MemoryModuleType.NEAREST_VISIBLE_BABY_HOGLIN, MemoryModuleType.RIDE_TARGET, RIDE_DURATION);
     }
 
-    protected static SetWalkTargetAwayFrom<BlockPos> avoidRepellent() {
+    protected static BehaviorControl<PathfinderMob> avoidRepellent() {
         return SetWalkTargetAwayFrom.pos(MemoryModuleType.NEAREST_REPELLENT, 1.0F, 8, false);
     }
 
-    protected static CopyMemoryWithExpiry<AbstractPiglin, LivingEntity> babyAvoidNemesis() {
-        return new CopyMemoryWithExpiry<>(AbstractPiglin::isBaby, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.AVOID_TARGET, BABY_AVOID_NEMESIS_DURATION);
+    protected static BehaviorControl<AbstractPiglin> babyAvoidNemesis() {
+        return CopyMemoryWithExpiry.create(AbstractPiglin::isBaby, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.AVOID_TARGET, BABY_AVOID_NEMESIS_DURATION);
     }
 
-    protected static CopyMemoryWithExpiry<AbstractPiglin, LivingEntity> avoidZombified() {
-        return new CopyMemoryWithExpiry<>(PiglinTaskManager::isNearZombified, MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, MemoryModuleType.AVOID_TARGET, AVOID_ZOMBIFIED_DURATION);
+    protected static BehaviorControl<AbstractPiglin> avoidZombified() {
+        return CopyMemoryWithExpiry.create(PiglinTaskManager::isNearZombified, MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, MemoryModuleType.AVOID_TARGET, AVOID_ZOMBIFIED_DURATION);
     }
 
     // STATIC HELPER METHODS
@@ -238,14 +223,14 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
             if (doBarter && isPiglinBarter) {
                 throwItems(piglin, PiglinTaskManager.getBarterResponseItems(piglin));
             } else if (!isPiglinBarter) {
-                boolean didEquip = piglin.equipItemIfPossible(itemstack);
-                if (!didEquip) {
+                ItemStack equipItem = piglin.equipItemIfPossible(itemstack);
+                if (!equipItem.isEmpty()) {
                     putInInventory(piglin, itemstack);
                 }
             }
         } else {
-            boolean didEquip = piglin.equipItemIfPossible(itemstack);
-            if (!didEquip) {
+            ItemStack equipItem = piglin.equipItemIfPossible(itemstack);
+            if (!equipItem.isEmpty()) {
                 ItemStack mainHandItem = piglin.getMainHandItem();
                 if (isLovedItem(mainHandItem.getItem())) {
                     putInInventory(piglin, mainHandItem);
@@ -288,8 +273,8 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
         } else if (isFood(itemstack) && !hasEatenRecently(piglin)) {
             eat(piglin, 200L);
         } else {
-            boolean flag = piglin.equipItemIfPossible(itemstack);
-            if (!flag) {
+            ItemStack equipItem = piglin.equipItemIfPossible(itemstack);
+            if (!equipItem.isEmpty()) {
                 putInInventory(piglin, itemstack);
             }
         }
