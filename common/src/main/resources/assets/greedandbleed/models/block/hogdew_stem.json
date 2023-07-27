@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "greedandbleed:block/hogdew_stem_top",
+    "side": "greedandbleed:block/hogdew_stem"
+  }
+}

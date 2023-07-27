@@ -5,8 +5,11 @@ import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -15,7 +18,18 @@ import java.util.function.Supplier;
 public class BlockRegistry {
     public static final CoreRegistry<Block> BLOCKS = CoreRegistry.of(BuiltInRegistries.BLOCK, GreedAndBleed.MOD_ID);
 
-    public static final Supplier<Block> HOGDEW_PLANKS = create("hogdew_planks", () -> new Block(BlockBehaviour.Properties.of()));
+    public static final Supplier<Block> HOGDEW_PLANKS = createWithItem("hogdew_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
+    public static final Supplier<Block> HOGDEW_WART_BLOCK = createWithItem("hogdew_wart_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(1.0f).sound(SoundType.NETHER_WART)));
+    public static final Supplier<Block> HOGDEW_STEM = createWithItem("hogdew_stem", () -> netherStem(MapColor.COLOR_PINK));
+    public static final Supplier<Block> STRIPPED_HOGDEW_STEM = createWithItem("stripped_hogdew_stem", () -> netherStem(MapColor.COLOR_PINK));
+    public static final Supplier<Block> HOGDEW_NYLIUM = createWithItem("hogdew_nylium", () -> new NyliumBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.4f).sound(SoundType.NYLIUM).randomTicks()));
+    public static final Supplier<Block> HOGDEW_FUNGUS = createWithItem("hogdew_fungus", () -> new NetherSproutsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().instabreak().sound(SoundType.NETHER_SPROUTS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY)));
+
+    public static final Supplier<Block> HOGDEW_LUMPS = createWithItem("hogdew_lumps", () -> new GlowLichenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().strength(0.2f).sound(SoundType.GLOW_LICHEN).lightLevel(GlowLichenBlock.emission(10)).pushReaction(PushReaction.DESTROY)));
+
+    private static Block netherStem(MapColor mapColor) {
+        return new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(blockState -> mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0f).sound(SoundType.STEM));
+    }
 
     public static <T extends Block> Supplier<T> create(String key, Supplier<T> entry) {
         return BLOCKS.create(key, entry);
@@ -28,7 +42,7 @@ public class BlockRegistry {
         return register;
     }
 
-    private static <B extends Block> Supplier<B> register(String name, Supplier<? extends Block> block) {
+    private static <B extends Block> Supplier<B> createWithItem(String name, Supplier<? extends Block> block) {
         return (Supplier<B>) createBase(name, block, (object) -> BlockRegistry.registerBlockItem(object));
     }
 

@@ -3,6 +3,7 @@ package com.github.teamfusion.greedandbleed;
 import com.github.teamfusion.greedandbleed.client.ClientSetup;
 import com.github.teamfusion.greedandbleed.common.CommonSetup;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.CreativeTabRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.platform.ModInstance;
@@ -18,5 +19,6 @@ public class GreedAndBleed {
         EntityTypeRegistry.ENTITIES.register();
         BlockRegistry.BLOCKS.register();
         ItemRegistry.ITEMS.register();
+        CreativeTabRegistry.CREATIVE_TABS.register();
     }
 }
