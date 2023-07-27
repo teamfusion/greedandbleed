@@ -29,7 +29,7 @@ public class CreativeTabRegistry {
                     output.acceptAll(Stream.of(
                             BlockRegistry.HOGDEW_NYLIUM,
                             BlockRegistry.HOGDEW_STEM,
-                            BlockRegistry.STRIPED_HOGDEW_STEM,
+                            BlockRegistry.STRIPPED_HOGDEW_STEM,
                             BlockRegistry.HOGDEW_PLANKS,
                             BlockRegistry.HOGDEW_WART_BLOCK,
                             BlockRegistry.HOGDEW_FUNGUS,
