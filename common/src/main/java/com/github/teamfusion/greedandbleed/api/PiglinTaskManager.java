@@ -21,7 +21,7 @@ import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -55,7 +55,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
     protected static BehaviorControl<LivingEntity> babySometimesRideBabyHoglin() {
         SetEntityLookTargetSometimes.Ticker ticker = new SetEntityLookTargetSometimes.Ticker(RIDE_START_INTERVAL);
         return CopyMemoryWithExpiry.create((livingEntity) -> {
-            return livingEntity.isBaby() && ticker.tickDownAndCheck(livingEntity.level.random);
+            return livingEntity.isBaby() && ticker.tickDownAndCheck(livingEntity.level().random);
         }, MemoryModuleType.NEAREST_VISIBLE_BABY_HOGLIN, MemoryModuleType.RIDE_TARGET, RIDE_DURATION);
     }
 
@@ -89,7 +89,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
         if (targetIn instanceof Hoglin) {
             return false;
         } else {
-            return new Random(livingEntity.level.getGameTime()).nextFloat() < 0.1F;
+            return new Random(livingEntity.level().getGameTime()).nextFloat() < 0.1F;
         }
     }
 
@@ -107,15 +107,15 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
         piglin.getBrain().eraseMemory(MemoryModuleType.ANGRY_AT);
         piglin.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
         piglin.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
-        piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.AVOID_TARGET, targetIn, RETREAT_DURATION.sample(piglin.level.random));
-        setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.sample(piglin.level.random));
+        piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.AVOID_TARGET, targetIn, RETREAT_DURATION.sample(piglin.level().random));
+        setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.sample(piglin.level().random));
     }
 
     public static void maybeRetaliate(AbstractPiglin piglin, LivingEntity targetIn) {
         if (!piglin.getBrain().isActive(Activity.AVOID)) {
             if (isAttackAllowed(piglin, targetIn)) {
                 if (!BehaviorUtils.isOtherTargetMuchFurtherAwayThanCurrentAttackTarget(piglin, targetIn, 4.0D)) {
-                    if (targetIn instanceof Player && piglin.level.getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
+                    if (targetIn instanceof Player && piglin.level().getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
                         setAngerTargetToNearestTargetablePlayerIfFound(piglin, targetIn);
                         broadcastUniversalAnger(piglin);
                     } else {
@@ -147,10 +147,10 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
             piglin.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
             piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, targetIn.getUUID(), 600L);
             if (targetIn instanceof Hoglin && piglin instanceof GBPiglin gbPiglin && gbPiglin.canHunt()) {
-                setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.sample(piglin.level.random));
+                setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.sample(piglin.level().random));
             }
 
-            if (targetIn instanceof Player && piglin.level.getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
+            if (targetIn instanceof Player && piglin.level().getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
                 piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.UNIVERSAL_ANGER, true, 600L);
             }
 
@@ -198,7 +198,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
     }
 
     public static void dontKillAnyMoreHoglinsForAWhile(AbstractPiglin piglin) {
-        setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.sample(piglin.level.random));
+        setHuntedRecently(piglin, TIME_BETWEEN_HUNTS.sample(piglin.level().random));
     }
 
     public static void broadcastDontKillAnyMoreHoglinsForAWhile(AbstractPiglin piglin) {
@@ -244,10 +244,10 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
     }
 
     public static List<ItemStack> getBarterResponseItems(AbstractPiglin piglin) {
-        MinecraftServer server = piglin.level.getServer();
+        MinecraftServer server = piglin.level().getServer();
         if (server != null) {
-            LootTable loottable = server.getLootTables().get(BuiltInLootTables.PIGLIN_BARTERING);
-            return loottable.getRandomItems(new LootContext.Builder((ServerLevel)piglin.level).withParameter(LootContextParams.THIS_ENTITY, piglin).withRandom(piglin.level.random).create(LootContextParamSets.PIGLIN_BARTER));
+            LootTable loottable = server.getLootData().getLootTable(BuiltInLootTables.PIGLIN_BARTERING);
+            return loottable.getRandomItems(new LootParams.Builder((ServerLevel) piglin.level()).withParameter(LootContextParams.THIS_ENTITY, piglin).create(LootContextParamSets.PIGLIN_BARTER));
         }
 
         return new ArrayList<>();

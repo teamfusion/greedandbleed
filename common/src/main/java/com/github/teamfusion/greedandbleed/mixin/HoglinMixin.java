@@ -77,7 +77,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
             // Handle opening inventory with shift-key down during interaction
             if (isPacified(this) && player.isSecondaryUseActive()) {
                 this.openInventory(player);
-                cir.setReturnValue(InteractionResult.sidedSuccess(this.level.isClientSide));
+                cir.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide));
                 return;
             }
 
@@ -112,7 +112,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
                     }
 
                     this.createInventory();
-                    cir.setReturnValue(InteractionResult.sidedSuccess(this.level.isClientSide));
+                    cir.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide));
                     return;
                 }
 
@@ -121,7 +121,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
                 boolean canOpenInventoryWithItem = this.isArmor(stack) || canGiveSaddle;
                 if (canOpenInventoryWithItem) {
                     this.openInventory(player);
-                    cir.setReturnValue(InteractionResult.sidedSuccess(this.level.isClientSide));
+                    cir.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide));
                     return;
                 }
             } else {
@@ -137,7 +137,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
         } else if (isPacified(this)) {
             // Handle mounting the hoglin
             player.startRiding(this);
-            cir.setReturnValue(InteractionResult.sidedSuccess(this.level.isClientSide));
+            cir.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide));
         }
     }
 
@@ -231,12 +231,12 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
 
     private void setArmorEquipment(ItemStack stack) {
         this.setArmor(stack);
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             AttributeInstance armor = this.getAttribute(Attributes.ARMOR);
             if (armor != null) {
                 armor.removeModifier(ARMOR_MODIFIER_UUID);
                 if (this.isArmor(stack)) {
-                    int i = ((HoglinArmorItem)stack.getItem()).getProtection();
+                    int i = ((HoglinArmorItem) stack.getItem()).getProtection();
                     if (i != 0) {
                         armor.addTransientModifier(new AttributeModifier(ARMOR_MODIFIER_UUID, "Horse armor bonus", i, AttributeModifier.Operation.ADDITION));
                     }
@@ -258,7 +258,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
-        if (DATA_BOOST_TIME.equals(data) && this.level.isClientSide) {
+        if (DATA_BOOST_TIME.equals(data) && this.level().isClientSide) {
             this.steering.onSynced();
         }
 
@@ -299,7 +299,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
         }
 
         if (this.hasChest()) {
-            if (!this.level.isClientSide) {
+            if (!this.level().isClientSide) {
                 this.spawnAtLocation(this.getDefaultChestItem());
             }
 
@@ -385,7 +385,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
         return this.steering.boost(this.getRandom());
     }
 
-    protected void tickRidden(LivingEntity livingEntity, Vec3 vec3) {
+    protected void tickRidden(Player livingEntity, Vec3 vec3) {
         this.setRot(livingEntity.getYRot(), livingEntity.getXRot() * 0.5F);
         this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
         this.steering.tickBoost();
@@ -393,12 +393,12 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
     }
 
     @Override
-    protected Vec3 getRiddenInput(LivingEntity livingEntity, Vec3 vec3) {
+    protected Vec3 getRiddenInput(Player livingEntity, Vec3 vec3) {
         return new Vec3(0.0, 0.0, 1.0);
     }
 
     @Override
-    protected float getRiddenSpeed(LivingEntity livingEntity) {
+    protected float getRiddenSpeed(Player livingEntity) {
         float toleranceProgress = this.getToleranceProgress();
         float minSpeedFactor = 0.4F;
         float midSpeedFactor = minSpeedFactor * 1.75F;
@@ -418,7 +418,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
     public void equipHogSaddle(@Nullable SoundSource soundSource) {
         this.setSaddled(true);
         if (soundSource != null) {
-            this.level.playSound(null, this, SoundEvents.HORSE_SADDLE, soundSource, 0.5F, 1.0F);
+            this.level().playSound(null, this, SoundEvents.HORSE_SADDLE, soundSource, 0.5F, 1.0F);
         }
     }
 
@@ -506,7 +506,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
     }
 
     private void updateContainerEquipment() {
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             this.steering.setSaddle(!this.inventory.getItem(0).isEmpty());
             this.setArmorEquipment(this.inventory.getItem(1));
             this.setDropChance(EquipmentSlot.CHEST, 0.0F);
@@ -522,7 +522,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
 
     @Override
     public void openInventory(Player player) {
-        if (!this.level.isClientSide && (!this.isVehicle() || this.hasPassenger(player)) && player instanceof CanOpenMountInventory rider) {
+        if (!this.level().isClientSide && (!this.isVehicle() || this.hasPassenger(player)) && player instanceof CanOpenMountInventory rider) {
             GreedAndBleed.LOGGER.debug("Opening mount inventory for {}", this);
             rider.openMountInventory(this, this.inventory);
         }

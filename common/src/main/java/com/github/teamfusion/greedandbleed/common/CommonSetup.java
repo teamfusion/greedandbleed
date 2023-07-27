@@ -22,7 +22,7 @@ public class CommonSetup {
     }
 
     public static void onHoglinAttack(LivingEntity entity, DamageSource source) {
-        if (source.getDirectEntity() instanceof ToleratingMount mount && !entity.level.isClientSide) {
+        if (source.getDirectEntity() instanceof ToleratingMount mount && !entity.level().isClientSide) {
             if (mount.getTolerance() > 0) {
                 mount.addTolerance(-1);
             } else if (mount.getTolerance() < 0) {
@@ -32,7 +32,7 @@ public class CommonSetup {
     }
 
     public static void onHoglinUpdate(LivingEntity entity) {
-        if (entity instanceof ToleratingMount mount && !entity.level.isClientSide) {
+        if (entity instanceof ToleratingMount mount && !entity.level().isClientSide) {
             if (mount.getTolerance() > 0) {
                 mount.addTolerance(-1);
             } else if (mount.getTolerance() < 0) {

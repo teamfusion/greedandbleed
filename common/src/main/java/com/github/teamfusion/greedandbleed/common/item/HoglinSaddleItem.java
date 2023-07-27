@@ -19,12 +19,12 @@ public class HoglinSaddleItem extends SaddleItem {
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
         if (entity instanceof HogEquipable equipable && entity instanceof ToleratingMount mount && entity.isAlive()) {
             if (!equipable.isHogSaddled() && mount.canAcceptSaddle()) {
-                if (!entity.level.isClientSide) {
+                if (!entity.level().isClientSide) {
                     equipable.equipHogSaddle(SoundSource.NEUTRAL);
                     stack.shrink(1);
                 }
 
-                return InteractionResult.sidedSuccess(entity.level.isClientSide);
+                return InteractionResult.sidedSuccess(entity.level().isClientSide);
             }
         }
 

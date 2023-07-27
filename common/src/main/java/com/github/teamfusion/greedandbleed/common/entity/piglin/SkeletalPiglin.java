@@ -129,7 +129,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
     // EXPERIENCE POINTS
     @Override
     public int getExperienceReward() {
-        return 2 + this.level.random.nextInt(2);
+        return 2 + this.level().random.nextInt(2);
     }
 
 
@@ -191,7 +191,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
     @Override
     public void setBaby(boolean baby) {
         this.getEntityData().set(DATA_BABY_ID, baby);
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             AttributeInstance instance = this.getAttribute(Attributes.MOVEMENT_SPEED);
             if (instance != null) {
                 instance.removeModifier(SPEED_MODIFIER_BABY);

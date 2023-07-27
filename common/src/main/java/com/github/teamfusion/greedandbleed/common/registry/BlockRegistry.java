@@ -7,8 +7,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -17,7 +15,7 @@ import java.util.function.Supplier;
 public class BlockRegistry {
     public static final CoreRegistry<Block> BLOCKS = CoreRegistry.of(BuiltInRegistries.BLOCK, GreedAndBleed.MOD_ID);
 
-    public static final Supplier<Block> HOGDEW_PLANKS = create("hogdew_planks", () -> new Block(BlockBehaviour.Properties.of(Material.NETHER_WOOD, MaterialColor.TERRACOTTA_PINK)));
+    public static final Supplier<Block> HOGDEW_PLANKS = create("hogdew_planks", () -> new Block(BlockBehaviour.Properties.of()));
 
     public static <T extends Block> Supplier<T> create(String key, Supplier<T> entry) {
         return BLOCKS.create(key, entry);

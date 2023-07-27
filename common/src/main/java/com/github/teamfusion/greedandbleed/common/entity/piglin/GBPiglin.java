@@ -63,7 +63,7 @@ public abstract class GBPiglin extends AbstractPiglin implements HasTaskManager 
     @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean isHurt = super.hurt(source, amount);
-        if (this.level.isClientSide) {
+        if (this.level().isClientSide) {
             return false;
         } else {
             if (isHurt && source.getEntity() instanceof LivingEntity living) {
@@ -76,7 +76,7 @@ public abstract class GBPiglin extends AbstractPiglin implements HasTaskManager 
 
     @Nullable @Override
     protected SoundEvent getAmbientSound() {
-        return this.level.isClientSide ? null : this.taskManager.getSoundForCurrentActivity().orElse(null);
+        return this.level().isClientSide ? null : this.taskManager.getSoundForCurrentActivity().orElse(null);
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class GBPiglin extends AbstractPiglin implements HasTaskManager 
     @Override
     public void setBaby(boolean baby) {
         this.getEntityData().set(DATA_BABY_ID, baby);
-        if (!this.level.isClientSide) {
+        if (!this.level().isClientSide) {
             AttributeInstance movementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED);
             if (movementSpeed != null) {
                 movementSpeed.removeModifier(SPEED_MODIFIER_BABY);
