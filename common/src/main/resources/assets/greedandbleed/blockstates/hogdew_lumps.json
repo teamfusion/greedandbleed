@@ -5,7 +5,7 @@
         "north": "true"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps"
+        "model": "greedandbleed:block/hogdew_lumps"
       }
     },
     {
@@ -18,7 +18,7 @@
         "west": "false"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps"
+        "model": "greedandbleed:block/hogdew_lumps"
       }
     },
     {
@@ -26,7 +26,7 @@
         "east": "true"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "y": 90,
         "uvlock": true
       }
@@ -41,7 +41,7 @@
         "west": "false"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "y": 90,
         "uvlock": true
       }
@@ -51,7 +51,7 @@
         "south": "true"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "y": 180,
         "uvlock": true
       }
@@ -66,7 +66,7 @@
         "west": "false"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "y": 180,
         "uvlock": true
       }
@@ -76,7 +76,7 @@
         "west": "true"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "y": 270,
         "uvlock": true
       }
@@ -91,7 +91,7 @@
         "west": "false"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "y": 270,
         "uvlock": true
       }
@@ -101,7 +101,7 @@
         "up": "true"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "x": 270,
         "uvlock": true
       }
@@ -116,7 +116,7 @@
         "west": "false"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "x": 270,
         "uvlock": true
       }
@@ -126,7 +126,7 @@
         "down": "true"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "x": 90,
         "uvlock": true
       }
@@ -141,7 +141,7 @@
         "west": "false"
       },
       "apply": {
-        "model": "greedandbleed:blcok/hogdew_lumps",
+        "model": "greedandbleed:block/hogdew_lumps",
         "x": 90,
         "uvlock": true
       }

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "planks",
+  "ingredients": [
+    {
+      "tag": "greedandbleed:hogdew_stem"
+    }
+  ],
+  "result": {
+    "item": "greedandbleed:hogdew_planks",
+    "count": 4
+  }
+}

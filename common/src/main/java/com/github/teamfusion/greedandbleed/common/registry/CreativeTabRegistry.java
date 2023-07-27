@@ -31,6 +31,8 @@ public class CreativeTabRegistry {
                             BlockRegistry.HOGDEW_STEM,
                             BlockRegistry.STRIPPED_HOGDEW_STEM,
                             BlockRegistry.HOGDEW_PLANKS,
+                            BlockRegistry.HOGDEW_PLANKS_STAIRS,
+                            BlockRegistry.HOGDEW_PLANKS_SLAB,
                             BlockRegistry.HOGDEW_WART_BLOCK,
                             BlockRegistry.HOGDEW_FUNGUS,
                             BlockRegistry.HOGDEW_LUMPS

@@ -19,6 +19,8 @@ public class BlockRegistry {
     public static final CoreRegistry<Block> BLOCKS = CoreRegistry.of(BuiltInRegistries.BLOCK, GreedAndBleed.MOD_ID);
 
     public static final Supplier<Block> HOGDEW_PLANKS = createWithItem("hogdew_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
+    public static final Supplier<Block> HOGDEW_PLANKS_STAIRS = createWithItem("hogdew_stairs", () -> new StairBlock(HOGDEW_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
+    public static final Supplier<Block> HOGDEW_PLANKS_SLAB = createWithItem("hogdew_slab", () -> new SlabBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
     public static final Supplier<Block> HOGDEW_WART_BLOCK = createWithItem("hogdew_wart_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(1.0f).sound(SoundType.NETHER_WART)));
     public static final Supplier<Block> HOGDEW_STEM = createWithItem("hogdew_stem", () -> netherStem(MapColor.COLOR_PINK));
     public static final Supplier<Block> STRIPPED_HOGDEW_STEM = createWithItem("stripped_hogdew_stem", () -> netherStem(MapColor.COLOR_PINK));

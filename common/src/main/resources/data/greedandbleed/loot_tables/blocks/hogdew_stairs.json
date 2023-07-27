@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "greedandbleed:hogdew_wart_block"
+          "name": "greedandbleed:hogdew_stairs"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "greeddandbleed:blocks/hogdew_wart_block"
+  "random_sequence": "greedandbleed:blocks/hogdew_stairs"
 }

@@ -7,14 +7,17 @@ import com.github.teamfusion.greedandbleed.client.models.SkeletalPiglinModel;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.client.renderer.HogletRenderer;
 import com.github.teamfusion.greedandbleed.client.renderer.SkeletalPiglinRenderer;
+import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.platform.client.RenderRegistry;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ClientSetup {
@@ -41,5 +44,6 @@ public class ClientSetup {
     }
 
     public static void onInitialized() {
+        RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_FUNGUS.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_LUMPS.get()));
     }
 }
