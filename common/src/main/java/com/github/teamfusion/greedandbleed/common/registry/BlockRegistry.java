@@ -25,9 +25,9 @@ public class BlockRegistry {
     public static final Supplier<Block> HOGDEW_STEM = createWithItem("hogdew_stem", () -> netherStem(MapColor.COLOR_PINK));
     public static final Supplier<Block> STRIPPED_HOGDEW_STEM = createWithItem("stripped_hogdew_stem", () -> netherStem(MapColor.COLOR_PINK));
     public static final Supplier<Block> HOGDEW_NYLIUM = createWithItem("hogdew_nylium", () -> new NyliumBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.4f).sound(SoundType.NYLIUM).randomTicks()));
-    public static final Supplier<Block> HOGDEW_FUNGUS = createWithItem("hogdew_fungus", () -> new NetherSproutsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().instabreak().sound(SoundType.NETHER_SPROUTS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY)));
+    public static final Supplier<Block> HOGDEW_FUNGUS = createWithItem("hogdew_fungus", () -> new NetherSproutsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().instabreak().sound(SoundType.FUNGUS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY)));
 
-    public static final Supplier<Block> HOGDEW_LUMPS = createWithItem("hogdew_lumps", () -> new GlowLichenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().strength(0.2f).sound(SoundType.GLOW_LICHEN).lightLevel(GlowLichenBlock.emission(10)).pushReaction(PushReaction.DESTROY)));
+    public static final Supplier<Block> HOGDEW_LUMPS = createWithItem("hogdew_lumps", () -> new GlowLichenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().strength(0.2f).sound(SoundType.FUNGUS).lightLevel(GlowLichenBlock.emission(10)).pushReaction(PushReaction.DESTROY)));
 
     private static Block netherStem(MapColor mapColor) {
         return new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(blockState -> mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0f).sound(SoundType.STEM));

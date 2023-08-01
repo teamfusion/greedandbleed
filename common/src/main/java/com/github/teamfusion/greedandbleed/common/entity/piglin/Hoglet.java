@@ -1,5 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
+import com.github.teamfusion.greedandbleed.common.entity.goal.AngryForStealerGoal;
+import com.github.teamfusion.greedandbleed.common.entity.goal.DiggingHogdewGoal;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,6 +34,10 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Hoglet.class, EntityDataSerializers.INT);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private UUID persistentAngerTarget;
+    public final AnimationState diggingAnimationState = new AnimationState();
+
+    @Nullable
+    private LivingEntity stealTarget;
 
     public Hoglet(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -39,13 +45,29 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     }
 
     @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> entityDataAccessor) {
+        if (DATA_POSE.equals(entityDataAccessor)) {
+            switch (this.getPose()) {
+                case DIGGING: {
+                    this.diggingAnimationState.start(this.tickCount);
+                    break;
+                }
+            }
+        }
+        super.onSyncedDataUpdated(entityDataAccessor);
+    }
+
+    @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
-        this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, true));
+        this.goalSelector.addGoal(4, new AngryForStealerGoal(this, 1.2D));
+        this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.15D, 10.0F, 2.0F, false));
+        this.goalSelector.addGoal(6, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(7, new DiggingHogdewGoal(this, 1.0D, 8, (int) (1.375 * 20), (int) (1.75 * 20)));
+
+        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.9D));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
@@ -172,5 +194,14 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
 
             return super.hurt(source, amount);
         }
+    }
+
+    @Nullable
+    public void setStealTarget(LivingEntity stealTarget) {
+        this.stealTarget = stealTarget;
+    }
+
+    public LivingEntity getStealTarget() {
+        return stealTarget;
     }
 }
