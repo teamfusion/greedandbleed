@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.common.entity.goal.AngryForStealerGoal;
 import com.github.teamfusion.greedandbleed.common.entity.goal.DiggingHogdewGoal;
+import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -13,6 +14,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -21,6 +24,10 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -33,6 +40,10 @@ import java.util.UUID;
 public class Hoglet extends TamableAnimal implements NeutralMob {
     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Hoglet.class, EntityDataSerializers.INT);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
+
+    private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(Items.NETHER_WART);
+
+
     private UUID persistentAngerTarget;
     public final AnimationState diggingAnimationState = new AnimationState();
 
@@ -75,6 +86,81 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
+    }
+
+    @Override
+    public boolean isFood(ItemStack itemStack) {
+        return TEMPT_INGREDIENT.test(itemStack);
+    }
+
+    public boolean hasHogdew() {
+        return this.isHolding(BlockRegistry.HOGDEW_FUNGUS.get().asItem());
+    }
+
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
+        InteractionResult interactionResult;
+        ItemStack itemStack = player.getItemInHand(interactionHand);
+        Item item = itemStack.getItem();
+        if (this.level().isClientSide) {
+            if (this.isTame() && this.isOwnedBy(player)) {
+                return InteractionResult.SUCCESS;
+            }
+            if (this.isFood(itemStack) && (this.getHealth() < this.getMaxHealth() || !this.isTame())) {
+                return InteractionResult.SUCCESS;
+            }
+            if (this.hasHogdew() && itemStack.isEmpty()) {
+                return InteractionResult.SUCCESS;
+            }
+            return InteractionResult.PASS;
+        }
+
+        if (this.hasHogdew() && itemStack.isEmpty()) {
+            if (!this.isTame()) {
+                this.setStealTarget(player);
+            }
+            ItemStack hogdew = this.getItemInHand(InteractionHand.MAIN_HAND);
+            ItemStack itemStack2 = hogdew.split(1);
+            if (!player.getInventory().add(itemStack2)) {
+                player.drop(itemStack2, false);
+            }
+            return InteractionResult.SUCCESS;
+        }
+        if (this.isTame()) {
+            if (this.isOwnedBy(player)) {
+
+                if (item.isEdible() && this.isFood(itemStack) && this.getHealth() < this.getMaxHealth()) {
+                    this.usePlayerItem(player, interactionHand, itemStack);
+                    if (item.getFoodProperties() != null) {
+                        this.heal(item.getFoodProperties().getNutrition());
+                    } else {
+                        this.heal(2);
+                    }
+                    return InteractionResult.CONSUME;
+                }
+                InteractionResult interactionResult2 = super.mobInteract(player, interactionHand);
+                if (!interactionResult2.consumesAction() || this.isBaby()) {
+                    this.setOrderedToSit(!this.isOrderedToSit());
+                }
+                return interactionResult2;
+            }
+        } else if (this.isFood(itemStack)) {
+            this.usePlayerItem(player, interactionHand, itemStack);
+            if (this.random.nextInt(3) == 0) {
+                this.tame(player);
+                this.setOrderedToSit(true);
+                ((Level) this.level()).broadcastEntityEvent(this, (byte) 7);
+            } else {
+                ((Level) this.level()).broadcastEntityEvent(this, (byte) 6);
+            }
+            this.setPersistenceRequired();
+            return InteractionResult.CONSUME;
+        }
+        if ((interactionResult = super.mobInteract(player, interactionHand)).consumesAction()) {
+            this.setPersistenceRequired();
+        }
+        return interactionResult;
     }
 
     public static AttributeSupplier.Builder setCustomAttributes() {

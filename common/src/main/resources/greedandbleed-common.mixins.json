@@ -10,7 +10,6 @@
   ],
   "mixins": [
     "HoglinMixin",
-    "ItemEntityMixin",
     "LivingEntityMixin",
     "PlayerMixin",
     "PlayerSensorMixin",

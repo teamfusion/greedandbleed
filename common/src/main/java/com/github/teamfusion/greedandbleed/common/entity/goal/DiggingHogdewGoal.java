@@ -3,13 +3,12 @@ package com.github.teamfusion.greedandbleed.common.entity.goal;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.Vec3;
 
 public class DiggingHogdewGoal extends MoveToBlockGoal {
     protected boolean digging;
@@ -62,7 +61,7 @@ public class DiggingHogdewGoal extends MoveToBlockGoal {
                 this.mob.level().levelEvent(2001, this.blockPos, Block.getId(this.mob.level().getBlockState(this.blockPos)));
                 this.mob.level().removeBlock(blockPos, false);
                 this.mob.playSound(SoundEvents.FUNGUS_BREAK);
-                BehaviorUtils.throwItem(this.mob, BlockRegistry.HOGDEW_FUNGUS.get().asItem().getDefaultInstance(), Vec3.ZERO);
+                this.mob.setItemInHand(InteractionHand.MAIN_HAND, BlockRegistry.HOGDEW_FUNGUS.get().asItem().getDefaultInstance());
                 this.mob.setPose(Pose.STANDING);
             }
             if (this.diggingTick == this.animationLengh) {
