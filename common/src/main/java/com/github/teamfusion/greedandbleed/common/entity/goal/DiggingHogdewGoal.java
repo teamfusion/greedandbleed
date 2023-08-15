@@ -24,6 +24,11 @@ public class DiggingHogdewGoal extends MoveToBlockGoal {
     }
 
     @Override
+    public boolean canUse() {
+        return !this.mob.getMainHandItem().is(BlockRegistry.HOGDEW_FUNGUS.get().asItem()) && super.canUse();
+    }
+
+    @Override
     public boolean canContinueToUse() {
         if (this.diggingStop) {
             return false;

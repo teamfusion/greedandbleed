@@ -7,8 +7,12 @@ import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeManager;
+import dev.architectury.registry.level.biome.BiomeModifications;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 
 public class CommonSetup {
     public static void onBootstrap() {
@@ -17,6 +21,16 @@ public class CommonSetup {
     }
 
     public static void onInitialized() {
+        BiomeModifications.addProperties((biomeContext, mutable) -> {
+            if (Biomes.CRIMSON_FOREST.location() == biomeContext.getKey().get()) {
+                mutable.getSpawnProperties().addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.HOGLET.get(), 10, 2, 4));
+            }
+
+            if (Biomes.SOUL_SAND_VALLEY.location() == biomeContext.getKey().get()) {
+                mutable.getSpawnProperties().addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.SKELETAL_PIGLIN.get(), 10, 4, 5));
+                mutable.getSpawnProperties().setSpawnCost(EntityTypeRegistry.SKELETAL_PIGLIN.get(), 0.7, 0.15);
+            }
+        });
         BiomeManager.setup();
         GreedAndBleedNetwork.registerReceivers();
     }

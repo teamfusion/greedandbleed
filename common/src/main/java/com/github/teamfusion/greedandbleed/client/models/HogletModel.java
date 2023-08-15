@@ -15,10 +15,10 @@ import net.minecraft.util.Mth;
 
 public class HogletModel<T extends Hoglet> extends HierarchicalModel<T> {
     private final ModelPart root;
-    private final ModelPart body;
+    public final ModelPart body;
     private final ModelPart leftFrontLeg;
     private final ModelPart rightFrontLeg;
-    private final ModelPart head;
+    public final ModelPart head;
     private final ModelPart pelvis;
     private final ModelPart leftHindLeg;
     private final ModelPart rightHindLeg;

@@ -98,7 +98,7 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     }
 
     public boolean hasHogdew() {
-        return this.isHolding(BlockRegistry.HOGDEW_FUNGUS.get().asItem());
+        return this.getMainHandItem().is(BlockRegistry.HOGDEW_FUNGUS.get().asItem());
     }
 
 
@@ -288,6 +288,9 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
 
     @Nullable
     public void setStealTarget(LivingEntity stealTarget) {
+        if (stealTarget != null && stealTarget != this.stealTarget) {
+            this.playSound(SoundEvents.HOGLIN_ANGRY, this.getSoundVolume(), this.getVoicePitch());
+        }
         this.stealTarget = stealTarget;
     }
 
