@@ -46,6 +46,7 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
 
     private UUID persistentAngerTarget;
     public final AnimationState diggingAnimationState = new AnimationState();
+    public final AnimationState angryAnimationState = new AnimationState();
 
     @Nullable
     private LivingEntity stealTarget;
@@ -62,6 +63,9 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
                 case DIGGING: {
                     this.diggingAnimationState.start(this.tickCount);
                     break;
+                }
+                case ROARING: {
+                    this.angryAnimationState.start(this.tickCount);
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.common.entity.goal;
 
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +13,8 @@ public class AngryForStealerGoal extends Goal {
     protected final Hoglet hoglet;
     protected final double speed;
     protected boolean revengeComplete;
+
+    private int tick = 0;
 
     public AngryForStealerGoal(Hoglet hoglet, double speed) {
         this.setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
@@ -32,7 +35,9 @@ public class AngryForStealerGoal extends Goal {
     @Override
     public void start() {
         super.start();
+        this.tick = 0;
         this.revengeComplete = false;
+        this.hoglet.setPose(Pose.ROARING);
     }
 
     @Override
@@ -54,22 +59,30 @@ public class AngryForStealerGoal extends Goal {
     @Override
     public void tick() {
         super.tick();
-        LivingEntity stealer = this.hoglet.getStealTarget();
-        if (stealer != null) {
-            this.hoglet.getNavigation().moveTo(stealer, this.speed);
-            if (this.hoglet.distanceToSqr(stealer) < 6) {
-                if (stealer instanceof Player player) {
-                    ItemStack stack = findFood(player);
-                    if (!stack.isEmpty()) {
-                        this.hoglet.eat(this.hoglet.level(), stack);
-                    } else {
-                        player.hurt(this.hoglet.damageSources().mobAttack(this.hoglet), 0.5F);
-                    }
-                } else {
-                    stealer.hurt(this.hoglet.damageSources().mobAttack(this.hoglet), 0.5F);
-                }
-                this.revengeComplete = true;
+        ++this.tick;
+        if (this.tick > 0.75F * 20) {
+            if (this.hoglet.getPose() != Pose.STANDING) {
+                this.hoglet.setPose(Pose.STANDING);
             }
+            LivingEntity stealer = this.hoglet.getStealTarget();
+            if (stealer != null) {
+                this.hoglet.getNavigation().moveTo(stealer, this.speed);
+                if (this.hoglet.distanceToSqr(stealer) < 6) {
+                    if (stealer instanceof Player player) {
+                        ItemStack stack = findFood(player);
+                        if (!stack.isEmpty()) {
+                            this.hoglet.eat(this.hoglet.level(), stack);
+                        } else {
+                            player.hurt(this.hoglet.damageSources().mobAttack(this.hoglet), 0.5F);
+                        }
+                    } else {
+                        stealer.hurt(this.hoglet.damageSources().mobAttack(this.hoglet), 0.5F);
+                    }
+                    this.revengeComplete = true;
+                }
+            }
+        } else {
+            this.hoglet.getNavigation().stop();
         }
     }
 }

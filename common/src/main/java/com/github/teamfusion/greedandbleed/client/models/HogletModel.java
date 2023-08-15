@@ -101,6 +101,7 @@ public class HogletModel<T extends Hoglet> extends HierarchicalModel<T> {
             this.applyStatic(HogletAnimation.BABY);
         }
         this.animate(entity.diggingAnimationState, HogletAnimation.DIGGING, ageInTicks);
+        this.animate(entity.angryAnimationState, HogletAnimation.ANGRY, ageInTicks);
     }
 
     @Override
