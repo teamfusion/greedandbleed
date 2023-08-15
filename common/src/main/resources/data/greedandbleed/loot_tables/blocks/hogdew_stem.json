@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "greeddandbleed:hogdew_stem"
+          "name": "greedandbleed:hogdew_stem"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "greeddandbleed:blocks/hogdew_stem"
+  "random_sequence": "greedandbleed:blocks/hogdew_stem"
 }

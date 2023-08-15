@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "greeddandbleed:hogdew_planks"
+          "name": "greedandbleed:hogdew_planks"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "greeddandbleed:blocks/hogdew_planks"
+  "random_sequence": "greedandbleed:blocks/hogdew_planks"
 }
