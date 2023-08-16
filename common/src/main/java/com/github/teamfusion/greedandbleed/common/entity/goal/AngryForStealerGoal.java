@@ -12,9 +12,10 @@ import java.util.EnumSet;
 public class AngryForStealerGoal extends Goal {
     protected final Hoglet hoglet;
     protected final double speed;
-    protected boolean revengeComplete;
 
     private int tick = 0;
+    private int eatCooldown = 0;
+    private int eatCount = 0;
 
     public AngryForStealerGoal(Hoglet hoglet, double speed) {
         this.setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
@@ -29,14 +30,14 @@ public class AngryForStealerGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return !this.revengeComplete && super.canContinueToUse();
+        return this.eatCount < 10 && super.canContinueToUse();
     }
 
     @Override
     public void start() {
         super.start();
         this.tick = 0;
-        this.revengeComplete = false;
+        this.eatCount = 0;
         this.hoglet.setPose(Pose.ROARING);
     }
 
@@ -60,25 +61,36 @@ public class AngryForStealerGoal extends Goal {
     public void tick() {
         super.tick();
         ++this.tick;
+        if (this.eatCooldown > 0) {
+            --this.eatCooldown;
+        }
         if (this.tick > 0.75F * 20) {
             if (this.hoglet.getPose() != Pose.STANDING) {
                 this.hoglet.setPose(Pose.STANDING);
             }
             LivingEntity stealer = this.hoglet.getStealTarget();
             if (stealer != null) {
-                this.hoglet.getNavigation().moveTo(stealer, this.speed);
-                if (this.hoglet.distanceToSqr(stealer) < 6) {
-                    if (stealer instanceof Player player) {
-                        ItemStack stack = findFood(player);
-                        if (!stack.isEmpty()) {
-                            this.hoglet.eat(this.hoglet.level(), stack);
+                if (eatCooldown <= 0) {
+                    this.hoglet.getNavigation().moveTo(stealer, this.speed);
+
+                    if (this.hoglet.distanceToSqr(stealer) < 6) {
+                        if (stealer instanceof Player player) {
+                            ItemStack stack = findFood(player);
+                            if (!stack.isEmpty()) {
+                                this.hoglet.eat(this.hoglet.level(), stack);
+                                ++this.eatCount;
+                                this.eatCooldown = 10;
+                            } else {
+                                player.hurt(this.hoglet.damageSources().mobAttack(this.hoglet), 0.5F);
+                                this.eatCount += 10;
+                                this.eatCooldown = 10;
+                            }
                         } else {
-                            player.hurt(this.hoglet.damageSources().mobAttack(this.hoglet), 0.5F);
+                            stealer.hurt(this.hoglet.damageSources().mobAttack(this.hoglet), 0.5F);
+                            this.eatCount += 10;
+                            this.eatCooldown = 10;
                         }
-                    } else {
-                        stealer.hurt(this.hoglet.damageSources().mobAttack(this.hoglet), 0.5F);
                     }
-                    this.revengeComplete = true;
                 }
             }
         } else {

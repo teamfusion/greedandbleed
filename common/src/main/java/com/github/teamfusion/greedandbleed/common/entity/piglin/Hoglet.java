@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -203,7 +205,12 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     }
 
     public static boolean checkHogletSpawnRules(EntityType<Hoglet> hoglet, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        return !level.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK);
+        return !level.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK) && !level.getBlockState(pos.below()).isAir() && level.getBlockState(pos).isAir();
+    }
+
+    @Override
+    public float getWalkTargetValue(BlockPos blockPos, LevelReader levelReader) {
+        return levelReader.getBlockState(blockPos.below()).is(BlockTags.NYLIUM) ? 10.0F : 0.0F;
     }
 
     @Override
@@ -296,5 +303,15 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
 
     public LivingEntity getStealTarget() {
         return stealTarget;
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return false;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double d) {
+        return !this.isTame() && !this.hasHogdew();
     }
 }

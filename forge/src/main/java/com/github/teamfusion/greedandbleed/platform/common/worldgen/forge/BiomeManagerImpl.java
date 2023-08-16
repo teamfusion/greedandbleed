@@ -1,11 +1,19 @@
 package com.github.teamfusion.greedandbleed.platform.common.worldgen.forge;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = GreedAndBleed.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BiomeManagerImpl {
     public static void setup() {
+    }
+
+    public static <T extends Mob> void registrySpawnPlacement(EntityType<T> entityType, SpawnPlacements.Type placementType, Heightmap.Types heightTypes, SpawnPlacements.SpawnPredicate<T> spawnPredicate) {
+        SpawnPlacements.register(entityType, placementType, heightTypes, spawnPredicate);
     }
 
     //TODO Rewrite to 1.19.4
