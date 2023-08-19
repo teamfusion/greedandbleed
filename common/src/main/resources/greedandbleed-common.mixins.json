@@ -3,18 +3,18 @@
   "package": "com.github.teamfusion.greedandbleed.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "client.MultiPlayerGameModeMixin",
-    "client.RemotePlayerMixin",
+    "client.HoglinRendererMixin",
     "client.LocalPlayerMixin",
-    "client.HoglinRendererMixin"
+    "client.MultiPlayerGameModeMixin",
+    "client.RemotePlayerMixin"
   ],
   "mixins": [
     "HoglinMixin",
     "LivingEntityMixin",
     "PlayerMixin",
-    "ServerPlayerMixin",
     "PlayerSensorMixin",
-    "ServerGamePacketListenerImplMixin"
+    "ServerGamePacketListenerImplMixin",
+    "ServerPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -59,7 +59,7 @@ public class GBHoglinModelComplete<T extends Mob & HoglinBase> extends AgeableLi
         partDefinition2.addOrReplaceChild("mane", CubeListBuilder.create().texOffs(90, 33).addBox(0.0F, 0.0F, -9.0F, 0.0F, 10.0F, 19.0F, new CubeDeformation(0.001F)), PartPose.offset(0.0F, -14.0F, -5.0F));
         partDefinition2.addOrReplaceChild("right_chest", CubeListBuilder.create().texOffs(0, 67).mirror().addBox(-11.0F, -22.0F, 10.0F, 3.0F, 8.0F, 8.0F, new CubeDeformation(0.00F)).mirror(false), PartPose.offset(0.0F, 18.0F, -17.0F));
         partDefinition2.addOrReplaceChild("left_chest", CubeListBuilder.create().texOffs(0, 67).addBox(8.0F, -22.0F, 10.0F, 3.0F, 8.0F, 8.0F, new CubeDeformation(0.00F)), PartPose.offset(0.0F, 18.0F, -17.0F));
-        partDefinition2.addOrReplaceChild("saddle", CubeListBuilder.create().texOffs(1, 63).addBox(-8.0F, -24.0F, -25.5F + 13.0F, 16.0F, 16.0F, 26.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 18.0F, 0.0F));
+        partDefinition2.addOrReplaceChild("saddle", CubeListBuilder.create().texOffs(1, 63).addBox(-8.0F, -25.0F, -25.5F + 13.0F, 16.0F, 16.0F, 26.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 18.0F, 0.0F));
 
 
         PartDefinition partDefinition3 = partDefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(61, 1).addBox(-7.0F, -3.0F, -19.0F, 14.0F, 6.0F, 19.0F, new CubeDeformation(size)), PartPose.offsetAndRotation(0.0F, 2.0F, -12.0F, 0.87266463F, 0.0F, 0.0F));

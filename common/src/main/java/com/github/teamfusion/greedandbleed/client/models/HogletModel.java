@@ -1,9 +1,10 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
+import com.github.teamfusion.greedandbleed.client.aniamtion.HogletAnimation;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -12,15 +13,17 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
-public class HogletModel<T extends Hoglet> extends EntityModel<T> {
-    private final ModelPart body;
+public class HogletModel<T extends Hoglet> extends HierarchicalModel<T> {
+    private final ModelPart root;
+    public final ModelPart body;
     private final ModelPart leftFrontLeg;
     private final ModelPart rightFrontLeg;
-    private final ModelPart head;
+    public final ModelPart head;
     private final ModelPart pelvis;
     private final ModelPart leftHindLeg;
     private final ModelPart rightHindLeg;
     public HogletModel(ModelPart root) {
+        this.root = root;
         this.body = root.getChild("body");
         this.leftFrontLeg = this.body.getChild("left_front_leg");
         this.rightFrontLeg = this.body.getChild("right_front_leg");
@@ -86,18 +89,29 @@ public class HogletModel<T extends Hoglet> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.head.yRot = netHeadYaw * ((float)Math.PI / 180.0F);
-        this.head.xRot = headPitch * ((float)Math.PI / 180.0F);
+        this.root().getAllParts().forEach(ModelPart::resetPose);
+        this.head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
+        this.head.xRot = headPitch * ((float) Math.PI / 180.0F);
 
         this.rightFrontLeg.xRot = Mth.cos(limbSwing) * 1.2F * limbSwingAmount;
-        this.leftFrontLeg.xRot = Mth.cos(limbSwing + (float)Math.PI) * 1.2F * limbSwingAmount;
+        this.leftFrontLeg.xRot = Mth.cos(limbSwing + (float) Math.PI) * 1.2F * limbSwingAmount;
         this.rightHindLeg.xRot = this.leftFrontLeg.xRot;
         this.leftHindLeg.xRot = this.rightFrontLeg.xRot;
+        if (this.young) {
+            this.applyStatic(HogletAnimation.BABY);
+        }
+        this.animate(entity.diggingAnimationState, HogletAnimation.DIGGING, ageInTicks);
+        this.animate(entity.angryAnimationState, HogletAnimation.ANGRY, ageInTicks);
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         this.body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         this.pelvis.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
+    @Override
+    public ModelPart root() {
+        return this.root;
     }
 }

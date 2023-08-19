@@ -4,7 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +22,11 @@ public class BiomeManager {
 
     @ExpectPlatform
     public static void setup() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static <T extends Mob> void registrySpawnPlacement(EntityType<T> entityType, SpawnPlacements.Type placementType, Heightmap.Types heightTypes, SpawnPlacements.SpawnPredicate<T> spawnPredicate) {
         throw new AssertionError();
     }
 
