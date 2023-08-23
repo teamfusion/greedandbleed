@@ -9,6 +9,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +21,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class LivingEntityMixin {
     @Shadow
     public abstract boolean hasEffect(MobEffect mobEffect);
+
+    @Shadow
+    public abstract @Nullable MobEffectInstance getEffect(MobEffect mobEffect);
 
     private final LivingEntity $this = (LivingEntity)(Object)this;
 
@@ -36,7 +40,7 @@ public abstract class LivingEntityMixin {
 
     @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
     public void canBeAffected(MobEffectInstance mobEffectInstance, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        if (hasEffect(PotionRegistry.IMMUNITY.get())) {
+        if (hasEffect(PotionRegistry.IMMUNITY.get()) && getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
             if (mobEffectInstance.getEffect().getCategory() == MobEffectCategory.HARMFUL) {
                 if (mobEffectInstance.getEffect() != MobEffects.WITHER || mobEffectInstance.getEffect() != MobEffects.DIG_SLOWDOWN || mobEffectInstance.getEffect() != MobEffects.LEVITATION) {
                     callbackInfoReturnable.setReturnValue(false);
