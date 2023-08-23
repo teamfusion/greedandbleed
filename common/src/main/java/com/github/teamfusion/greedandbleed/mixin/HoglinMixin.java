@@ -8,6 +8,7 @@ import com.github.teamfusion.greedandbleed.common.entity.HasMountInventory;
 import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
 import com.github.teamfusion.greedandbleed.common.item.HoglinArmorItem;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -60,6 +61,12 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
 
     //MIXINS
 
+    @Inject(method = "isConverting", at = @At("HEAD"), cancellable = true)
+    public void isConverting(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+        if (this.hasEffect(PotionRegistry.IMMUNITY.get())) {
+            callbackInfoReturnable.setReturnValue(false);
+        }
+    }
     @Inject(method = "finishConversion", at = @At("RETURN"))
     private void gb$dropInventoryWhenZombified(ServerLevel level, CallbackInfo ci) {
         this.dropEquipment();

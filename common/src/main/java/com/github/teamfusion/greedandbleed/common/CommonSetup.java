@@ -5,6 +5,7 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeManager;
 import dev.architectury.registry.level.biome.BiomeModifications;
@@ -24,6 +25,7 @@ public class CommonSetup {
     }
 
     public static void onInitialized() {
+        PotionRegistry.init();
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGLET.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hoglet::checkHogletSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKELETAL_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
 

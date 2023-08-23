@@ -9,10 +9,12 @@
     "client.RemotePlayerMixin"
   ],
   "mixins": [
+    "AbstractPiglinMixin",
     "HoglinMixin",
     "LivingEntityMixin",
     "PlayerMixin",
     "PlayerSensorMixin",
+    "PotionBrewingMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerMixin"
   ],
