@@ -9,12 +9,17 @@
     "client.RemotePlayerMixin"
   ],
   "mixins": [
+    "AbstractPiglinMixin",
     "HoglinMixin",
     "LivingEntityMixin",
+    "PigMixin",
     "PlayerMixin",
     "PlayerSensorMixin",
+    "PotionBrewingMixin",
     "ServerGamePacketListenerImplMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "ZoglinMixin",
+    "ZombifiedPiglinMixin"
   ],
   "injectors": {
     "defaultRequire": 1

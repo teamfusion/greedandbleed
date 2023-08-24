@@ -13,5 +13,18 @@
   "item.greedandbleed.hoglet_spawn_egg": "Hoglet Spawn Egg",
   "item.greedandbleed.skeletal_piglin_spawn_egg": "Skeletal Piglin Spawn Egg",
   "enchantment.greedandbleed.woe_of_swines": "Woe of Swines",
+  "effect.greedandbleed.immunity": "Immunity",
+  "item.minecraft.potion.effect.immunity": "Potion of Immunity",
+  "item.minecraft.splash_potion.effect.immunity": "Splash Potion of Immunity",
+  "item.minecraft.lingering_potion.effect.immunity": "Lingering Potion of Immunity",
+  "item.minecraft.tipped_arrow.effect.immunity": "Arrow of Immunity",
+  "item.minecraft.potion.effect.long_immunity": "Potion of Immunity",
+  "item.minecraft.splash_potion.effect.long_immunity": "Splash Potion of Immunity",
+  "item.minecraft.lingering_potion.effect.long_immunity": "Lingering Potion of Immunity",
+  "item.minecraft.tipped_arrow.effect.long_immunity": "Arrow of Immunity",
+  "item.minecraft.potion.effect.strong_immunity": "Potion of Immunity",
+  "item.minecraft.splash_potion.effect.strong_immunity": "Splash Potion of Immunity",
+  "item.minecraft.lingering_potion.effect.strong_immunity": "Lingering Potion of Immunity",
+  "item.minecraft.tipped_arrow.effect.strong_immunity": "Arrow of Immunity",
   "itemGroup.greedandbleed": "Greed And Bleed"
 }
