@@ -40,7 +40,7 @@ public abstract class LivingEntityMixin {
 
     @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
     public void canBeAffected(MobEffectInstance mobEffectInstance, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        if (hasEffect(PotionRegistry.IMMUNITY.get()) && getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+        if (hasEffect(PotionRegistry.IMMUNITY.get()) && getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > mobEffectInstance.getAmplifier()) {
             if (mobEffectInstance.getEffect().getCategory() == MobEffectCategory.HARMFUL) {
                 if (mobEffectInstance.getEffect() != MobEffects.WITHER || mobEffectInstance.getEffect() != MobEffects.DIG_SLOWDOWN || mobEffectInstance.getEffect() != MobEffects.LEVITATION) {
                     callbackInfoReturnable.setReturnValue(false);

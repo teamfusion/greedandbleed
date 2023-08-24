@@ -7,9 +7,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
+import net.minecraft.world.entity.monster.ZombifiedPiglin;
+import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,40 +17,25 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(AbstractPiglin.class)
-public abstract class AbstractPiglinMixin extends Monster {
+@Mixin(ZombifiedPiglin.class)
+public abstract class ZombifiedPiglinMixin extends Monster {
 
     protected int timeWithImmunity;
-    protected AbstractPiglinMixin(EntityType<? extends Monster> entityType, Level level) {
-        super(entityType, level);
-    }
 
-    @Inject(method = "isConverting", at = @At("HEAD"), cancellable = true)
-    public void isConverting(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        if (this.hasEffect(PotionRegistry.IMMUNITY.get())) {
-            callbackInfoReturnable.setReturnValue(false);
-        }
+    protected ZombifiedPiglinMixin(EntityType<? extends Monster> entityType, Level level) {
+        super(entityType, level);
     }
 
     @Inject(method = "customServerAiStep", at = @At("HEAD"))
     protected void customServerAiStep(CallbackInfo callbackInfo) {
         if (!this.level().isClientSide()) {
+
             if (this.hasEffect(PotionRegistry.IMMUNITY.get()) && this.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
-                if (hasCorrectConvert()) {
+                if (this.hasCorrectConvert()) {
                     finishImmunity((ServerLevel) this.level());
                 }
             }
-        }
-    }
-
-    protected void finishImmunity(ServerLevel serverLevel) {
-        Pig pig = this.convertTo(EntityType.PIG, true);
-        if (pig != null) {
-            pig.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
-            pig.setPersistenceRequired();
-            pig.playSound(SoundEvents.ZOMBIE_VILLAGER_CONVERTED);
         }
     }
 
@@ -65,5 +50,15 @@ public abstract class AbstractPiglinMixin extends Monster {
             }
         }
         return false;
+    }
+
+    protected void finishImmunity(ServerLevel serverLevel) {
+        Piglin pig = this.convertTo(EntityType.PIGLIN, true);
+        if (pig != null) {
+            pig.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
+            pig.setImmuneToZombification(true);
+            pig.setPersistenceRequired();
+            pig.playSound(SoundEvents.ZOMBIE_VILLAGER_CONVERTED);
+        }
     }
 }

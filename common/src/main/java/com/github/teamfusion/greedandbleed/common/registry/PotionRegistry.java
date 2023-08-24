@@ -19,7 +19,7 @@ public class PotionRegistry {
     public static final CoreRegistry<MobEffect> MOB_EFFECT = CoreRegistry.of(BuiltInRegistries.MOB_EFFECT, GreedAndBleed.MOD_ID);
     public static final CoreRegistry<Potion> POTION = CoreRegistry.of(BuiltInRegistries.POTION, GreedAndBleed.MOD_ID);
 
-    public static final Supplier<MobEffect> IMMUNITY = MOB_EFFECT.create("immunity", () -> new ImmunityBodyEffect(MobEffectCategory.NEUTRAL, 0x869B82));
+    public static final Supplier<MobEffect> IMMUNITY = MOB_EFFECT.create("immunity", () -> new ImmunityBodyEffect(MobEffectCategory.BENEFICIAL, 0x869B82));
     public static final Supplier<Potion> IMMUNITY_POTION = POTION.create("immunity", () -> new Potion(new MobEffectInstance(Objects.requireNonNull(IMMUNITY.get()), 3600)));
 
     public static final Supplier<Potion> LONG_IMMUNITY_POTION = POTION.create("long_immunity", () -> new Potion(new MobEffectInstance(Objects.requireNonNull(IMMUNITY.get()), 9600)));
