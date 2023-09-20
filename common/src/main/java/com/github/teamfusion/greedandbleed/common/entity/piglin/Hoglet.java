@@ -205,7 +205,7 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     }
 
     public static boolean checkHogletSpawnRules(EntityType<Hoglet> hoglet, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        return !level.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK) && !level.getBlockState(pos.below()).isAir() && level.getBlockState(pos).isAir();
+        return !level.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK);
     }
 
     @Override

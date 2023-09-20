@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:nether_forest_vegetation",
+  "config": {
+    "state_provider": {
+      "type": "minecraft:weighted_state_provider",
+      "entries": [
+        {
+          "weight": 5,
+          "data": {
+            "Name": "minecraft:crimson_roots"
+          }
+        },
+        {
+          "weight": 11,
+          "data": {
+            "Name": "greedandbleed:hogdew_fungus"
+          }
+        },
+        {
+          "weight": 1,
+          "data": {
+            "Name": "minecraft:crimson_fungus"
+          }
+        }
+      ]
+    },
+    "spread_width": 8,
+    "spread_height": 4
+  }
+}

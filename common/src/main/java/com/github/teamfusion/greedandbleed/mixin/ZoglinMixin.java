@@ -33,7 +33,11 @@ public abstract class ZoglinMixin extends Monster {
 
             if (this.hasEffect(PotionRegistry.IMMUNITY.get()) && this.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
                 if (hasCorrectConvert()) {
-                    finishImmunity((ServerLevel) this.level());
+                    if (++timeWithImmunity > 300) {
+                        finishImmunity((ServerLevel) this.level());
+                    }
+                } else if (timeWithImmunity > 0) {
+                    --this.timeWithImmunity;
                 }
             }
         }

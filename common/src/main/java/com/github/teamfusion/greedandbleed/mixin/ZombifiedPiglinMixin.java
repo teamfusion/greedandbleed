@@ -32,8 +32,12 @@ public abstract class ZombifiedPiglinMixin extends Monster {
         if (!this.level().isClientSide()) {
 
             if (this.hasEffect(PotionRegistry.IMMUNITY.get()) && this.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
-                if (this.hasCorrectConvert()) {
-                    finishImmunity((ServerLevel) this.level());
+                if (hasCorrectConvert()) {
+                    if (++timeWithImmunity > 300) {
+                        finishImmunity((ServerLevel) this.level());
+                    }
+                } else if (timeWithImmunity > 0) {
+                    --this.timeWithImmunity;
                 }
             }
         }
