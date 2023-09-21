@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:block_pile",
+  "type": "greedandbleed:blob",
   "config": {
     "state_provider": {
       "type": "minecraft:simple_state_provider",
