@@ -4,7 +4,6 @@ import com.github.teamfusion.greedandbleed.common.CommonSetup;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,10 +40,8 @@ public abstract class LivingEntityMixin {
     @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
     public void canBeAffected(MobEffectInstance mobEffectInstance, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         if (hasEffect(PotionRegistry.IMMUNITY.get()) && getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > mobEffectInstance.getAmplifier()) {
-            if (mobEffectInstance.getEffect().getCategory() == MobEffectCategory.HARMFUL) {
-                if (mobEffectInstance.getEffect() != MobEffects.WITHER || mobEffectInstance.getEffect() != MobEffects.DIG_SLOWDOWN || mobEffectInstance.getEffect() != MobEffects.LEVITATION) {
+            if (mobEffectInstance.getEffect() != MobEffects.WITHER || mobEffectInstance.getEffect() != MobEffects.DIG_SLOWDOWN || mobEffectInstance.getEffect() != MobEffects.LEVITATION) {
                     callbackInfoReturnable.setReturnValue(false);
-                }
             }
         }
     }
