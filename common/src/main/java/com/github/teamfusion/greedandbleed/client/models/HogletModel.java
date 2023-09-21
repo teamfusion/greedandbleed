@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
-import com.github.teamfusion.greedandbleed.client.aniamtion.HogletAnimation;
+import com.github.teamfusion.greedandbleed.client.animation.HogletAnimation;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -99,6 +99,9 @@ public class HogletModel<T extends Hoglet> extends HierarchicalModel<T> {
         this.leftHindLeg.xRot = this.rightFrontLeg.xRot;
         if (this.young) {
             this.applyStatic(HogletAnimation.BABY);
+        }
+        if (this.riding || entity.isInSittingPose()) {
+            this.applyStatic(HogletAnimation.SIT);
         }
         this.animate(entity.diggingAnimationState, HogletAnimation.DIGGING, ageInTicks);
         this.animate(entity.angryAnimationState, HogletAnimation.ANGRY, ageInTicks);
