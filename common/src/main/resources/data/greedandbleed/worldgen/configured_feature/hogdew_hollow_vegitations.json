@@ -1,30 +1,30 @@
 {
-  "type": "minecraft:nether_forest_vegetation",
+  "type": "minecraft:random_patch",
   "config": {
-    "state_provider": {
-      "type": "minecraft:weighted_state_provider",
-      "entries": [
-        {
-          "weight": 5,
-          "data": {
-            "Name": "minecraft:crimson_roots"
+    "tries": 32,
+    "xz_spread": 7,
+    "y_spread": 3,
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:simple_state_provider",
+            "state": {
+              "Name": "greedandbleed:hogdew_fungus"
+            }
           }
-        },
+        }
+      },
+      "placement": [
         {
-          "weight": 11,
-          "data": {
-            "Name": "greedandbleed:hogdew_fungus"
-          }
-        },
-        {
-          "weight": 1,
-          "data": {
-            "Name": "minecraft:crimson_fungus"
+          "type": "minecraft:block_predicate_filter",
+          "predicate": {
+            "type": "minecraft:matching_blocks",
+            "blocks": "minecraft:air"
           }
         }
       ]
-    },
-    "spread_width": 8,
-    "spread_height": 4
+    }
   }
 }

@@ -24,7 +24,7 @@ public class BiomeManagerImpl {
         BiomeModifications.create(new ResourceLocation(GreedAndBleed.MOD_ID, "biome_modifier")).add(ModificationPhase.ADDITIONS, context -> true, (selector, modifier) -> {
             BiomeManager.INSTANCE.register(new FabricBiomeWriter(selector, modifier));
         });
-        NetherBiomes.addNetherBiome(BiomeRegistry.HOGDEW_HOLLOW, Climate.parameters(0.4f, 0.35f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
+        NetherBiomes.addNetherBiome(BiomeRegistry.HOGDEW_HOLLOW, Climate.parameters(0.475F, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.125F));
     }
 
     public static <T extends Mob> void registrySpawnPlacement(EntityType<T> entityType, SpawnPlacements.Type placementType, Heightmap.Types heightTypes, SpawnPlacements.SpawnPredicate<T> spawnPredicate) {

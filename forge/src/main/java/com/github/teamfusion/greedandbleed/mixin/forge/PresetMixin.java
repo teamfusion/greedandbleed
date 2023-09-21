@@ -21,7 +21,7 @@ public class PresetMixin {
     public <T extends MultiNoiseBiomeSourceParameterList.Preset> void apply(Function<ResourceKey<Biome>, T> function, CallbackInfoReturnable<Climate.ParameterList<T>> cir) {
         List<Pair<Climate.ParameterPoint, T>> entryList = new ArrayList<>();
 
-        entryList.add(Pair.of(Climate.parameters(0.4f, 0.35f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f), function.apply(BiomeRegistry.HOGDEW_HOLLOW)));
+        entryList.add(Pair.of(Climate.parameters(0.475F, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.125F), function.apply(BiomeRegistry.HOGDEW_HOLLOW)));
         entryList.addAll(cir.getReturnValue().values());
         cir.setReturnValue(new Climate.ParameterList<>(entryList));
     }
