@@ -16,10 +16,21 @@
     },
     "replaceable": "#minecraft:base_stone_nether",
     "ground_state": {
-      "type": "minecraft:simple_state_provider",
-      "state": {
-        "Name": "greedandbleed:hogdew_nylium"
-      }
+      "type": "minecraft:weighted_state_provider",
+      "entries": [
+        {
+          "weight": 5,
+          "data": {
+            "Name": "greedandbleed:hogdew_nylium"
+          }
+        },
+        {
+          "weight": 1,
+          "data": {
+            "Name": "greedandbleed:hogdew_wart_block"
+          }
+        }
+      ]
     },
     "vegetation_feature": {
       "feature": "greedandbleed:hogdew_hollow_vegitations",
