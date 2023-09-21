@@ -214,11 +214,6 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     }
 
     @Override
-    public int getMaxSpawnClusterSize() {
-        return 8;
-    }
-
-    @Override
     public int getRemainingPersistentAngerTime() {
         return this.entityData.get(DATA_REMAINING_ANGER_TIME);
     }
