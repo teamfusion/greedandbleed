@@ -5,6 +5,9 @@ import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -39,6 +42,9 @@ public class CreativeTabRegistry {
                     ).map(sup -> {
                         return sup.get().asItem().getDefaultInstance();
                     }).toList());
+                    output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), PotionRegistry.IMMUNITY_POTION.get()));
+                    output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), PotionRegistry.STRONG_IMMUNITY_POTION.get()));
+                    output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), PotionRegistry.LONG_IMMUNITY_POTION.get()));
                 }).build();
     }));
 
