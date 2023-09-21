@@ -11,6 +11,7 @@
   "mixins": [
     "AbstractPiglinMixin",
     "HoglinMixin",
+    "HoglinSpecificSensorMixin",
     "LivingEntityMixin",
     "PigMixin",
     "PlayerMixin",
