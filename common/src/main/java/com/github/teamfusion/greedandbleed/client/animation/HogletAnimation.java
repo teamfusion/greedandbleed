@@ -73,11 +73,11 @@ public class HogletAnimation {
                             new Keyframe(0.75f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
     public static final AnimationDefinition SIT = AnimationDefinition.Builder.withLength(0f)
-            .addAnimation("Body",
+            .addAnimation("body",
                     new AnimationChannel(AnimationChannel.Targets.POSITION,
                             new Keyframe(0f, KeyframeAnimations.posVec(0f, -2f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("Body",
+            .addAnimation("body",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-27.5f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
@@ -85,19 +85,19 @@ public class HogletAnimation {
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(27.5f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("LeftLeg",
+            .addAnimation("left_leg",
                     new AnimationChannel(AnimationChannel.Targets.POSITION,
                             new Keyframe(0f, KeyframeAnimations.posVec(0f, -3.5f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("LeftLeg",
+            .addAnimation("left_leg",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-90f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("RightLeg",
+            .addAnimation("right_leg",
                     new AnimationChannel(AnimationChannel.Targets.POSITION,
                             new Keyframe(0f, KeyframeAnimations.posVec(0f, -3.5f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("RightLeg",
+            .addAnimation("right_leg",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-90f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
