@@ -15,7 +15,7 @@ public class EntityTypeRegistry {
     public static final CoreRegistry<EntityType<?>> ENTITIES = CoreRegistry.of(BuiltInRegistries.ENTITY_TYPE, GreedAndBleed.MOD_ID);
 
     public static final Supplier<EntityType<SkeletalPiglin>> SKELETAL_PIGLIN = create("skeletal_piglin", EntityType.Builder.of(SkeletalPiglin::new, MobCategory.MONSTER).sized(0.6F, 1.95F));
-    public static final Supplier<EntityType<Hoglet>> HOGLET = create("hoglet", EntityType.Builder.of(Hoglet::new, MobCategory.CREATURE).sized(0.6F, 0.55F));
+    public static final Supplier<EntityType<Hoglet>> HOGLET = create("hoglet", EntityType.Builder.of(Hoglet::new, MobCategory.MONSTER).sized(0.6F, 0.55F));
 
     private static <T extends Entity> Supplier<EntityType<T>> create(String key, EntityType.Builder<T> builder) {
         return ENTITIES.create(key, () -> builder.build(key));
