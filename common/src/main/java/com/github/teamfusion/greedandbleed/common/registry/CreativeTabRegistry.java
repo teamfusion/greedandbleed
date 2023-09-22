@@ -37,6 +37,7 @@ public class CreativeTabRegistry {
                             BlockRegistry.HOGDEW_PLANKS_STAIRS,
                             BlockRegistry.HOGDEW_PLANKS_SLAB,
                             BlockRegistry.HOGDEW_WART_BLOCK,
+                            BlockRegistry.HOGDEW_CLUSTER,
                             BlockRegistry.HOGDEW_FUNGUS,
                             BlockRegistry.HOGDEW_LUMPS
                     ).map(sup -> {
