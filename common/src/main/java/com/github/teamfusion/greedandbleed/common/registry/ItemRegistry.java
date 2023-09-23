@@ -22,6 +22,8 @@ public class ItemRegistry {
 
     public static final Supplier<Item> SKELETAL_PIGLIN_SPAWN_EGG = create("skeletal_piglin_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SKELETAL_PIGLIN, 12698049, 4802889, new Item.Properties()));
     public static final Supplier<Item> HOGLET_SPAWN_EGG = create("hoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.HOGLET, 10051392, 16380836, new Item.Properties()));
+    public static final Supplier<Item> ZOGLET_SPAWN_EGG = create("zoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.ZOGLET, 13004373, 0xE6E6E6, new Item.Properties()));
+    public static final Supplier<Item> SKELET_SPAWN_EGG = create("skelet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SKELET, 0xC1C1C1, 0x494949, new Item.Properties()));
 
     public static <T extends Item> Supplier<T> create(String key, Supplier<T> entry) {
         return ITEMS.create(key, entry);

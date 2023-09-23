@@ -1,8 +1,8 @@
 package com.github.teamfusion.greedandbleed.client;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
+import com.github.teamfusion.greedandbleed.client.models.AbstractHogletModel;
 import com.github.teamfusion.greedandbleed.client.models.GBHoglinModelComplete;
-import com.github.teamfusion.greedandbleed.client.models.HogletModel;
 import com.github.teamfusion.greedandbleed.client.models.SkeletalPiglinModel;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.client.renderer.HogletRenderer;
@@ -32,7 +32,7 @@ public class ClientSetup {
         GreedAndBleedClientNetwork.registerReceivers();
         // HOGLET RENDERER
         RenderRegistry.entityModel(EntityTypeRegistry.HOGLET, HogletRenderer::new);
-        RenderRegistry.layerDefinition(HogletRenderer.MAIN, HogletModel::createBodyLayer);
+        RenderRegistry.layerDefinition(HogletRenderer.MAIN, AbstractHogletModel::createBodyLayer);
 
         // SKELETAL PIGLIN RENDERER
         RenderRegistry.entityModel(EntityTypeRegistry.SKELETAL_PIGLIN, SkeletalPiglinRenderer::new);
