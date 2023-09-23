@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -15,9 +16,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
@@ -33,6 +39,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public class Zoglet extends Monster implements NeutralMob {
+    private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
+    private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
+    private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
+
     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Hoglet.class, EntityDataSerializers.INT);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
@@ -45,8 +55,7 @@ public class Zoglet extends Monster implements NeutralMob {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, true));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.15D, true));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.9D));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
@@ -63,6 +72,19 @@ public class Zoglet extends Monster implements NeutralMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_REMAINING_ANGER_TIME, 0);
+        this.entityData.define(DATA_BABY_ID, false);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("IsBaby", this.isBaby());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.setBaby(tag.getBoolean("IsBaby"));
     }
 
     @Nullable
@@ -100,6 +122,25 @@ public class Zoglet extends Monster implements NeutralMob {
     @Override
     public float getWalkTargetValue(BlockPos blockPos, LevelReader levelReader) {
         return levelReader.getBlockState(blockPos.below()).is(BlockTags.NYLIUM) ? 10.0F : 0.0F;
+    }
+
+    @Override
+    public void setBaby(boolean baby) {
+        this.getEntityData().set(DATA_BABY_ID, baby);
+        if (!this.level().isClientSide) {
+            AttributeInstance instance = this.getAttribute(Attributes.MOVEMENT_SPEED);
+            if (instance != null) {
+                instance.removeModifier(SPEED_MODIFIER_BABY);
+                if (baby) {
+                    instance.addTransientModifier(SPEED_MODIFIER_BABY);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isBaby() {
+        return this.getEntityData().get(DATA_BABY_ID);
     }
 
     @Override

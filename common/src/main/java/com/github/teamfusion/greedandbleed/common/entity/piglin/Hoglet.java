@@ -78,8 +78,8 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, true));
-        this.goalSelector.addGoal(4, new AngryForStealerGoal(this, 1.2D));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.15D, true));
+        this.goalSelector.addGoal(4, new AngryForStealerGoal(this, 1.15D));
         this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.15D, 10.0F, 2.0F, false));
         this.goalSelector.addGoal(6, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new DiggingHogdewGoal(this, 1.0D, 8, (int) (1.375 * 20), (int) (1.75 * 20)));
