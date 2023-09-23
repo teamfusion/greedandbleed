@@ -11,6 +11,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -34,13 +36,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class Skelet extends Monster {
-    private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
+public class Skoglet extends Monster {
+    private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(Skoglet.class, EntityDataSerializers.BOOLEAN);
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
 
 
-    public Skelet(EntityType<? extends Monster> entityType, Level level) {
+    public Skoglet(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -56,6 +58,37 @@ public class Skelet extends Monster {
 
     public static AttributeSupplier.Builder setCustomAttributes() {
         return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.3F).add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.ATTACK_DAMAGE, 3.0D);
+    }
+
+    protected boolean shouldBurnInDay() {
+        return true;
+    }
+
+    @Override
+    public void aiStep() {
+        if (this.isAlive()) {
+            boolean shouldApplySunburn = this.shouldBurnInDay() && this.isSunBurnTick();
+            if (shouldApplySunburn) {
+                ItemStack stack = this.getItemBySlot(EquipmentSlot.HEAD);
+                if (!stack.isEmpty()) {
+                    if (stack.isDamageableItem()) {
+                        stack.setDamageValue(stack.getDamageValue() + this.random.nextInt(2));
+                        if (stack.getDamageValue() >= stack.getMaxDamage()) {
+                            this.broadcastBreakEvent(EquipmentSlot.HEAD);
+                            this.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+                        }
+                    }
+
+                    shouldApplySunburn = false;
+                }
+
+                if (shouldApplySunburn) {
+                    this.setSecondsOnFire(8);
+                }
+            }
+        }
+
+        super.aiStep();
     }
 
     @Override

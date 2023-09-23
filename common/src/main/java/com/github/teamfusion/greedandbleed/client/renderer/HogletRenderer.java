@@ -21,4 +21,9 @@ public class HogletRenderer<T extends Hoglet> extends MobRenderer<T, HogletModel
     public ResourceLocation getTextureLocation(T entity) {
         return new ResourceLocation(GreedAndBleed.MOD_ID, "textures/entity/hoglet/hoglet.png");
     }
+
+    @Override
+    protected boolean isShaking(T livingEntity) {
+        return super.isShaking(livingEntity) || livingEntity.isConverting();
+    }
 }

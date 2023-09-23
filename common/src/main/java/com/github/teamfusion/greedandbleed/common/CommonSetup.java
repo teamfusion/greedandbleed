@@ -22,7 +22,7 @@ public class CommonSetup {
     public static void onBootstrap() {
         MobRegistry.attributes(EntityTypeRegistry.SKELETAL_PIGLIN, SkeletalPiglin::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.HOGLET, Hoglet::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.SKELET, Hoglet::setCustomAttributes);
+        MobRegistry.attributes(EntityTypeRegistry.SKOGLET, Hoglet::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.ZOGLET, Hoglet::setCustomAttributes);
     }
 
@@ -30,7 +30,7 @@ public class CommonSetup {
         PotionRegistry.init();
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hoglet::checkHogletSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.ZOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKELET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
+        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKELETAL_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
 
         BiomeModifications.addProperties((biomeContext, mutable) -> {
