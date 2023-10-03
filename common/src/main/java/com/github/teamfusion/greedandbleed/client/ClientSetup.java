@@ -1,12 +1,14 @@
 package com.github.teamfusion.greedandbleed.client;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
+import com.github.teamfusion.greedandbleed.client.models.AbstractHogletModel;
 import com.github.teamfusion.greedandbleed.client.models.GBHoglinModelComplete;
-import com.github.teamfusion.greedandbleed.client.models.HogletModel;
 import com.github.teamfusion.greedandbleed.client.models.SkeletalPiglinModel;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.client.renderer.HogletRenderer;
 import com.github.teamfusion.greedandbleed.client.renderer.SkeletalPiglinRenderer;
+import com.github.teamfusion.greedandbleed.client.renderer.SkogletRenderer;
+import com.github.teamfusion.greedandbleed.client.renderer.ZogletRenderer;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.platform.client.RenderRegistry;
@@ -32,7 +34,9 @@ public class ClientSetup {
         GreedAndBleedClientNetwork.registerReceivers();
         // HOGLET RENDERER
         RenderRegistry.entityModel(EntityTypeRegistry.HOGLET, HogletRenderer::new);
-        RenderRegistry.layerDefinition(HogletRenderer.MAIN, HogletModel::createBodyLayer);
+        RenderRegistry.entityModel(EntityTypeRegistry.ZOGLET, ZogletRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.SKOGLET, SkogletRenderer::new);
+        RenderRegistry.layerDefinition(HogletRenderer.MAIN, AbstractHogletModel::createBodyLayer);
 
         // SKELETAL PIGLIN RENDERER
         RenderRegistry.entityModel(EntityTypeRegistry.SKELETAL_PIGLIN, SkeletalPiglinRenderer::new);

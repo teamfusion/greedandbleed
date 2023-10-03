@@ -1,0 +1,12 @@
+{
+  "feature": "greedandbleed:hogdew_hollow_vegitations",
+  "placement": [
+    {
+      "type": "minecraft:count_on_every_layer",
+      "count": 2
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

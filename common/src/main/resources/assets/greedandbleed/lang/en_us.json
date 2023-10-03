@@ -1,6 +1,19 @@
 {
+  "block.greedandbleed.hogdew_planks": "Hogdew Planks",
+  "block.greedandbleed.hogdew_stairs": "Hogdew Planks Stairs",
+  "block.greedandbleed.hogdew_slab": "Hogdew Planks Slab",
+  "block.greedandbleed.hogdew_wart_block": "Hogdew Wart Block",
+  "block.greedandbleed.hogdew_cluster": "Hogdew Cluster",
+  "block.greedandbleed.hogdew_stem": "Hogdew Stem",
+  "block.greedandbleed.stripped_hogdew_stem": "Stripped Hogdew Stem",
+  "block.greedandbleed.hogdew_nylium": "Hogdew Nylium",
+  "block.greedandbleed.hogdew_fungus": "Hogdew Fungus",
+  "block.greedandbleed.hogdew_lumps": "Hogdew Lumps",
   "entity.greedandbleed.pigmy": "Pigmy",
   "entity.greedandbleed.skeletal_piglin": "Skeletal Piglin",
+  "entity.greedandbleed.hoglet": "Hoglet",
+  "entity.greedandbleed.zoglet": "Zoglet",
+  "entity.greedandbleed.skoglet": "Skoglet",
   "item.greedandbleed.crimson_fungus_on_a_stick": "Crimson Fungus on a Stick",
   "item.greedandbleed.hoglin_saddle": "Hoglin Saddle",
   "item.greedandbleed.golden_hoglin_armor": "Golden Hoglin Armor",
@@ -11,6 +24,8 @@
   "item.greedandbleed.pebble": "Pebble",
   "item.greedandbleed.pigmy_spawn_egg": "Pigmy Spawn Egg",
   "item.greedandbleed.hoglet_spawn_egg": "Hoglet Spawn Egg",
+  "item.greedandbleed.zoglet_spawn_egg": "Zoglet Spawn Egg",
+  "item.greedandbleed.skoglet_spawn_egg": "Skoglet Spawn Egg",
   "item.greedandbleed.skeletal_piglin_spawn_egg": "Skeletal Piglin Spawn Egg",
   "enchantment.greedandbleed.woe_of_swines": "Woe of Swines",
   "effect.greedandbleed.immunity": "Immunity",
@@ -26,5 +41,5 @@
   "item.minecraft.splash_potion.effect.strong_immunity": "Splash Potion of Immunity",
   "item.minecraft.lingering_potion.effect.strong_immunity": "Lingering Potion of Immunity",
   "item.minecraft.tipped_arrow.effect.strong_immunity": "Arrow of Immunity",
-  "itemGroup.greedandbleed": "Greed And Bleed"
+  "itemGroup.greed_and_bleed": "Greed And Bleed"
 }

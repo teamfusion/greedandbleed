@@ -5,6 +5,9 @@ import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -22,6 +25,8 @@ public class CreativeTabRegistry {
                             ItemRegistry.HOGLIN_SADDLE,
                             ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK,
                             ItemRegistry.HOGLET_SPAWN_EGG,
+                            ItemRegistry.ZOGLET_SPAWN_EGG,
+                            ItemRegistry.SKELET_SPAWN_EGG,
                             ItemRegistry.SKELETAL_PIGLIN_SPAWN_EGG
                     ).map(sup -> {
                         return sup.get().getDefaultInstance();
@@ -34,11 +39,15 @@ public class CreativeTabRegistry {
                             BlockRegistry.HOGDEW_PLANKS_STAIRS,
                             BlockRegistry.HOGDEW_PLANKS_SLAB,
                             BlockRegistry.HOGDEW_WART_BLOCK,
+                            BlockRegistry.HOGDEW_CLUSTER,
                             BlockRegistry.HOGDEW_FUNGUS,
                             BlockRegistry.HOGDEW_LUMPS
                     ).map(sup -> {
                         return sup.get().asItem().getDefaultInstance();
                     }).toList());
+                    output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), PotionRegistry.IMMUNITY_POTION.get()));
+                    output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), PotionRegistry.STRONG_IMMUNITY_POTION.get()));
+                    output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), PotionRegistry.LONG_IMMUNITY_POTION.get()));
                 }).build();
     }));
 

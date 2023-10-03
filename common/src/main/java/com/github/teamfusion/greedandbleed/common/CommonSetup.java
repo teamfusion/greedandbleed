@@ -22,16 +22,20 @@ public class CommonSetup {
     public static void onBootstrap() {
         MobRegistry.attributes(EntityTypeRegistry.SKELETAL_PIGLIN, SkeletalPiglin::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.HOGLET, Hoglet::setCustomAttributes);
+        MobRegistry.attributes(EntityTypeRegistry.SKOGLET, Hoglet::setCustomAttributes);
+        MobRegistry.attributes(EntityTypeRegistry.ZOGLET, Hoglet::setCustomAttributes);
     }
 
     public static void onInitialized() {
         PotionRegistry.init();
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGLET.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hoglet::checkHogletSpawnRules);
+        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hoglet::checkHogletSpawnRules);
+        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.ZOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
+        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKELETAL_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
 
         BiomeModifications.addProperties((biomeContext, mutable) -> {
             if (Biomes.CRIMSON_FOREST.location() == biomeContext.getKey().get()) {
-                mutable.getSpawnProperties().addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.HOGLET.get(), 8, 4, 4));
+                mutable.getSpawnProperties().addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.HOGLET.get(), 8, 2, 4));
             }
 
             if (Biomes.SOUL_SAND_VALLEY.location() == biomeContext.getKey().get()) {

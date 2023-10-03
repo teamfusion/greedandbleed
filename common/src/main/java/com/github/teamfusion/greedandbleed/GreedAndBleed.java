@@ -18,6 +18,7 @@ public class GreedAndBleed {
         EntityTypeRegistry.ENTITIES.register();
         BlockRegistry.BLOCKS.register();
         ItemRegistry.ITEMS.register();
+        FeatureRegistry.FEATURES.register();
         CreativeTabRegistry.CREATIVE_TABS.register();
     }
 }

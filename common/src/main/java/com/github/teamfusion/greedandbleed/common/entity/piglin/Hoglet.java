@@ -5,6 +5,7 @@ import com.github.teamfusion.greedandbleed.common.entity.goal.DiggingHogdewGoal;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -18,6 +19,8 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -40,6 +43,8 @@ import java.util.UUID;
 
 @SuppressWarnings("ConstantConditions")
 public class Hoglet extends TamableAnimal implements NeutralMob {
+    protected static final EntityDataAccessor<Boolean> DATA_IMMUNE_TO_ZOMBIFICATION = SynchedEntityData.defineId(Hoglet.class, EntityDataSerializers.BOOLEAN);
+
     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Hoglet.class, EntityDataSerializers.INT);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
@@ -52,6 +57,8 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
 
     @Nullable
     private LivingEntity stealTarget;
+
+    protected int timeInOverworld;
 
     public Hoglet(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -74,12 +81,24 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
         super.onSyncedDataUpdated(entityDataAccessor);
     }
 
+    public static AttributeSupplier.Builder setCustomAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.3F).add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.ATTACK_DAMAGE, 3.0D);
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_REMAINING_ANGER_TIME, 0);
+        this.entityData.define(DATA_IMMUNE_TO_ZOMBIFICATION, false);
+
+    }
+
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2D, true));
-        this.goalSelector.addGoal(4, new AngryForStealerGoal(this, 1.2D));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.15D, true));
+        this.goalSelector.addGoal(4, new AngryForStealerGoal(this, 1.15D));
         this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.15D, 10.0F, 2.0F, false));
         this.goalSelector.addGoal(6, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new DiggingHogdewGoal(this, 1.0D, 8, (int) (1.375 * 20), (int) (1.75 * 20)));
@@ -103,6 +122,55 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
         return this.getMainHandItem().is(BlockRegistry.HOGDEW_FUNGUS.get().asItem());
     }
 
+    public void setImmuneToZombification(boolean bl) {
+        this.getEntityData().set(DATA_IMMUNE_TO_ZOMBIFICATION, bl);
+    }
+
+    protected boolean isImmuneToZombification() {
+        return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
+    }
+
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compoundTag) {
+        super.addAdditionalSaveData(compoundTag);
+        if (this.isImmuneToZombification()) {
+            compoundTag.putBoolean("IsImmuneToZombification", true);
+        }
+        compoundTag.putInt("TimeInOverworld", this.timeInOverworld);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compoundTag) {
+        super.readAdditionalSaveData(compoundTag);
+        this.setImmuneToZombification(compoundTag.getBoolean("IsImmuneToZombification"));
+        this.timeInOverworld = compoundTag.getInt("TimeInOverworld");
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        this.timeInOverworld = this.isConverting() ? ++this.timeInOverworld : 0;
+        if (this.timeInOverworld > 300) {
+            this.playConvertedSound();
+            this.finishConversion((ServerLevel) this.level());
+        }
+    }
+
+    private void playConvertedSound() {
+        this.playSound(SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED, 1.0f, this.getVoicePitch());
+    }
+
+    public boolean isConverting() {
+        return !this.level().dimensionType().piglinSafe() && !this.isImmuneToZombification() && !this.isNoAi();
+    }
+
+    protected void finishConversion(ServerLevel serverLevel) {
+        Zoglet zombifiedPiglin = this.convertTo(EntityTypeRegistry.ZOGLET.get(), true);
+        if (zombifiedPiglin != null) {
+            zombifiedPiglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
+        }
+    }
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
@@ -169,16 +237,6 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
         return interactionResult;
     }
 
-    public static AttributeSupplier.Builder setCustomAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.3F).add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.ATTACK_DAMAGE, 3.0D);
-    }
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_REMAINING_ANGER_TIME, 0);
-    }
-
     @Nullable @Override
     protected SoundEvent getAmbientSound() {
         return SoundEvents.HOGLIN_AMBIENT;
@@ -205,17 +263,12 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     }
 
     public static boolean checkHogletSpawnRules(EntityType<Hoglet> hoglet, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        return !level.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK) && !level.getBlockState(pos.below()).isAir() && level.getBlockState(pos).isAir();
+        return !level.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK);
     }
 
     @Override
     public float getWalkTargetValue(BlockPos blockPos, LevelReader levelReader) {
         return levelReader.getBlockState(blockPos.below()).is(BlockTags.NYLIUM) ? 10.0F : 0.0F;
-    }
-
-    @Override
-    public int getMaxSpawnClusterSize() {
-        return 8;
     }
 
     @Override
