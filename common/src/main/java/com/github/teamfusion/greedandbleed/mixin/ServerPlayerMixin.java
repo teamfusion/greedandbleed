@@ -6,7 +6,6 @@ import com.github.teamfusion.greedandbleed.common.inventory.HoglinInventoryMenu;
 import com.mojang.authlib.GameProfile;
 import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,12 +36,11 @@ public abstract class ServerPlayerMixin extends Player implements CanOpenMountIn
             }
 
             this.nextContainerCounter();
-
-            NetworkManager.sendToPlayer(serverPlayer, GreedAndBleedClientNetwork.SCREEN_OPEN_PACKET, Util.make(new FriendlyByteBuf(Unpooled.buffer()), buf -> {
-                buf.writeInt(hoglin.getId());
-                buf.writeInt(inventory.getContainerSize());
-                buf.writeInt(this.containerCounter);
-            }));
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeInt(hoglin.getId());
+            buf.writeInt(inventory.getContainerSize());
+            buf.writeInt(this.containerCounter);
+            NetworkManager.sendToPlayer(serverPlayer, GreedAndBleedClientNetwork.SCREEN_OPEN_PACKET, buf);
             this.containerMenu = new HoglinInventoryMenu(this.containerCounter, inventory, this.getInventory(), hoglin);
             this.initMenu(this.containerMenu);
 
