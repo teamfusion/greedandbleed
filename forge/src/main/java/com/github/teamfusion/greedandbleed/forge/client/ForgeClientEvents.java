@@ -1,5 +1,6 @@
-package com.github.teamfusion.greedandbleed.client;
+package com.github.teamfusion.greedandbleed.forge.client;
 
+import com.github.teamfusion.greedandbleed.client.RenderHelper;
 import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
