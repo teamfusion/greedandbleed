@@ -49,5 +49,7 @@ public class ClientSetup {
 
     public static void onInitialized() {
         RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_FUNGUS.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_LUMPS.get()));
+        RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()));
+        RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_TRAPDOOR.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_TRAPDOOR.get()));
     }
 }
