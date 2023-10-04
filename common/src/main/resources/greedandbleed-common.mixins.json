@@ -10,6 +10,7 @@
   ],
   "mixins": [
     "AbstractPiglinMixin",
+    "BlockSetTypeInvoker",
     "HoglinMixin",
     "HoglinSpecificSensorMixin",
     "LivingEntityMixin",
@@ -19,6 +20,7 @@
     "PotionBrewingMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerMixin",
+    "WoodTypeInvoker",
     "ZoglinMixin",
     "ZombifiedPiglinMixin"
   ],
