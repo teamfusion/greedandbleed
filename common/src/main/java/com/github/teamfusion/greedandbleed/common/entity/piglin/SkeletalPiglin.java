@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
-import java.util.Random;
 import java.util.UUID;
 
 public class SkeletalPiglin extends Monster implements NeutralMob {
@@ -43,7 +42,6 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
     public static final UniformInt RANGED_INT = TimeUtil.rangeOfSeconds(20, 39);
     private int angerTime;
     private UUID angerTarget;
-    protected final Random rand = new Random();
 
     public SkeletalPiglin(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
@@ -65,7 +63,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
 
     // ATTRIBUTES
     public static AttributeSupplier.Builder setCustomAttributes() {
-        return Mob.createMobAttributes()
+        return Monster.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.5D);
     }
@@ -107,7 +105,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
                 ItemStack stack = this.getItemBySlot(EquipmentSlot.HEAD);
                 if (!stack.isEmpty()) {
                     if (stack.isDamageableItem()) {
-                        stack.setDamageValue(stack.getDamageValue() + this.rand.nextInt(2));
+                        stack.setDamageValue(stack.getDamageValue() + this.random.nextInt(2));
                         if (stack.getDamageValue() >= stack.getMaxDamage()) {
                             this.broadcastBreakEvent(EquipmentSlot.HEAD);
                             this.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
@@ -211,6 +209,17 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance instance) {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SHOVEL));
+        this.maybeWearArmor(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET), randomSource);
+        this.maybeWearArmor(EquipmentSlot.CHEST, new ItemStack(Items.GOLDEN_CHESTPLATE), randomSource);
+        this.maybeWearArmor(EquipmentSlot.LEGS, new ItemStack(Items.GOLDEN_LEGGINGS), randomSource);
+        this.maybeWearArmor(EquipmentSlot.FEET, new ItemStack(Items.GOLDEN_BOOTS), randomSource);
+    }
+
+    private void maybeWearArmor(EquipmentSlot equipmentSlot, ItemStack itemStack, RandomSource randomSource) {
+        if (randomSource.nextFloat() < 0.1F) {
+            this.setItemSlot(equipmentSlot, itemStack);
+        }
+
     }
 
     @Override
@@ -228,7 +237,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
     @Nullable @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
         float difficultyMultiplier = difficulty.getSpecialMultiplier();
-        this.setCanPickUpLoot(this.rand.nextFloat() < 0.55F * difficultyMultiplier);
+        this.setCanPickUpLoot(level.getRandom().nextFloat() < 0.55F * difficultyMultiplier);
 
         this.populateDefaultEquipmentSlots(random, difficulty);
         this.populateDefaultEquipmentEnchantments(random, difficulty);
@@ -237,7 +246,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
             LocalDate date = LocalDate.now();
             int currentDay = date.get(ChronoField.DAY_OF_MONTH);
             int currentMonth = date.get(ChronoField.MONTH_OF_YEAR);
-            if (currentMonth == 10 && currentDay == 31 && this.rand.nextFloat() < 0.25F) {
+            if (currentMonth == 10 && currentDay == 31 && level.getRandom().nextFloat() < 0.25F) {
                 this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(this.random.nextFloat() < 0.1F ? Blocks.JACK_O_LANTERN : Blocks.CARVED_PUMPKIN));
                 this.armorDropChances[EquipmentSlot.HEAD.getIndex()] = 0.0F;
             }

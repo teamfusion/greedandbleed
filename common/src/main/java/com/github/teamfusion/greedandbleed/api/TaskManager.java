@@ -8,7 +8,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.behavior.RunOne;
@@ -74,8 +73,8 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param activity The Activity to initialize
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
-    protected void initActivity(List<? extends Behavior<? super T>> taskList, Activity activity, int priorityStart) {
-        ImmutableList<Behavior<? super T>> immutableTaskList =
+    protected void initActivity(List<? extends BehaviorControl<? super T>> taskList, Activity activity, int priorityStart) {
+        ImmutableList<BehaviorControl<? super T>> immutableTaskList =
                 ImmutableList.copyOf(taskList);
         this.dynamicBrain.addActivity(
                 activity, priorityStart,
@@ -89,8 +88,8 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      * @param memoryModuleType The MemoryModuleType to remove data from when the Activity is stopped
      */
-    protected void initActivityAndRemoveMemoryWhenStopped(List<? extends Behavior<? super T>> taskList, Activity activity, int priorityStart, MemoryModuleType<?> memoryModuleType) {
-        ImmutableList<Behavior<? super T>> immutableTaskList =
+    protected void initActivityAndRemoveMemoryWhenStopped(List<? extends BehaviorControl<? super T>> taskList, Activity activity, int priorityStart, MemoryModuleType<?> memoryModuleType) {
+        ImmutableList<BehaviorControl<? super T>> immutableTaskList =
                 ImmutableList.copyOf(taskList);
         this.dynamicBrain.addActivityAndRemoveMemoryWhenStopped(
                 activity, priorityStart,
@@ -103,7 +102,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initCoreActivity(int priorityStart) {
-        List<Behavior<? super T>> coreTasks = getCoreTasks();
+        List<BehaviorControl<? super T>> coreTasks = getCoreTasks();
         this.initActivity(coreTasks, Activity.CORE, priorityStart);
     }
     /**
@@ -111,7 +110,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initIdleActivity(int priorityStart) {
-        List<Behavior<? super T>> idleTasks = getIdleTasks();
+        List<BehaviorControl<? super T>> idleTasks = getIdleTasks();
         this.initActivity(idleTasks, Activity.IDLE, priorityStart);
     }
     /**
@@ -120,7 +119,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      */
     //TODO: make initActivityWithConditions
     protected void initWorkTasks(int priorityStart) {
-        List<Behavior<? super T>> workTasks = getWorkTasks();
+        List<BehaviorControl<? super T>> workTasks = getWorkTasks();
         this.initActivity(workTasks, Activity.WORK, priorityStart);
     }
     /**
@@ -128,7 +127,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initPlayActivity(int priorityStart) {
-        List<Behavior<? super T>> playTasks = getPlayTasks();
+        List<BehaviorControl<? super T>> playTasks = getPlayTasks();
         this.initActivity(playTasks, Activity.PLAY, priorityStart);
     }
     /**
@@ -136,7 +135,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initRestActivity(int priorityStart) {
-        List<Behavior<? super T>> restTasks = getRestTasks();
+        List<BehaviorControl<? super T>> restTasks = getRestTasks();
         this.initActivity(restTasks, Activity.REST, priorityStart);
     }
     /**
@@ -145,7 +144,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      */
     //TODO: make initActivityWithConditions
     protected void initMeetActivity(int priorityStart) {
-        List<Behavior<? super T>> meetTasks = getMeetTasks();
+        List<BehaviorControl<? super T>> meetTasks = getMeetTasks();
         this.initActivity(meetTasks, Activity.MEET, priorityStart);
     }
     /**
@@ -153,7 +152,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initPanicActivity(int priorityStart) {
-        List<Behavior<? super T>> panicTasks = getPanicTasks();
+        List<BehaviorControl<? super T>> panicTasks = getPanicTasks();
         this.initActivity(panicTasks, Activity.PANIC, priorityStart);
     }
     /**
@@ -161,7 +160,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initRaidActivity(int priorityStart) {
-        List<Behavior<? super T>> raidTasks = getRaidTasks();
+        List<BehaviorControl<? super T>> raidTasks = getRaidTasks();
         this.initActivity(raidTasks, Activity.RAID, priorityStart);
     }
     /**
@@ -169,7 +168,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initPreRaidActivity(int priorityStart) {
-        List<Behavior<? super T>> preRaidTasks = getPreRaidTasks();
+        List<BehaviorControl<? super T>> preRaidTasks = getPreRaidTasks();
         this.initActivity(preRaidTasks, Activity.PRE_RAID, priorityStart);
     }
     /**
@@ -177,7 +176,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initHideActivity(int priorityStart) {
-        List<Behavior<? super T>> hideTasks = getHideTasks();
+        List<BehaviorControl<? super T>> hideTasks = getHideTasks();
         this.initActivity(hideTasks, Activity.HIDE, priorityStart);
     }
     /**
@@ -185,7 +184,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initFightActivity(int priorityStart) {
-        List<Behavior<? super T>> fightTasks = getFightTasks();
+        List<BehaviorControl<? super T>> fightTasks = getFightTasks();
         this.initActivityAndRemoveMemoryWhenStopped(fightTasks, Activity.FIGHT, priorityStart, MemoryModuleType.ATTACK_TARGET);
     }
     /**
@@ -193,7 +192,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initCelebrateActivity(int priorityStart) {
-        List<Behavior<? super T>> celebrateTasks = getCelebrateTasks();
+        List<BehaviorControl<? super T>> celebrateTasks = getCelebrateTasks();
         this.initActivityAndRemoveMemoryWhenStopped(celebrateTasks, Activity.CELEBRATE, priorityStart, MemoryModuleType.CELEBRATE_LOCATION);
     }
     /**
@@ -201,7 +200,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initAdmireItemActivity(int priorityStart) {
-        List<Behavior<? super T>> admireItemTasks = getAdmireItemTasks();
+        List<BehaviorControl<? super T>> admireItemTasks = getAdmireItemTasks();
         this.initActivityAndRemoveMemoryWhenStopped(admireItemTasks, Activity.ADMIRE_ITEM, priorityStart, MemoryModuleType.ADMIRING_ITEM);
     }
     /**
@@ -209,7 +208,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initAvoidActivity(int priorityStart) {
-        List<Behavior<? super T>> avoidTasks = getAvoidTasks();
+        List<BehaviorControl<? super T>> avoidTasks = getAvoidTasks();
         this.initActivityAndRemoveMemoryWhenStopped(avoidTasks, Activity.AVOID, priorityStart, MemoryModuleType.AVOID_TARGET);
     }
     /**
@@ -217,7 +216,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     protected void initRideActivity(int priorityStart) {
-        List<Behavior<? super T>> getRideTasks = getRideTasks();
+        List<BehaviorControl<? super T>> getRideTasks = getRideTasks();
         this.initActivityAndRemoveMemoryWhenStopped(getRideTasks, Activity.RIDE, priorityStart, MemoryModuleType.RIDE_TARGET);
     }
 
@@ -242,63 +241,63 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
 
     // LIST METHODS
 
-    protected List<Behavior<? super T>> getCoreTasks(){
+    protected List<BehaviorControl<? super T>> getCoreTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getIdleTasks(){
+    protected List<BehaviorControl<? super T>> getIdleTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getWorkTasks(){
+    protected List<BehaviorControl<? super T>> getWorkTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getPlayTasks(){
+    protected List<BehaviorControl<? super T>> getPlayTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getRestTasks(){
+    protected List<BehaviorControl<? super T>> getRestTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getMeetTasks(){
+    protected List<BehaviorControl<? super T>> getMeetTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getPanicTasks(){
+    protected List<BehaviorControl<? super T>> getPanicTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getRaidTasks(){
+    protected List<BehaviorControl<? super T>> getRaidTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getPreRaidTasks(){
+    protected List<BehaviorControl<? super T>> getPreRaidTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getHideTasks(){
+    protected List<BehaviorControl<? super T>> getHideTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getFightTasks(){
+    protected List<BehaviorControl<? super T>> getFightTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getCelebrateTasks(){
+    protected List<BehaviorControl<? super T>> getCelebrateTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getAdmireItemTasks(){
+    protected List<BehaviorControl<? super T>> getAdmireItemTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getAvoidTasks(){
+    protected List<BehaviorControl<? super T>> getAvoidTasks() {
         return new ArrayList<>();
     }
 
-    protected List<Behavior<? super T>> getRideTasks(){
+    protected List<BehaviorControl<? super T>> getRideTasks() {
         return new ArrayList<>();
     }
 

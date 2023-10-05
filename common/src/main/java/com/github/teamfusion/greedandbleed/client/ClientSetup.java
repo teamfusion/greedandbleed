@@ -3,12 +3,10 @@ package com.github.teamfusion.greedandbleed.client;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.AbstractHogletModel;
 import com.github.teamfusion.greedandbleed.client.models.GBHoglinModelComplete;
+import com.github.teamfusion.greedandbleed.client.models.ShamanPiglinModel;
 import com.github.teamfusion.greedandbleed.client.models.SkeletalPiglinModel;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
-import com.github.teamfusion.greedandbleed.client.renderer.HogletRenderer;
-import com.github.teamfusion.greedandbleed.client.renderer.SkeletalPiglinRenderer;
-import com.github.teamfusion.greedandbleed.client.renderer.SkogletRenderer;
-import com.github.teamfusion.greedandbleed.client.renderer.ZogletRenderer;
+import com.github.teamfusion.greedandbleed.client.renderer.*;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.platform.client.RenderRegistry;
@@ -36,6 +34,7 @@ public class ClientSetup {
         RenderRegistry.entityModel(EntityTypeRegistry.HOGLET, HogletRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.ZOGLET, ZogletRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SKOGLET, SkogletRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.SHAMAN_PIGLIN, ShamanPiglinRenderer::new);
         RenderRegistry.layerDefinition(HogletRenderer.MAIN, AbstractHogletModel::createBodyLayer);
 
         // SKELETAL PIGLIN RENDERER
@@ -45,6 +44,7 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(SkeletalPiglinRenderer.INNER_ARMOR, INNER_ARMOR_DEFINITION);
         RenderRegistry.layerDefinition(HOGLIN, () -> GBHoglinModelComplete.createBodyLayer(0.0F));
         RenderRegistry.layerDefinition(HOGLIN_ARMOR, () -> GBHoglinModelComplete.createBodyLayer(0.05F));
+        RenderRegistry.layerDefinition(ShamanPiglinRenderer.MAIN, ShamanPiglinModel::createBodyLayer);
     }
 
     public static void onInitialized() {
