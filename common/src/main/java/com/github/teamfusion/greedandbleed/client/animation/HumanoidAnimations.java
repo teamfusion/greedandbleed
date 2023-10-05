@@ -5,6 +5,11 @@ import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
+/***
+ * This animation using same bone mob like Humanoid
+ *  base from bagu_chan's Bagus Mob
+ * @author bagu_chan
+ */
 public class HumanoidAnimations {
     public static final AnimationDefinition WALK_SWING = AnimationDefinition.Builder.withLength(1f).looping()
             .addAnimation("right_arm",

@@ -101,6 +101,16 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
     }
 
+    @Override
+    protected void customServerAiStep() {
+        this.level().getProfiler().push("piglinBruteBrain");
+        this.getBrain().tick((ServerLevel) this.level(), this);
+        this.level().getProfiler().pop();
+        this.taskManager.updateActivity();
+        this.taskManager.initMemories();
+        super.customServerAiStep();
+    }
+
     // EXPERIENCE POINTS
     @Override
     public int getExperienceReward() {

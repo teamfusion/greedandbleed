@@ -3,6 +3,7 @@ package com.github.teamfusion.greedandbleed.api;
 import com.github.teamfusion.greedandbleed.common.entity.brain.SummonAttack;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -60,7 +61,7 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.0f), BackUpIfTooClose.create(5, 0.75f), new SummonAttack<>());
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), BackUpIfTooClose.create(8, 0.75f), new SummonAttack<>());
     }
 
     @Override
@@ -105,12 +106,14 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
 
     @Override
     protected void initActivities() {
-
+        super.initActivities();
     }
 
     @Override
     protected void setCoreAndDefault() {
-
+        this.getBrain().setCoreActivities(ImmutableSet.of(Activity.CORE));
+        this.getBrain().setDefaultActivity(Activity.IDLE);
+        this.getBrain().useDefaultActivity();
     }
 
     @Override
