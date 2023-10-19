@@ -1,25 +1,23 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
+import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.PiglinModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.Mob;
 
-public class SkeletalPiglinModel<T extends Mob> extends PiglinModel<T> {
+public class SkeletalPiglinModel<T extends SkeletalPiglin> extends PiglinModel<T> {
     public final ModelPart rightEar = this.head.getChild("right_ear");
     private final ModelPart leftEar = this.head.getChild("left_ear");
+    private final ModelPart root;
 
     public SkeletalPiglinModel(ModelPart root) {
         super(root);
+        this.root = root;
     }
 
     public static LayerDefinition createBodyLayer() {

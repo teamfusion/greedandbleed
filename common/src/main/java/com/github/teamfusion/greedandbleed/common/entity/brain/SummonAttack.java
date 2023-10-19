@@ -20,12 +20,12 @@ public class SummonAttack<E extends ShamanPiglin> extends Behavior<E> {
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel p_22538_, E p_22539_) {
-        return p_22539_.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).isPresent();
+        return p_22539_.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).isPresent() && p_22539_.summonCooldown <= 0;
     }
 
     @Override
     protected boolean canStillUse(ServerLevel p_22545_, E p_22546_, long p_22547_) {
-        return p_22546_.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).isPresent();
+        return p_22546_.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).isPresent() && p_22546_.summonCooldown <= 0;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class SummonAttack<E extends ShamanPiglin> extends Behavior<E> {
         if (optional.isPresent()) {
             p_22552_.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new EntityTracker(optional.get(), true));
 
-            if (++this.ticks >= 200) {
+            if (++this.ticks >= 40) {
                 p_22552_.summon();
                 this.ticks = 0;
             }

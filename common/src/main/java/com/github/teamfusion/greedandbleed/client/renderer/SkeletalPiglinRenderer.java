@@ -2,15 +2,17 @@ package com.github.teamfusion.greedandbleed.client.renderer;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.SkeletalPiglinModel;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
 
-public class SkeletalPiglinRenderer extends HumanoidMobRenderer<Mob, SkeletalPiglinModel<Mob>> {
+public class SkeletalPiglinRenderer extends HumanoidMobRenderer<SkeletalPiglin, SkeletalPiglinModel<SkeletalPiglin>> {
     public static final ModelLayerLocation MAIN = new ModelLayerLocation(new ResourceLocation(GreedAndBleed.MOD_ID, "skeletal_piglin"), "main");
     public static final ModelLayerLocation INNER_ARMOR = new ModelLayerLocation(new ResourceLocation(GreedAndBleed.MOD_ID, "skeletal_piglin"), "inner_armor");
     public static final ModelLayerLocation OUTER_ARMOR = new ModelLayerLocation(new ResourceLocation(GreedAndBleed.MOD_ID, "skeletal_piglin"), "outer_armor");
@@ -21,7 +23,15 @@ public class SkeletalPiglinRenderer extends HumanoidMobRenderer<Mob, SkeletalPig
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Mob mob) {
+    protected void setupRotations(SkeletalPiglin livingEntity, PoseStack poseStack, float f, float g, float h) {
+        super.setupRotations(livingEntity, poseStack, f, g, h);
+        if (livingEntity.getPose() == Pose.EMERGING) {
+            poseStack.translate(0, -livingEntity.getSpawnScaleAnimationScale(h) * 4.0F, 0);
+        }
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(SkeletalPiglin mob) {
         return new ResourceLocation(GreedAndBleed.MOD_ID, "textures/entity/piglin/skeletal_piglin.png");
     }
 }

@@ -2,11 +2,19 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.api.ShamanPiglinTaskManager;
+import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
+import com.github.teamfusion.greedandbleed.common.entity.SummonData;
+import com.github.teamfusion.greedandbleed.common.entity.SummonHandler;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -32,6 +40,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
+import static dev.architectury.networking.NetworkManager.collectPackets;
+import static dev.architectury.networking.NetworkManager.serverToClient;
+
 public class ShamanPiglin extends GBPiglin implements NeutralMob {
     protected static final ImmutableList<SensorType<? extends Sensor<? super ShamanPiglin>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_BRUTE_SPECIFIC_SENSOR);
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, new MemoryModuleType[]{MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.HOME});
@@ -40,6 +51,9 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     private int angerTime;
     private UUID angerTarget;
     public int summonCooldown;
+    protected static final EntityDataAccessor<Boolean> DATA_SOUL_GUARD = SynchedEntityData.defineId(ShamanPiglin.class, EntityDataSerializers.BOOLEAN);
+
+    public final SummonHandler summonHandler = new SummonHandler();
 
     public ShamanPiglin(EntityType<? extends ShamanPiglin> entityType, Level level) {
         super(entityType, level);
@@ -48,8 +62,16 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
+        this.entityData.define(DATA_SOUL_GUARD, false);
     }
 
+    public boolean isSoulGuard() {
+        return this.getEntityData().get(DATA_SOUL_GUARD);
+    }
+
+    public void setSoulGuard(boolean soul) {
+        this.getEntityData().set(DATA_SOUL_GUARD, soul);
+    }
 
     @Override
     protected Brain.Provider<?> brainProvider() {
@@ -70,7 +92,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     // ATTRIBUTES
     public static AttributeSupplier.Builder setCustomAttributes() {
         return Monster.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0D)
+                .add(Attributes.MAX_HEALTH, 10.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D);
     }
 
@@ -111,6 +133,39 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
         super.customServerAiStep();
     }
 
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (this.summonCooldown > 0) {
+            --this.summonCooldown;
+        }
+        this.summonHandler.tick(this.level(), this);
+        if (!this.level().isClientSide()) {
+            this.setSoulGuard(!this.summonHandler.getList().isEmpty());
+        }
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        for (SummonData data : this.summonHandler.getList()) {
+            LivingEntity living = data.getOwner(this.level());
+            if (living != null) {
+                if (!this.level().isClientSide()) {
+                    FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+                    buf.writeInt(this.getId());
+                    buf.writeFloat(amount);
+                    buf.writeUtf(source.typeHolder().unwrapKey().get().location().toString());
+                    living.hurt(source, amount);
+                    collectPackets(GreedAndBleedClientNetwork.ofTrackingEntity(() -> living), serverToClient(), GreedAndBleedClientNetwork.HURT_PACKET, buf);
+                    this.playSound(SoundEvents.FIRE_EXTINGUISH);
+                }
+                return false;
+            }
+        }
+
+        return super.hurt(source, amount);
+    }
+
     // EXPERIENCE POINTS
     @Override
     public int getExperienceReward() {
@@ -146,11 +201,15 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
+        tag.putInt("SummonCooldown", this.summonCooldown);
+        summonHandler.addAdditionalSaveData(tag);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        this.summonCooldown = tag.getInt("SummonCooldown");
+        summonHandler.readAdditionalSaveData(tag);
     }
 
     @Override
@@ -206,23 +265,27 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     }
 
     public void summon() {
-        ServerLevel serverLevel = (ServerLevel) this.level();
-        int count = 0;
-        for (int i = 0; i < 8; ++i) {
+        if (summonHandler.getList().size() < 3) {
+            ServerLevel serverLevel = (ServerLevel) this.level();
+            int count = 0;
+            for (int i = 0; i < 16; ++i) {
 
-            BlockPos blockPos = this.blockPosition().offset(-2 + this.random.nextInt(5), 1, -2 + this.random.nextInt(5));
-            if (serverLevel.isEmptyBlock(blockPos) && serverLevel.isEmptyBlock(blockPos.above())) {
-                SkeletalPiglin piglin = EntityTypeRegistry.SKELETAL_PIGLIN.get().create(this.level());
-                if (piglin == null) continue;
-                piglin.moveTo(blockPos, 0.0f, 0.0f);
-                piglin.finalizeSpawn(serverLevel, this.level().getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
-                serverLevel.addFreshEntityWithPassengers(piglin);
-                count += 1;
-                if (count >= 3) {
-                    break;
+                BlockPos blockPos = this.blockPosition().offset(-3 + this.random.nextInt(6), this.random.nextInt(3) - this.random.nextInt(3), -3 + this.random.nextInt(6));
+                if (serverLevel.isEmptyBlock(blockPos) && serverLevel.isEmptyBlock(blockPos.above()) && !serverLevel.isEmptyBlock(blockPos.below())) {
+                    SkeletalPiglin piglin = EntityTypeRegistry.SKELETAL_PIGLIN.get().create(this.level());
+                    if (piglin == null) continue;
+                    piglin.moveTo(blockPos, 0.0f, 0.0f);
+                    piglin.setPose(Pose.EMERGING);
+                    summonHandler.addSummonData(piglin);
+                    piglin.finalizeSpawn(serverLevel, this.level().getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
+                    serverLevel.addFreshEntityWithPassengers(piglin);
+                    count += 1;
+                    if (count >= 3) {
+                        break;
+                    }
                 }
             }
+            this.summonCooldown = 600;
         }
-        this.summonCooldown = 600;
     }
 }
