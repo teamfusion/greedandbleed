@@ -25,14 +25,11 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
-import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.piglin.PiglinArmPose;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -46,6 +43,7 @@ import static dev.architectury.networking.NetworkManager.serverToClient;
 public class ShamanPiglin extends GBPiglin implements NeutralMob {
     protected static final ImmutableList<SensorType<? extends Sensor<? super ShamanPiglin>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_BRUTE_SPECIFIC_SENSOR);
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, new MemoryModuleType[]{MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.HOME});
+    private static final EntityDataAccessor<Integer> DATA_WAVE = SynchedEntityData.defineId(ShamanPiglin.class, EntityDataSerializers.INT);
 
     public static final UniformInt RANGED_INT = TimeUtil.rangeOfSeconds(20, 39);
     private int angerTime;
@@ -63,6 +61,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_SOUL_GUARD, false);
+        this.entityData.define(DATA_WAVE, 1);
     }
 
     public boolean isSoulGuard() {
@@ -72,6 +71,15 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     public void setSoulGuard(boolean soul) {
         this.getEntityData().set(DATA_SOUL_GUARD, soul);
     }
+
+    public int getWave() {
+        return this.getEntityData().get(DATA_WAVE);
+    }
+
+    public void setWave(int wave) {
+        this.getEntityData().set(DATA_WAVE, wave);
+    }
+
 
     @Override
     protected Brain.Provider<?> brainProvider() {
@@ -91,7 +99,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
 
     // ATTRIBUTES
     public static AttributeSupplier.Builder setCustomAttributes() {
-        return Monster.createMobAttributes()
+        return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D);
     }
@@ -109,18 +117,6 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
 
     @Override
     public void setBaby(boolean baby) {
-    }
-
-    // BEHAVIOR
-    @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(0, new PanicGoal(this, 0.6D));
-        this.goalSelector.addGoal(2, new RestrictSunGoal(this));
-        this.goalSelector.addGoal(3, new FleeSunGoal(this, 0.6D));
-        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Wolf.class, 6.0F, 0.55D, 0.6D));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.5D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
     }
 
     @Override
@@ -163,6 +159,11 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
             }
         }
 
+        if (this.getWave() <= 5) {
+            this.playSound(SoundEvents.FIRE_EXTINGUISH);
+            return false;
+        }
+
         return super.hurt(source, amount);
     }
 
@@ -202,6 +203,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("SummonCooldown", this.summonCooldown);
+        tag.putInt("Wave", this.getWave());
         summonHandler.addAdditionalSaveData(tag);
     }
 
@@ -209,6 +211,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.summonCooldown = tag.getInt("SummonCooldown");
+        this.setWave(tag.getInt("Wave"));
         summonHandler.readAdditionalSaveData(tag);
     }
 
@@ -264,8 +267,8 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
         this.setRemainingPersistentAngerTime(RANGED_INT.sample(this.random));
     }
 
-    public void summon() {
-        if (summonHandler.getList().size() < 3) {
+    public void summon(LivingEntity living) {
+        if (summonHandler.getList().isEmpty()) {
             ServerLevel serverLevel = (ServerLevel) this.level();
             int count = 0;
             for (int i = 0; i < 16; ++i) {
@@ -278,14 +281,18 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
                     piglin.setPose(Pose.EMERGING);
                     summonHandler.addSummonData(piglin);
                     piglin.finalizeSpawn(serverLevel, this.level().getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
+                    piglin.setOwner(this);
+                    piglin.setTarget(living);
                     serverLevel.addFreshEntityWithPassengers(piglin);
+
                     count += 1;
                     if (count >= 3) {
                         break;
                     }
                 }
             }
-            this.summonCooldown = 600;
+            this.summonCooldown = 200;
+            this.setWave(this.getWave() + 1);
         }
     }
 }

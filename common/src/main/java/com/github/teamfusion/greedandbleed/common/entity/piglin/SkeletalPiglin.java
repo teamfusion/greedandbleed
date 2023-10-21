@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
@@ -23,6 +24,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -41,7 +46,7 @@ import java.time.temporal.ChronoField;
 import java.util.EnumSet;
 import java.util.UUID;
 
-public class SkeletalPiglin extends Monster implements NeutralMob {
+public class SkeletalPiglin extends Monster implements NeutralMob, TraceableEntity {
     private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
@@ -51,6 +56,11 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
 
     private float spawnScale;
     private float spawnScaleO;
+
+    @Nullable
+    private LivingEntity owner;
+    @Nullable
+    private UUID ownerUUID;
 
     public SkeletalPiglin(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
@@ -81,9 +91,9 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
 
     // ATTRIBUTES
     public static AttributeSupplier.Builder setCustomAttributes() {
-        return Monster.createMobAttributes()
+        return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.5D);
+                .add(Attributes.MOVEMENT_SPEED, 0.3D);
     }
 
     public static boolean checkSkeletalPiglinSpawnRules(EntityType<SkeletalPiglin> piglin, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
@@ -103,13 +113,35 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new DoNothingGoal());
-        this.goalSelector.addGoal(1, new PanicGoal(this, 0.6D));
+        this.goalSelector.addGoal(1, new PanicGoal(this, 0.8D) {
+            @Override
+            public boolean canUse() {
+                return getOwner() == null && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return getOwner() == null && super.canContinueToUse();
+            }
+        });
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0F, true));
+
         this.goalSelector.addGoal(2, new RestrictSunGoal(this));
-        this.goalSelector.addGoal(3, new FleeSunGoal(this, 0.6D));
+        this.goalSelector.addGoal(3, new FleeSunGoal(this, 0.8D));
         this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Wolf.class, 6.0F, 0.55D, 0.6D));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.5D));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.6D));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(0, new HurtByTargetGoal(this, SkeletalPiglin.class));
+
+        this.targetSelector.addGoal(1, new CopyOwnerTargetGoal(this));
+
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
+            @Override
+            public boolean canUse() {
+                return getOwner() != null && super.canUse();
+            }
+        });
     }
 
     @Override
@@ -303,12 +335,18 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("IsBaby", this.isBaby());
+        if (tag.hasUUID("Owner")) {
+            this.ownerUUID = tag.getUUID("Owner");
+        }
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.setBaby(tag.getBoolean("IsBaby"));
+        if (this.ownerUUID != null) {
+            tag.putUUID("Owner", this.ownerUUID);
+        }
     }
 
     @Nullable
@@ -333,6 +371,23 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
         return super.finalizeSpawn(level, difficulty, spawnType, groupData, tag);
     }
 
+    public void setOwner(@Nullable LivingEntity arg) {
+        this.owner = arg;
+        this.ownerUUID = arg == null ? null : arg.getUUID();
+    }
+
+    @Nullable
+    public LivingEntity getOwner() {
+        if (this.owner == null && this.ownerUUID != null && this.level() instanceof ServerLevel) {
+            Entity entity = ((ServerLevel) this.level()).getEntity(this.ownerUUID);
+            if (entity instanceof LivingEntity) {
+                this.owner = (LivingEntity) entity;
+            }
+        }
+
+        return this.owner;
+    }
+
     class DoNothingGoal
             extends Goal {
         public DoNothingGoal() {
@@ -342,6 +397,29 @@ public class SkeletalPiglin extends Monster implements NeutralMob {
         @Override
         public boolean canUse() {
             return SkeletalPiglin.this.getPose() == Pose.EMERGING;
+        }
+    }
+
+    class CopyOwnerTargetGoal
+            extends TargetGoal {
+        private final TargetingConditions copyOwnerTargeting;
+
+        public CopyOwnerTargetGoal(PathfinderMob pathfinderMob) {
+            super(pathfinderMob, false);
+            this.copyOwnerTargeting = TargetingConditions.forNonCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
+        }
+
+        @Override
+        public boolean canUse() {
+            return SkeletalPiglin.this.owner != null && SkeletalPiglin.this.owner instanceof Mob mob && mob.getTarget() != null && this.canAttack(mob.getTarget(), this.copyOwnerTargeting);
+        }
+
+        @Override
+        public void start() {
+            if (SkeletalPiglin.this.owner instanceof Mob mob) {
+                SkeletalPiglin.this.setTarget(mob.getTarget());
+            }
+            super.start();
         }
     }
 }

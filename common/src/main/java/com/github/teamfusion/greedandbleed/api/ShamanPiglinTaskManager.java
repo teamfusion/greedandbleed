@@ -1,7 +1,9 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.brain.SetWalkTargetFromAttackTargetIfTargetFar;
 import com.github.teamfusion.greedandbleed.common.entity.brain.SummonAttack;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.GlobalPos;
@@ -13,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
+import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
@@ -61,7 +64,15 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetAwayFrom.entity(MemoryModuleType.ATTACK_TARGET, 1.0F, 8, false), new SummonAttack<>());
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), BehaviorBuilder.triggerIf(predicate -> {
+            return predicate.getWave() > 5;
+        }, SetWalkTargetFromAttackTargetIfTargetFar.create(1.0f)), BehaviorBuilder.triggerIf(predicate -> {
+            return predicate.getWave() > 5;
+        }, MeleeAttack.create(20)), BehaviorBuilder.triggerIf(predicate -> {
+            return predicate.getWave() <= 5;
+        }, SetWalkTargetAwayFrom.entity(MemoryModuleType.ATTACK_TARGET, 1.0F, 8, false)), BehaviorBuilder.triggerIf(predicate -> {
+            return predicate.getWave() <= 5;
+        }, SummonAttack.create()));
     }
 
     @Override
@@ -78,6 +89,9 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
     @Override
     public void wasHurtBy(LivingEntity entity) {
         if (entity instanceof AbstractPiglin) {
+            return;
+        }
+        if (entity instanceof SkeletalPiglin) {
             return;
         }
         maybeRetaliate(this.mob, entity);
