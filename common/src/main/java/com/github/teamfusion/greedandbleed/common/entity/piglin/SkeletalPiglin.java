@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
+import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -50,7 +51,7 @@ import java.time.temporal.ChronoField;
 import java.util.EnumSet;
 import java.util.UUID;
 
-public class SkeletalPiglin extends Monster implements NeutralMob, TraceableEntity, RangedAttackMob {
+public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOwner, RangedAttackMob {
     private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
@@ -345,14 +346,14 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceableEnti
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance instance) {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SHOVEL));
-        this.maybeWearArmor(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET), randomSource);
-        this.maybeWearArmor(EquipmentSlot.CHEST, new ItemStack(Items.GOLDEN_CHESTPLATE), randomSource);
-        this.maybeWearArmor(EquipmentSlot.LEGS, new ItemStack(Items.GOLDEN_LEGGINGS), randomSource);
-        this.maybeWearArmor(EquipmentSlot.FEET, new ItemStack(Items.GOLDEN_BOOTS), randomSource);
+        this.maybeWearArmor(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET), randomSource, 0.1F);
+        this.maybeWearArmor(EquipmentSlot.CHEST, new ItemStack(Items.GOLDEN_CHESTPLATE), randomSource, 0.1F);
+        this.maybeWearArmor(EquipmentSlot.LEGS, new ItemStack(Items.GOLDEN_LEGGINGS), randomSource, 0.1F);
+        this.maybeWearArmor(EquipmentSlot.FEET, new ItemStack(Items.GOLDEN_BOOTS), randomSource, 0.1F);
     }
 
-    private void maybeWearArmor(EquipmentSlot equipmentSlot, ItemStack itemStack, RandomSource randomSource) {
-        if (randomSource.nextFloat() < 0.1F) {
+    protected void maybeWearArmor(EquipmentSlot equipmentSlot, ItemStack itemStack, RandomSource randomSource, float chance) {
+        if (randomSource.nextFloat() < chance) {
             this.setItemSlot(equipmentSlot, itemStack);
         }
 
@@ -381,10 +382,10 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceableEnti
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
         float difficultyMultiplier = difficulty.getSpecialMultiplier();
         this.setCanPickUpLoot(level.getRandom().nextFloat() < 0.55F * difficultyMultiplier);
-
-        this.populateDefaultEquipmentSlots(random, difficulty);
-        this.populateDefaultEquipmentEnchantments(random, difficulty);
-
+        if (spawnType != MobSpawnType.MOB_SUMMONED) {
+            this.populateDefaultEquipmentSlots(random, difficulty);
+            this.populateDefaultEquipmentEnchantments(random, difficulty);
+        }
         if (this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
             LocalDate date = LocalDate.now();
             int currentDay = date.get(ChronoField.DAY_OF_MONTH);

@@ -29,7 +29,7 @@ public class SetWalkTargetFromAttackTargetIfTargetFar {
                 return (p_258694_, p_258695_, p_258696_) -> {
                     LivingEntity livingentity = p_258687_.get(p_258701_);
                     Optional<NearestVisibleLivingEntities> optional = p_258687_.tryGet(p_258702_);
-                    if (optional.isPresent() && optional.get().contains(livingentity) && p_258695_.closerThan(livingentity, 10)) {
+                    if (optional.isPresent() && optional.get().contains(livingentity) && p_258695_.closerThan(livingentity, 1)) {
                         p_258699_.erase();
                     } else {
                         p_258700_.set(new EntityTracker(livingentity, true));

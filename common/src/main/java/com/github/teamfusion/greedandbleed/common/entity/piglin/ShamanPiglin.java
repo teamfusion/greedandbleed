@@ -5,6 +5,7 @@ import com.github.teamfusion.greedandbleed.api.ShamanPiglinTaskManager;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.common.entity.SummonData;
 import com.github.teamfusion.greedandbleed.common.entity.SummonHandler;
+import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
@@ -18,6 +19,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
@@ -31,6 +33,8 @@ import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.piglin.PiglinArmPose;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -275,13 +279,33 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
 
                 BlockPos blockPos = this.blockPosition().offset(-3 + this.random.nextInt(6), this.random.nextInt(3) - this.random.nextInt(3), -3 + this.random.nextInt(6));
                 if (serverLevel.isEmptyBlock(blockPos) && serverLevel.isEmptyBlock(blockPos.above()) && !serverLevel.isEmptyBlock(blockPos.below())) {
-                    SkeletalPiglin piglin = EntityTypeRegistry.SKELETAL_PIGLIN.get().create(this.level());
+                    Mob piglin = EntityTypeRegistry.SKELETAL_PIGLIN.get().create(this.level());
+
+                    if (this.getWave() > 2 && this.random.nextFloat() < this.getWave() * 0.075F) {
+                        piglin = EntityType.ZOMBIFIED_PIGLIN.create(this.level());
+                    }
+
                     if (piglin == null) continue;
                     piglin.moveTo(blockPos, 0.0f, 0.0f);
                     piglin.setPose(Pose.EMERGING);
                     summonHandler.addSummonData(piglin);
+                    if (piglin instanceof TraceAndSetOwner traceableEntity) {
+                        traceableEntity.setOwner(this);
+                    }
+                    this.maybeWearArmorWithSummon(piglin, EquipmentSlot.HEAD, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_HELMET), getWave() * 5, false), this.random, getWave() * 0.1F);
+                    this.maybeWearArmorWithSummon(piglin, EquipmentSlot.CHEST, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_CHESTPLATE), getWave() * 5, false), this.random, getWave() * 0.1F);
+                    this.maybeWearArmorWithSummon(piglin, EquipmentSlot.LEGS, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_LEGGINGS), getWave() * 5, false), this.random, getWave() * 0.1F);
+                    this.maybeWearArmorWithSummon(piglin, EquipmentSlot.FEET, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_BOOTS), getWave() * 5, false), this.random, getWave() * 0.1F);
+                    if (piglin instanceof SkeletalPiglin skeletalPiglin) {
+                        if (this.random.nextBoolean()) {
+                            piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_SWORD), getWave() * 5, false));
+                        } else {
+                            piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.BOW), getWave() * 5, false));
+                        }
+                    }
+
                     piglin.finalizeSpawn(serverLevel, this.level().getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
-                    piglin.setOwner(this);
+
                     piglin.setTarget(living);
                     serverLevel.addFreshEntityWithPassengers(piglin);
 
@@ -294,5 +318,12 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
             this.summonCooldown = 200;
             this.setWave(this.getWave() + 1);
         }
+    }
+
+    protected void maybeWearArmorWithSummon(Mob mob, EquipmentSlot equipmentSlot, ItemStack itemStack, RandomSource randomSource, float chance) {
+        if (randomSource.nextFloat() < chance) {
+            mob.setItemSlot(equipmentSlot, itemStack);
+        }
+
     }
 }
