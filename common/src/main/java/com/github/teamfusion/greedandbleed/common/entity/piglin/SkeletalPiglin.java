@@ -30,9 +30,13 @@ import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -46,7 +50,7 @@ import java.time.temporal.ChronoField;
 import java.util.EnumSet;
 import java.util.UUID;
 
-public class SkeletalPiglin extends Monster implements NeutralMob, TraceableEntity {
+public class SkeletalPiglin extends Monster implements NeutralMob, TraceableEntity, RangedAttackMob {
     private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
@@ -124,14 +128,37 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceableEnti
                 return getOwner() == null && super.canContinueToUse();
             }
         });
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0F, true));
+        this.goalSelector.addGoal(2, new RangedBowAttackGoal<>(this, 1.0, 20, 15.0f) {
+            @Override
+            public boolean canUse() {
+                return isHolding(Items.BOW) && super.canUse();
+            }
 
-        this.goalSelector.addGoal(2, new RestrictSunGoal(this));
-        this.goalSelector.addGoal(3, new FleeSunGoal(this, 0.8D));
-        this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Wolf.class, 6.0F, 0.55D, 0.6D));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.6D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+            @Override
+            public boolean canContinueToUse() {
+                return isHolding(Items.BOW) && super.canContinueToUse();
+            }
+        });
+
+
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0F, true) {
+            @Override
+            public boolean canUse() {
+                return !isHolding(Items.BOW) && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !isHolding(Items.BOW) && super.canContinueToUse();
+            }
+        });
+
+        this.goalSelector.addGoal(4, new RestrictSunGoal(this));
+        this.goalSelector.addGoal(5, new FleeSunGoal(this, 0.8D));
+        this.goalSelector.addGoal(5, new AvoidEntityGoal<>(this, Wolf.class, 6.0F, 0.55D, 0.6D));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6D));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this, SkeletalPiglin.class));
 
         this.targetSelector.addGoal(1, new CopyOwnerTargetGoal(this));
@@ -386,6 +413,28 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceableEnti
         }
 
         return this.owner;
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity livingEntity, float f) {
+        ItemStack itemStack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW)));
+        AbstractArrow abstractArrow = this.getArrow(itemStack, f);
+        double d = livingEntity.getX() - this.getX();
+        double e = livingEntity.getY(0.3333333333333333) - abstractArrow.getY();
+        double g = livingEntity.getZ() - this.getZ();
+        double h = Math.sqrt(d * d + g * g);
+        abstractArrow.shoot(d, e + h * (double) 0.2f, g, 1.6f, 14 - this.level().getDifficulty().getId() * 4);
+        this.playSound(SoundEvents.SKELETON_SHOOT, 1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
+        this.level().addFreshEntity(abstractArrow);
+    }
+
+    protected AbstractArrow getArrow(ItemStack itemStack, float f) {
+        return ProjectileUtil.getMobArrow(this, itemStack, f);
+    }
+
+    @Override
+    public boolean canFireProjectileWeapon(ProjectileWeaponItem projectileWeaponItem) {
+        return projectileWeaponItem == Items.BOW;
     }
 
     class DoNothingGoal
