@@ -70,8 +70,6 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
             return predicate.getWave() > 5;
         }, MeleeAttack.create(20)), BehaviorBuilder.triggerIf(predicate -> {
             return predicate.getWave() <= 5;
-        }, SetWalkTargetAwayFrom.entity(MemoryModuleType.ATTACK_TARGET, 1.0F, 8, false)), BehaviorBuilder.triggerIf(predicate -> {
-            return predicate.getWave() <= 5;
         }, SummonAttack.create()));
     }
 
