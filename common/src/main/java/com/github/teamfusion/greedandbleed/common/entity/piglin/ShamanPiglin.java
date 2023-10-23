@@ -281,8 +281,12 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
                 if (serverLevel.isEmptyBlock(blockPos) && serverLevel.isEmptyBlock(blockPos.above()) && !serverLevel.isEmptyBlock(blockPos.below())) {
                     Mob piglin = EntityTypeRegistry.SKELETAL_PIGLIN.get().create(this.level());
 
-                    if (this.getWave() > 2 && this.random.nextFloat() < this.getWave() * 0.075F) {
-                        piglin = EntityType.ZOMBIFIED_PIGLIN.create(this.level());
+                    if (this.random.nextFloat() < this.getWave() * 0.075F) {
+                        if (this.getWave() > 2 && this.random.nextInt(4) == 0) {
+                            piglin = EntityType.ZOGLIN.create(this.level());
+                        } else {
+                            piglin = EntityType.ZOMBIFIED_PIGLIN.create(this.level());
+                        }
                     }
 
                     if (piglin == null) continue;
