@@ -24,6 +24,7 @@ public class CreativeTabRegistry {
                             ItemRegistry.NETHERITE_HOGLIN_ARMOR,
                             ItemRegistry.HOGLIN_SADDLE,
                             ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK,
+                            ItemRegistry.AMULET,
                             ItemRegistry.HOGLET_SPAWN_EGG,
                             ItemRegistry.ZOGLET_SPAWN_EGG,
                             ItemRegistry.SKELET_SPAWN_EGG,

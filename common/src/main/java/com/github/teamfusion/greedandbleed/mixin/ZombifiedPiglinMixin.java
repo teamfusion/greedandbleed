@@ -1,6 +1,8 @@
 package com.github.teamfusion.greedandbleed.mixin;
 
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
+import com.github.teamfusion.greedandbleed.common.entity.goal.TracedOwnerHurtByTargetGoal;
+import com.github.teamfusion.greedandbleed.common.entity.goal.TracedOwnerHurtTargetGoal;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -44,6 +46,8 @@ public abstract class ZombifiedPiglinMixin extends Monster implements TraceAndSe
         this.targetSelector.getAvailableGoals().removeIf(wrappedGoal -> {
             return wrappedGoal.getGoal() instanceof HurtByTargetGoal;
         });
+        this.targetSelector.addGoal(0, new TracedOwnerHurtByTargetGoal<>(this));
+        this.targetSelector.addGoal(1, new TracedOwnerHurtTargetGoal<>(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, new Class[0]) {
             @Override
             public HurtByTargetGoal setAlertOthers(Class<?>... classs) {
@@ -103,15 +107,15 @@ public abstract class ZombifiedPiglinMixin extends Monster implements TraceAndSe
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     public void addAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
-        if (tag.hasUUID("Owner")) {
-            this.ownerUUID = tag.getUUID("Owner");
+        if (this.ownerUUID != null) {
+            tag.putUUID("Owner", this.ownerUUID);
         }
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
     public void readAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
-        if (this.ownerUUID != null) {
-            tag.putUUID("Owner", this.ownerUUID);
+        if (tag.hasUUID("Owner")) {
+            this.ownerUUID = tag.getUUID("Owner");
         }
     }
 
@@ -130,5 +134,21 @@ public abstract class ZombifiedPiglinMixin extends Monster implements TraceAndSe
         }
 
         return this.owner;
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity livingEntity) {
+        if (livingEntity == this.getOwner()) {
+            return false;
+        }
+        if (livingEntity instanceof TraceAndSetOwner traceAndSetOwner && traceAndSetOwner.getOwner() == this.getOwner()) {
+            return false;
+        }
+        return super.canAttack(livingEntity);
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return this.getOwner() == null && super.shouldDespawnInPeaceful();
     }
 }

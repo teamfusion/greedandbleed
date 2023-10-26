@@ -20,8 +20,10 @@
     "PotionBrewingMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerMixin",
+    "SkeletonMixin",
     "WoodTypeInvoker",
     "ZoglinMixin",
+    "ZombieMixin",
     "ZombifiedPiglinMixin"
   ],
   "injectors": {

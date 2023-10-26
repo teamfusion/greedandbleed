@@ -1,6 +1,8 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
+import com.github.teamfusion.greedandbleed.common.entity.goal.TracedOwnerHurtByTargetGoal;
+import com.github.teamfusion.greedandbleed.common.entity.goal.TracedOwnerHurtTargetGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -162,7 +164,8 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this, SkeletalPiglin.class));
 
-        this.targetSelector.addGoal(1, new CopyOwnerTargetGoal(this));
+        this.targetSelector.addGoal(1, new TracedOwnerHurtByTargetGoal<>(this));
+        this.targetSelector.addGoal(2, new TracedOwnerHurtTargetGoal<>(this));
 
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
             @Override
@@ -362,19 +365,29 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putBoolean("IsBaby", this.isBaby());
-        if (tag.hasUUID("Owner")) {
-            this.ownerUUID = tag.getUUID("Owner");
+        if (this.ownerUUID != null) {
+            tag.putUUID("Owner", this.ownerUUID);
         }
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.setBaby(tag.getBoolean("IsBaby"));
-        if (this.ownerUUID != null) {
-            tag.putUUID("Owner", this.ownerUUID);
+
+        if (tag.hasUUID("Owner")) {
+            this.ownerUUID = tag.getUUID("Owner");
         }
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity livingEntity) {
+        if (livingEntity == this.getOwner()) {
+            return false;
+        }
+        if (livingEntity instanceof TraceAndSetOwner traceAndSetOwner && traceAndSetOwner.getOwner() == this.getOwner()) {
+            return false;
+        }
+        return super.canAttack(livingEntity);
     }
 
     @Nullable
@@ -414,6 +427,11 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
         }
 
         return this.owner;
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return this.getOwner() == null && super.shouldDespawnInPeaceful();
     }
 
     @Override
