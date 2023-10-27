@@ -6,57 +6,89 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public class AmuletItem extends Item {
     public AmuletItem(Item.Properties properties) {
         super(properties);
     }
 
+
     @Override
-    public InteractionResult useOn(UseOnContext useOnContext) {
-        Player player = useOnContext.getPlayer();
-        Level level = useOnContext.getLevel();
-        BlockPos blockPos = useOnContext.getClickedPos();
-        BlockPos blockPos2 = blockPos.relative(useOnContext.getClickedFace());
-        if (player != null) {
-            ItemStack itemStack = getSoulSand(player);
-            if (!itemStack.isEmpty()) {
-                EntityType<?> entityType = getMobAndConsume(level, player, itemStack);
-                if (entityType != null) {
-                    if (level.isClientSide) {
-                        for (int i = 0; i < 8; i++) {
-                            level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, blockPos2.getX() + Mth.nextFloat(level.random, -0.5F, 0.5F), blockPos2.getY() + Mth.nextFloat(level.random, 0F, 3.0F), blockPos2.getZ() + Mth.nextFloat(level.random, -0.5F, 0.5F), 0, 0, 0);
-                        }
-                    } else {
-                        Entity entity = entityType.create(level);
-                        if (entity instanceof Mob mob && level instanceof ServerLevel serverLevel) {
-                            mob.setPos(blockPos2.getX(), blockPos2.getY(), blockPos2.getZ());
-                            mob.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(blockPos2), MobSpawnType.MOB_SUMMONED, null, null);
-                            if (mob instanceof TraceAndSetOwner traceAndSetOwner) {
-                                traceAndSetOwner.setOwner(player);
+    public boolean useOnRelease(ItemStack itemStack) {
+        return super.useOnRelease(itemStack);
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack itemStack) {
+        return UseAnim.BOW;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack itemStack) {
+        return 63;
+    }
+
+
+    @Override
+    public void releaseUsing(ItemStack itemStack, Level level, LivingEntity livingEntity, int time) {
+        float f = (float) (itemStack.getUseDuration() - time) / 60;
+        if (f >= 0.8F) {
+            if (livingEntity instanceof Player player) {
+                HitResult hitResult = this.calculateHitResult(livingEntity);
+                if (hitResult instanceof BlockHitResult blockHitResult) {
+                    BlockPos blockPos = blockHitResult.getBlockPos();
+                    BlockPos blockPos2 = blockPos.relative(blockHitResult.getDirection());
+                    ItemStack itemStack2 = getSoulSand(player);
+                    if (!itemStack2.isEmpty()) {
+                        EntityType<?> entityType = getMobAndConsume(level, player, itemStack2);
+                        if (entityType != null) {
+                            if (level.isClientSide) {
+                                for (int i = 0; i < 8; i++) {
+                                    level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, blockPos2.getX() + Mth.nextFloat(level.random, -0.5F, 0.5F), blockPos2.getY() + Mth.nextFloat(level.random, 0F, 3.0F), blockPos2.getZ() + Mth.nextFloat(level.random, -0.5F, 0.5F), 0, 0, 0);
+                                }
+                            } else {
+                                Entity entity = entityType.create(level);
+                                if (entity instanceof Mob mob && level instanceof ServerLevel serverLevel) {
+                                    mob.setPos(blockPos2.getX(), blockPos2.getY(), blockPos2.getZ());
+                                    mob.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(blockPos2), MobSpawnType.MOB_SUMMONED, null, null);
+                                    if (mob instanceof TraceAndSetOwner traceAndSetOwner) {
+                                        traceAndSetOwner.setOwner(player);
+                                    }
+                                    serverLevel.addFreshEntity(mob);
+                                }
                             }
-                            serverLevel.addFreshEntity(mob);
+                            player.getCooldowns().addCooldown(this, 80);
                         }
+
                     }
-                    player.getCooldowns().addCooldown(this, 80);
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+
                 }
-
             }
-
         }
-        return super.useOn(useOnContext);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+        ItemStack itemStack = player.getItemInHand(interactionHand);
+
+        player.startUsingItem(interactionHand);
+        return InteractionResultHolder.consume(itemStack);
+    }
+
+    private HitResult calculateHitResult(LivingEntity livingEntity) {
+        return ProjectileUtil.getHitResultOnViewVector(livingEntity, entity -> !entity.isSpectator() && entity.isPickable(), 8.0F);
     }
 
 

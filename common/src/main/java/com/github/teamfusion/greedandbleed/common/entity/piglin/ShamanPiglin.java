@@ -275,14 +275,14 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
         if (summonHandler.getList().isEmpty()) {
             ServerLevel serverLevel = (ServerLevel) this.level();
             int count = 0;
-            for (int i = 0; i < 16; ++i) {
+            for (int i = 0; i < 32; ++i) {
 
                 BlockPos blockPos = this.blockPosition().offset(-3 + this.random.nextInt(6), this.random.nextInt(3) - this.random.nextInt(3), -3 + this.random.nextInt(6));
                 if (serverLevel.isEmptyBlock(blockPos) && serverLevel.isEmptyBlock(blockPos.above()) && !serverLevel.isEmptyBlock(blockPos.below())) {
                     Mob piglin = EntityTypeRegistry.SKELETAL_PIGLIN.get().create(this.level());
 
                     if (this.random.nextFloat() < this.getWave() * 0.075F) {
-                        if (this.getWave() > 2 && this.random.nextInt(4) == 0) {
+                        if (this.getWave() > 2 && this.random.nextInt(2) == 0) {
                             piglin = EntityType.ZOGLIN.create(this.level());
                         } else {
                             piglin = EntityType.ZOMBIFIED_PIGLIN.create(this.level());
@@ -304,7 +304,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
                         if (this.random.nextBoolean()) {
                             piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_SWORD), getWave() * 5, false));
                         } else {
-                            piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.BOW), getWave() * 5, false));
+                            piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.CROSSBOW), getWave() * 5, false));
                         }
                     }
 
@@ -314,7 +314,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
                     serverLevel.addFreshEntityWithPassengers(piglin);
 
                     count += 1;
-                    if (count >= 3) {
+                    if (count >= 3 + this.getWave()) {
                         break;
                     }
                 }

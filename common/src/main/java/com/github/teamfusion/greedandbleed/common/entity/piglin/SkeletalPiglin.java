@@ -29,13 +29,13 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.TargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -53,8 +53,10 @@ import java.time.temporal.ChronoField;
 import java.util.EnumSet;
 import java.util.UUID;
 
-public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOwner, RangedAttackMob {
+public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOwner, RangedAttackMob, CrossbowAttackMob {
     private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
+
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
     public static final UniformInt RANGED_INT = TimeUtil.rangeOfSeconds(20, 39);
@@ -77,6 +79,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_BABY_ID, false);
+        this.entityData.define(IS_CHARGING_CROSSBOW, false);
     }
 
     @Override
@@ -131,6 +134,8 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
                 return getOwner() == null && super.canContinueToUse();
             }
         });
+        this.goalSelector.addGoal(2, new RangedCrossbowAttackGoal<SkeletalPiglin>(this, 1.0, 8.0f));
+
         this.goalSelector.addGoal(2, new RangedBowAttackGoal<>(this, 1.0, 20, 15.0f) {
             @Override
             public boolean canUse() {
@@ -147,12 +152,12 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0F, true) {
             @Override
             public boolean canUse() {
-                return !isHolding(Items.BOW) && super.canUse();
+                return !isHolding(Items.BOW) && !isHolding(Items.CROSSBOW) && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !isHolding(Items.BOW) && super.canContinueToUse();
+                return !isHolding(Items.BOW) && !isHolding(Items.CROSSBOW) && super.canContinueToUse();
             }
         });
 
@@ -436,15 +441,36 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
 
     @Override
     public void performRangedAttack(LivingEntity livingEntity, float f) {
-        ItemStack itemStack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW)));
-        AbstractArrow abstractArrow = this.getArrow(itemStack, f);
-        double d = livingEntity.getX() - this.getX();
-        double e = livingEntity.getY(0.3333333333333333) - abstractArrow.getY();
-        double g = livingEntity.getZ() - this.getZ();
-        double h = Math.sqrt(d * d + g * g);
-        abstractArrow.shoot(d, e + h * (double) 0.2f, g, 1.6f, 14 - this.level().getDifficulty().getId() * 4);
-        this.playSound(SoundEvents.SKELETON_SHOOT, 1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
-        this.level().addFreshEntity(abstractArrow);
+        if (this.isHolding(Items.CROSSBOW)) {
+            this.performCrossbowAttack(this, 1.6f);
+
+        } else {
+            ItemStack itemStack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW)));
+            AbstractArrow abstractArrow = this.getArrow(itemStack, f);
+            double d = livingEntity.getX() - this.getX();
+            double e = livingEntity.getY(0.3333333333333333) - abstractArrow.getY();
+            double g = livingEntity.getZ() - this.getZ();
+            double h = Math.sqrt(d * d + g * g);
+            abstractArrow.shoot(d, e + h * (double) 0.2f, g, 1.6f, 14 - this.level().getDifficulty().getId() * 4);
+            this.playSound(SoundEvents.SKELETON_SHOOT, 1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
+            this.level().addFreshEntity(abstractArrow);
+        }
+
+    }
+
+
+    public boolean isChargingCrossbow() {
+        return this.entityData.get(IS_CHARGING_CROSSBOW);
+    }
+
+    @Override
+    public void setChargingCrossbow(boolean bl) {
+        this.entityData.set(IS_CHARGING_CROSSBOW, bl);
+    }
+
+    @Override
+    public void onCrossbowAttackPerformed() {
+        this.noActionTime = 0;
     }
 
     protected AbstractArrow getArrow(ItemStack itemStack, float f) {
@@ -453,7 +479,11 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
 
     @Override
     public boolean canFireProjectileWeapon(ProjectileWeaponItem projectileWeaponItem) {
-        return projectileWeaponItem == Items.BOW;
+        return projectileWeaponItem == Items.BOW || projectileWeaponItem == Items.CROSSBOW;
+    }
+
+    public void shootCrossbowProjectile(LivingEntity livingEntity, ItemStack itemStack, Projectile projectile, float f) {
+        this.shootCrossbowProjectile(this, livingEntity, projectile, f, 1.6f);
     }
 
     class DoNothingGoal
@@ -468,26 +498,4 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
         }
     }
 
-    class CopyOwnerTargetGoal
-            extends TargetGoal {
-        private final TargetingConditions copyOwnerTargeting;
-
-        public CopyOwnerTargetGoal(PathfinderMob pathfinderMob) {
-            super(pathfinderMob, false);
-            this.copyOwnerTargeting = TargetingConditions.forNonCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
-        }
-
-        @Override
-        public boolean canUse() {
-            return SkeletalPiglin.this.owner != null && SkeletalPiglin.this.owner instanceof Mob mob && mob.getTarget() != null && this.canAttack(mob.getTarget(), this.copyOwnerTargeting);
-        }
-
-        @Override
-        public void start() {
-            if (SkeletalPiglin.this.owner instanceof Mob mob) {
-                SkeletalPiglin.this.setTarget(mob.getTarget());
-            }
-            super.start();
-        }
-    }
 }

@@ -94,6 +94,21 @@ public class SkeletalPiglinModel<T extends SkeletalPiglin> extends PiglinModel<T
                 this.leftArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
             }
         }
+
+        if (itemStack.is(Items.CROSSBOW) && ((Mob) mob).isAggressive()) {
+            if (((Mob) mob).getMainArm() == HumanoidArm.RIGHT) {
+                this.rightArmPose = ArmPose.CROSSBOW_HOLD;
+            } else {
+                this.leftArmPose = ArmPose.CROSSBOW_HOLD;
+            }
+        }
+        if (mob.isChargingCrossbow()) {
+            if (((Mob) mob).getMainArm() == HumanoidArm.RIGHT) {
+                this.rightArmPose = ArmPose.CROSSBOW_CHARGE;
+            } else {
+                this.leftArmPose = ArmPose.CROSSBOW_CHARGE;
+            }
+        }
         super.prepareMobModel(mob, f, g, h);
     }
 
