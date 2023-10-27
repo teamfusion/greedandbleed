@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.item;
 
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,7 +28,7 @@ public class AmuletItem extends Item {
 
     @Override
     public boolean useOnRelease(ItemStack itemStack) {
-        return super.useOnRelease(itemStack);
+        return itemStack.is(this);
     }
 
     @Override
@@ -63,6 +64,13 @@ public class AmuletItem extends Item {
                                 if (entity instanceof Mob mob && level instanceof ServerLevel serverLevel) {
                                     mob.setPos(blockPos2.getX(), blockPos2.getY(), blockPos2.getZ());
                                     mob.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(blockPos2), MobSpawnType.MOB_SUMMONED, null, null);
+                                    if (mob instanceof SkeletalPiglin skeletalPiglin) {
+                                        if (level.random.nextBoolean()) {
+                                            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
+                                        } else {
+                                            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.CROSSBOW));
+                                        }
+                                    }
                                     if (mob instanceof TraceAndSetOwner traceAndSetOwner) {
                                         traceAndSetOwner.setOwner(player);
                                     }

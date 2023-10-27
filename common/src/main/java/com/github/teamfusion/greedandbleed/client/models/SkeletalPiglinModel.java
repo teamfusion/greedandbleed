@@ -95,7 +95,7 @@ public class SkeletalPiglinModel<T extends SkeletalPiglin> extends PiglinModel<T
             }
         }
 
-        if (itemStack.is(Items.CROSSBOW) && ((Mob) mob).isAggressive()) {
+        if (itemStack.is(Items.CROSSBOW)) {
             if (((Mob) mob).getMainArm() == HumanoidArm.RIGHT) {
                 this.rightArmPose = ArmPose.CROSSBOW_HOLD;
             } else {
