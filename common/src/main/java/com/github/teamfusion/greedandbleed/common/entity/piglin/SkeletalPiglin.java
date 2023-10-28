@@ -64,8 +64,8 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
     private int angerTime;
     private UUID angerTarget;
 
-    private float spawnScale = 1.0F;
-    private float spawnScaleO = 1.0F;
+    private float spawnScale;
+    private float spawnScaleO;
 
     @Nullable
     private LivingEntity owner;

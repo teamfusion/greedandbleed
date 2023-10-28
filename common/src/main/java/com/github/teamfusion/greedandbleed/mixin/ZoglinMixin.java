@@ -3,8 +3,6 @@ package com.github.teamfusion.greedandbleed.mixin;
 import com.github.teamfusion.greedandbleed.common.entity.ICrawlSpawn;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
-import com.google.common.collect.ImmutableList;
-import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -21,12 +19,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.behavior.DoNothing;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zoglin;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
-import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
@@ -65,18 +60,6 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
                 }
             }
         }
-    }
-
-    @Inject(method = "makeBrain", at = @At("RETURN"), cancellable = true)
-    protected void makeBrain(Dynamic<?> dynamic, CallbackInfoReturnable<Brain<?>> cir) {
-        Brain<Zoglin> brain = (Brain<Zoglin>) cir.getReturnValue();
-        initEmergeActivity(brain);
-        cir.setReturnValue(brain);
-    }
-
-
-    private static void initEmergeActivity(Brain<Zoglin> brain) {
-        brain.addActivity(Activity.EMERGE, 10, ImmutableList.of(new DoNothing(20, 40)));
     }
 
     @Inject(method = "customServerAiStep", at = @At("HEAD"))
@@ -192,6 +175,9 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
                 callbackInfoReturnable.setReturnValue(false);
             }
         }
+        if (livingEntity.getPose() == Pose.EMERGING) {
+            callbackInfoReturnable.setReturnValue(false);
+        }
     }
 
     @Inject(method = "setAttackTarget", at = @At("HEAD"), cancellable = true)
@@ -203,6 +189,9 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
             if (traceAndSetOwner.getOwner() == this.getOwner()) {
                 callbackInfo.cancel();
             }
+        }
+        if (livingEntity.getPose() == Pose.EMERGING) {
+            callbackInfo.cancel();
         }
     }
 

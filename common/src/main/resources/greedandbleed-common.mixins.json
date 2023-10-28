@@ -4,8 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "client.HoglinRendererMixin",
+    "client.LivingEntityRenderer",
     "client.LocalPlayerMixin",
-    "client.MobRendererMixin",
     "client.MultiPlayerGameModeMixin",
     "client.RemotePlayerMixin"
   ],
