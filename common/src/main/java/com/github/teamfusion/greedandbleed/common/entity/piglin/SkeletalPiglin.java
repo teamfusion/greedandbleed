@@ -1,6 +1,8 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
+import com.github.teamfusion.greedandbleed.common.entity.ICrawlSpawn;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
+import com.github.teamfusion.greedandbleed.common.entity.goal.DoNothingGoal;
 import com.github.teamfusion.greedandbleed.common.entity.goal.TracedOwnerHurtByTargetGoal;
 import com.github.teamfusion.greedandbleed.common.entity.goal.TracedOwnerHurtTargetGoal;
 import net.minecraft.core.BlockPos;
@@ -50,10 +52,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
-import java.util.EnumSet;
 import java.util.UUID;
 
-public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOwner, RangedAttackMob, CrossbowAttackMob {
+public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOwner, RangedAttackMob, CrossbowAttackMob, ICrawlSpawn {
     private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
 
@@ -63,8 +64,8 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
     private int angerTime;
     private UUID angerTarget;
 
-    private float spawnScale;
-    private float spawnScaleO;
+    private float spawnScale = 1.0F;
+    private float spawnScaleO = 1.0F;
 
     @Nullable
     private LivingEntity owner;
@@ -84,6 +85,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
         if (DATA_POSE.equals(data)) {
             switch (this.getPose()) {
                 case EMERGING: {
@@ -93,7 +95,6 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
             }
         }
 
-        super.onSyncedDataUpdated(data);
         if (DATA_BABY_ID.equals(data)) {
             this.refreshDimensions();
         }
@@ -122,7 +123,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
     // BEHAVIOR
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new DoNothingGoal());
+        this.goalSelector.addGoal(0, new DoNothingGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 0.8D) {
             @Override
             public boolean canUse() {
@@ -486,16 +487,14 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
         this.shootCrossbowProjectile(this, livingEntity, projectile, f, 1.6f);
     }
 
-    class DoNothingGoal
-            extends Goal {
-        public DoNothingGoal() {
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP, Goal.Flag.LOOK));
-        }
+    @Override
+    public void setSpawnScale(float scale) {
+        this.spawnScale = scale;
+    }
 
-        @Override
-        public boolean canUse() {
-            return SkeletalPiglin.this.getPose() == Pose.EMERGING;
-        }
+    @Override
+    public float getSpawnScale() {
+        return this.spawnScale;
     }
 
 }

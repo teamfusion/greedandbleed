@@ -7,11 +7,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -46,6 +44,12 @@ public class AmuletItem extends Item {
                             if (mob instanceof TraceAndSetOwner traceAndSetOwner) {
                                 traceAndSetOwner.setOwner(player);
                             }
+                            mob.setPose(Pose.EMERGING);
+
+                            if (mob instanceof PathfinderMob pathfinderMob) {
+                                pathfinderMob.getBrain().setActiveActivityIfPossible(Activity.EMERGE);
+                            }
+
                             serverLevel.addFreshEntity(mob);
                         }
                     }

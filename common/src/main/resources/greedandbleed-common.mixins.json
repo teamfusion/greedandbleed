@@ -5,6 +5,7 @@
   "client": [
     "client.HoglinRendererMixin",
     "client.LocalPlayerMixin",
+    "client.MobRendererMixin",
     "client.MultiPlayerGameModeMixin",
     "client.RemotePlayerMixin"
   ],

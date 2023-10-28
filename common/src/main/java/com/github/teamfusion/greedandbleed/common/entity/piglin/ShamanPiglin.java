@@ -32,6 +32,7 @@ import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.piglin.PiglinArmPose;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -306,6 +307,11 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
                         } else {
                             piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.CROSSBOW), getWave() * 5, false));
                         }
+                    }
+                    piglin.setPose(Pose.EMERGING);
+
+                    if (piglin instanceof PathfinderMob pathfinderMob) {
+                        pathfinderMob.getBrain().setActiveActivityIfPossible(Activity.EMERGE);
                     }
 
                     piglin.finalizeSpawn(serverLevel, this.level().getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
