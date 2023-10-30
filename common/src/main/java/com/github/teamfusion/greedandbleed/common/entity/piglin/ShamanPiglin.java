@@ -62,6 +62,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
 
     public ShamanPiglin(EntityType<? extends ShamanPiglin> entityType, Level level) {
         super(entityType, level);
+        this.setCanPickUpLoot(false);
     }
 
     @Override
