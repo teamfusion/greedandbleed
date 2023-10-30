@@ -19,7 +19,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
@@ -31,6 +31,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Zoglin;
 import net.minecraft.world.entity.monster.piglin.PiglinArmPose;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
@@ -54,6 +55,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
     private int angerTime;
     private UUID angerTarget;
     public int summonCooldown;
+    public int groupsSpawned;
     protected static final EntityDataAccessor<Boolean> DATA_SOUL_GUARD = SynchedEntityData.defineId(ShamanPiglin.class, EntityDataSerializers.BOOLEAN);
 
     public final SummonHandler summonHandler = new SummonHandler();
@@ -148,6 +150,10 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (this.isInvulnerableTo(source)) {
+            return false;
+        }
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
         for (SummonData data : this.summonHandler.getList()) {
             LivingEntity living = data.getOwner(this.level());
             if (living != null) {
@@ -164,11 +170,12 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
             }
         }
 
+
         if (this.getWave() <= 5) {
             this.playSound(SoundEvents.FIRE_EXTINGUISH);
             return false;
         }
-
+        }
         return super.hurt(source, amount);
     }
 
@@ -276,64 +283,84 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
         if (summonHandler.getList().isEmpty()) {
             ServerLevel serverLevel = (ServerLevel) this.level();
             int count = 0;
-            for (int i = 0; i < 32; ++i) {
+            BlockPos blockPos = this.blockPosition().offset(-3 + this.random.nextInt(6), this.random.nextInt(3) - this.random.nextInt(3), -3 + this.random.nextInt(6));
 
-                BlockPos blockPos = this.blockPosition().offset(-3 + this.random.nextInt(6), this.random.nextInt(3) - this.random.nextInt(3), -3 + this.random.nextInt(6));
-                if (serverLevel.isEmptyBlock(blockPos) && serverLevel.isEmptyBlock(blockPos.above()) && !serverLevel.isEmptyBlock(blockPos.below())) {
-                    Mob piglin = EntityTypeRegistry.SKELETAL_PIGLIN.get().create(this.level());
 
-                    if (this.random.nextFloat() < this.getWave() * 0.075F) {
-                        if (this.getWave() > 2 && this.random.nextInt(2) == 0) {
-                            piglin = EntityType.ZOGLIN.create(this.level());
-                        } else {
-                            piglin = EntityType.ZOMBIFIED_PIGLIN.create(this.level());
+            if (serverLevel.isEmptyBlock(blockPos) && serverLevel.isEmptyBlock(blockPos.above()) && !serverLevel.isEmptyBlock(blockPos.below())) {
+                for (SummonType summonType : SummonType.VALUES) {
+                    for (int i = 0; i < summonType.spawnsPerWaveBeforeBonus[getWave()]; i++) {
+                        Mob piglin = summonType.entityType.create(this.level());
+
+
+                        piglin.moveTo(blockPos, 0.0f, 0.0f);
+                        piglin.setPose(Pose.EMERGING);
+                        summonHandler.addSummonData(piglin);
+                        if (piglin instanceof TraceAndSetOwner traceableEntity) {
+                            traceableEntity.setOwner(this);
                         }
-                    }
-
-                    if (piglin == null) continue;
-                    piglin.moveTo(blockPos, 0.0f, 0.0f);
-                    piglin.setPose(Pose.EMERGING);
-                    summonHandler.addSummonData(piglin);
-                    if (piglin instanceof TraceAndSetOwner traceableEntity) {
-                        traceableEntity.setOwner(this);
-                    }
-                    this.maybeWearArmorWithSummon(piglin, EquipmentSlot.HEAD, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_HELMET), getWave() * 5, false), this.random, getWave() * 0.1F);
-                    this.maybeWearArmorWithSummon(piglin, EquipmentSlot.CHEST, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_CHESTPLATE), getWave() * 5, false), this.random, getWave() * 0.1F);
-                    this.maybeWearArmorWithSummon(piglin, EquipmentSlot.LEGS, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_LEGGINGS), getWave() * 5, false), this.random, getWave() * 0.1F);
-                    this.maybeWearArmorWithSummon(piglin, EquipmentSlot.FEET, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_BOOTS), getWave() * 5, false), this.random, getWave() * 0.1F);
-                    if (piglin instanceof SkeletalPiglin skeletalPiglin) {
-                        if (this.random.nextBoolean()) {
-                            piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_SWORD), getWave() * 5, false));
-                        } else {
-                            piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.CROSSBOW), getWave() * 5, false));
+                        if (!(piglin instanceof Zoglin)) {
+                            if (this.getWave() == 3) {
+                                this.wearArmorWithSummon(piglin, EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
+                                this.wearArmorWithSummon(piglin, EquipmentSlot.CHEST, new ItemStack(Items.GOLDEN_CHESTPLATE));
+                                this.wearArmorWithSummon(piglin, EquipmentSlot.LEGS, new ItemStack(Items.GOLDEN_LEGGINGS));
+                                this.wearArmorWithSummon(piglin, EquipmentSlot.FEET, new ItemStack(Items.GOLDEN_BOOTS));
+                            } else if (this.getWave() >= 4) {
+                                this.wearArmorWithSummon(piglin, EquipmentSlot.HEAD, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_HELMET), getWave() * 5, false));
+                                this.wearArmorWithSummon(piglin, EquipmentSlot.CHEST, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_CHESTPLATE), getWave() * 5, false));
+                                this.wearArmorWithSummon(piglin, EquipmentSlot.LEGS, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_LEGGINGS), getWave() * 5, false));
+                                this.wearArmorWithSummon(piglin, EquipmentSlot.FEET, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_BOOTS), getWave() * 5, false));
+                            }
                         }
-                    }
-                    piglin.setPose(Pose.EMERGING);
+                        if (piglin instanceof SkeletalPiglin skeletalPiglin) {
+                            if (this.random.nextBoolean()) {
+                                piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_SWORD), getWave() * 5, false));
+                            } else {
+                                piglin.setItemSlot(EquipmentSlot.MAINHAND, EnchantmentHelper.enchantItem(random, new ItemStack(Items.CROSSBOW), getWave() * 5, false));
+                            }
+                        }
+                        piglin.setPose(Pose.EMERGING);
 
-                    if (piglin instanceof PathfinderMob pathfinderMob) {
-                        pathfinderMob.getBrain().setActiveActivityIfPossible(Activity.EMERGE);
-                    }
+                        if (piglin instanceof PathfinderMob pathfinderMob) {
+                            pathfinderMob.getBrain().setActiveActivityIfPossible(Activity.EMERGE);
+                        }
 
-                    piglin.finalizeSpawn(serverLevel, this.level().getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
+                        piglin.finalizeSpawn(serverLevel, this.level().getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
 
-                    piglin.setTarget(living);
-                    serverLevel.addFreshEntityWithPassengers(piglin);
+                        piglin.setTarget(living);
+                        serverLevel.addFreshEntityWithPassengers(piglin);
 
-                    count += 1;
-                    if (count >= 3 + this.getWave()) {
-                        break;
+                        count += 1;
+                        this.summonCooldown = 200;
+
                     }
                 }
+                this.setWave(this.getWave() + 1);
             }
-            this.summonCooldown = 200;
-            this.setWave(this.getWave() + 1);
-        }
+
     }
 
-    protected void maybeWearArmorWithSummon(Mob mob, EquipmentSlot equipmentSlot, ItemStack itemStack, RandomSource randomSource, float chance) {
-        if (randomSource.nextFloat() < chance) {
-            mob.setItemSlot(equipmentSlot, itemStack);
+    }
+
+    protected void wearArmorWithSummon(Mob mob, EquipmentSlot equipmentSlot, ItemStack itemStack) {
+        mob.setItemSlot(equipmentSlot, itemStack);
+    }
+
+    static enum SummonType {
+        SKELETON_PIGLIN(EntityTypeRegistry.SKELETAL_PIGLIN.get(), new int[]{0, 2, 2, 2, 2, 3}),
+        ZOMBIFIED_PIGLIN(EntityType.ZOMBIFIED_PIGLIN, new int[]{0, 1, 0, 0, 2, 3}),
+        ZOGLIN(EntityType.ZOGLIN, new int[]{0, 0, 0, 0, 1, 2});
+
+        static final SummonType[] VALUES;
+        final EntityType<? extends Mob> entityType;
+        final int[] spawnsPerWaveBeforeBonus;
+
+        private SummonType(EntityType<? extends Mob> entityType, int[] is) {
+            this.entityType = entityType;
+            this.spawnsPerWaveBeforeBonus = is;
         }
 
+        static {
+            VALUES = SummonType.values();
+        }
     }
 }
