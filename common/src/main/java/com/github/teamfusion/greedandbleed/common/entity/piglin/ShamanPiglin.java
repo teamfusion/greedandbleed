@@ -153,7 +153,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
         if (this.isInvulnerableTo(source)) {
             return false;
         }
-        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+        if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
         for (SummonData data : this.summonHandler.getList()) {
             LivingEntity living = data.getOwner(this.level());
             if (living != null) {
