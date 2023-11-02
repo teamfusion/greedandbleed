@@ -52,11 +52,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
+import java.util.Optional;
 import java.util.UUID;
 
 public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOwner, RangedAttackMob, CrossbowAttackMob, ICrawlSpawn {
     private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Optional<UUID>> DATA_UUID = SynchedEntityData.defineId(SkeletalPiglin.class, EntityDataSerializers.OPTIONAL_UUID);
 
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
@@ -69,8 +71,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
 
     @Nullable
     private LivingEntity owner;
-    @Nullable
-    private UUID ownerUUID;
+
 
     public SkeletalPiglin(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
@@ -81,6 +82,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
         super.defineSynchedData();
         this.entityData.define(DATA_BABY_ID, false);
         this.entityData.define(IS_CHARGING_CROSSBOW, false);
+        this.entityData.define(DATA_UUID, Optional.empty());
     }
 
     @Override
@@ -198,12 +200,29 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
 
                 break;
             }
+            default: {
+                this.clientSummonedParticles();
+            }
         }
         this.spawnScaleO = this.spawnScale;
         this.spawnScale = this.getPose() == Pose.EMERGING ? Mth.clamp(this.spawnScale - 0.01f, 0.0f, 1.0f) : 1.0F;
 
         if (this.spawnScale <= 0.0F && this.getPose() == Pose.EMERGING) {
             this.setPose(Pose.STANDING);
+        }
+    }
+
+    private void clientSummonedParticles() {
+        RandomSource randomSource = this.getRandom();
+        if (this.getOwnerUUID().isPresent()) {
+            if (this.level().isClientSide) {
+                for (int i = 0; i < 1; ++i) {
+                    double d = this.getX() + (double) Mth.randomBetween(randomSource, -this.getBbWidth() / 2, this.getBbWidth() / 2);
+                    double e = this.getY() + (double) Mth.randomBetween(randomSource, 0f, this.getBbHeight());
+                    double f = this.getZ() + (double) Mth.randomBetween(randomSource, -this.getBbWidth() / 2, this.getBbWidth() / 2);
+                    this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, d, e, f, 0.0, 0.0, 0.0);
+                }
+            }
         }
     }
 
@@ -371,8 +390,8 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        if (this.ownerUUID != null) {
-            tag.putUUID("Owner", this.ownerUUID);
+        if (this.getOwnerUUID().isPresent()) {
+            tag.putUUID("Owner", this.getOwnerUUID().get());
         }
     }
 
@@ -381,7 +400,7 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
         super.readAdditionalSaveData(tag);
 
         if (tag.hasUUID("Owner")) {
-            this.ownerUUID = tag.getUUID("Owner");
+            this.setOwnerUUID(Optional.of(tag.getUUID("Owner")));
         }
     }
 
@@ -418,15 +437,23 @@ public class SkeletalPiglin extends Monster implements NeutralMob, TraceAndSetOw
         return super.finalizeSpawn(level, difficulty, spawnType, groupData, tag);
     }
 
+    public void setOwnerUUID(Optional<UUID> uuid) {
+        this.entityData.set(DATA_UUID, uuid);
+    }
+
+    public Optional<UUID> getOwnerUUID() {
+        return this.entityData.get(DATA_UUID);
+    }
+
     public void setOwner(@Nullable LivingEntity arg) {
         this.owner = arg;
-        this.ownerUUID = arg == null ? null : arg.getUUID();
+        this.setOwnerUUID(arg == null ? Optional.empty() : Optional.of(arg.getUUID()));
     }
 
     @Nullable
     public LivingEntity getOwner() {
-        if (this.owner == null && this.ownerUUID != null && this.level() instanceof ServerLevel) {
-            Entity entity = ((ServerLevel) this.level()).getEntity(this.ownerUUID);
+        if (this.owner == null && this.getOwnerUUID().isPresent() && this.level() instanceof ServerLevel) {
+            Entity entity = ((ServerLevel) this.level()).getEntity(this.getOwnerUUID().get());
             if (entity instanceof LivingEntity) {
                 this.owner = (LivingEntity) entity;
             }

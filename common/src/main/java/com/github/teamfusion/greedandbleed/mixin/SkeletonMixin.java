@@ -9,6 +9,8 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -28,20 +30,27 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(AbstractSkeleton.class)
 public abstract class SkeletonMixin extends Monster implements TraceAndSetOwner, ICrawlSpawn {
+    private static final EntityDataAccessor<Optional<UUID>> DATA_UUID = SynchedEntityData.defineId(AbstractSkeleton.class, EntityDataSerializers.OPTIONAL_UUID);
+
     @Nullable
     private LivingEntity owner;
-    @Nullable
-    private UUID ownerUUID;
 
     private float spawnScale;
     private float spawnScaleO;
 
     protected SkeletonMixin(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_UUID, Optional.empty());
     }
 
     @Override
@@ -81,12 +90,29 @@ public abstract class SkeletonMixin extends Monster implements TraceAndSetOwner,
 
                 break;
             }
+            default: {
+                this.clientSummonedParticles();
+            }
         }
         this.spawnScaleO = this.spawnScale;
         this.spawnScale = this.getPose() == Pose.EMERGING ? Mth.clamp(this.spawnScale - 0.01f, 0.0f, 1.0f) : 1.0F;
 
         if (this.spawnScale <= 0.0F && this.getPose() == Pose.EMERGING) {
             this.setPose(Pose.STANDING);
+        }
+    }
+
+    private void clientSummonedParticles() {
+        RandomSource randomSource = this.getRandom();
+        if (this.getOwnerUUID().isPresent()) {
+            if (this.level().isClientSide) {
+                for (int i = 0; i < 1; ++i) {
+                    double d = this.getX() + (double) Mth.randomBetween(randomSource, -this.getBbWidth() / 2, this.getBbWidth() / 2);
+                    double e = this.getY() + (double) Mth.randomBetween(randomSource, 0f, this.getBbHeight());
+                    double f = this.getZ() + (double) Mth.randomBetween(randomSource, -this.getBbWidth() / 2, this.getBbWidth() / 2);
+                    this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, d, e, f, 0.0, 0.0, 0.0);
+                }
+            }
         }
     }
 
@@ -133,8 +159,8 @@ public abstract class SkeletonMixin extends Monster implements TraceAndSetOwner,
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        if (this.ownerUUID != null) {
-            tag.putUUID("Owner", this.ownerUUID);
+        if (this.getOwnerUUID().isPresent()) {
+            tag.putUUID("Owner", this.getOwnerUUID().get());
         }
     }
 
@@ -143,19 +169,27 @@ public abstract class SkeletonMixin extends Monster implements TraceAndSetOwner,
         super.readAdditionalSaveData(tag);
 
         if (tag.hasUUID("Owner")) {
-            this.ownerUUID = tag.getUUID("Owner");
+            this.setOwnerUUID(Optional.of(tag.getUUID("Owner")));
         }
+    }
+
+    public void setOwnerUUID(Optional<UUID> uuid) {
+        this.entityData.set(DATA_UUID, uuid);
+    }
+
+    public Optional<UUID> getOwnerUUID() {
+        return this.entityData.get(DATA_UUID);
     }
 
     public void setOwner(@Nullable LivingEntity arg) {
         this.owner = arg;
-        this.ownerUUID = arg == null ? null : arg.getUUID();
+        this.setOwnerUUID(arg == null ? Optional.empty() : Optional.of(arg.getUUID()));
     }
 
     @Nullable
     public LivingEntity getOwner() {
-        if (this.owner == null && this.ownerUUID != null && this.level() instanceof ServerLevel) {
-            Entity entity = ((ServerLevel) this.level()).getEntity(this.ownerUUID);
+        if (this.owner == null && this.getOwnerUUID().isPresent() && this.level() instanceof ServerLevel) {
+            Entity entity = ((ServerLevel) this.level()).getEntity(this.getOwnerUUID().get());
             if (entity instanceof LivingEntity) {
                 this.owner = (LivingEntity) entity;
             }
@@ -163,6 +197,7 @@ public abstract class SkeletonMixin extends Monster implements TraceAndSetOwner,
 
         return this.owner;
     }
+
 
     @Override
     public boolean canAttack(LivingEntity livingEntity) {

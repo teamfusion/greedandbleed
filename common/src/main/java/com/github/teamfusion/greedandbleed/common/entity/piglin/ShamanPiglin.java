@@ -3,10 +3,12 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.api.ShamanPiglinTaskManager;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
+import com.github.teamfusion.greedandbleed.common.entity.HasMountArmor;
 import com.github.teamfusion.greedandbleed.common.entity.SummonData;
 import com.github.teamfusion.greedandbleed.common.entity.SummonHandler;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import io.netty.buffer.Unpooled;
@@ -315,6 +317,10 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
                                 this.maybyWearArmorWithSummon(piglin, EquipmentSlot.CHEST, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_CHESTPLATE), getWave() * 5, false), this.getWave() * 0.1F);
                                 this.maybyWearArmorWithSummon(piglin, EquipmentSlot.LEGS, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_LEGGINGS), getWave() * 5, false), this.getWave() * 0.1F);
                                 this.maybyWearArmorWithSummon(piglin, EquipmentSlot.FEET, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_BOOTS), getWave() * 5, false), this.getWave() * 0.1F);
+                            }
+                        } else if (piglin instanceof HasMountArmor hasMountArmor) {
+                            if (this.getWave() == 5) {
+                                hasMountArmor.setArmor(new ItemStack(ItemRegistry.GOLDEN_HOGLIN_ARMOR.get()));
                             }
                         }
                         if (piglin instanceof SkeletalPiglin skeletalPiglin) {

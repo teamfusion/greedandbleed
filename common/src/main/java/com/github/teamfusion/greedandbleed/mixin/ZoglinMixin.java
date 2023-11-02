@@ -1,13 +1,17 @@
 package com.github.teamfusion.greedandbleed.mixin;
 
+import com.github.teamfusion.greedandbleed.common.entity.HasMountArmor;
 import com.github.teamfusion.greedandbleed.common.entity.ICrawlSpawn;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
+import com.github.teamfusion.greedandbleed.common.item.HoglinArmorItem;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -15,13 +19,14 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zoglin;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
@@ -33,14 +38,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(Zoglin.class)
-public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, ICrawlSpawn {
+public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, ICrawlSpawn, HasMountArmor {
+    private static final UUID ARMOR_MODIFIER_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
+    private static final EntityDataAccessor<Optional<UUID>> DATA_UUID = SynchedEntityData.defineId(Zoglin.class, EntityDataSerializers.OPTIONAL_UUID);
+
     @Nullable
     private LivingEntity owner;
-    @Nullable
-    private UUID ownerUUID;
     protected int timeWithImmunity;
 
     private float spawnScale;
@@ -48,6 +55,11 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
 
     protected ZoglinMixin(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Inject(method = "defineSynchedData", at = @At("RETURN"))
+    private void gb$defineSteeringData(CallbackInfo ci) {
+        this.entityData.define(DATA_UUID, Optional.empty());
     }
 
     @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
@@ -87,12 +99,29 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
 
                 break;
             }
+            default: {
+                this.clientSummonedParticles();
+            }
         }
         this.spawnScaleO = this.spawnScale;
         this.spawnScale = this.getPose() == Pose.EMERGING ? Mth.clamp(this.spawnScale - 0.01f, 0.0f, 1.0f) : 1.0F;
 
         if (this.spawnScale <= 0.0F && this.getPose() == Pose.EMERGING) {
             this.setPose(Pose.STANDING);
+        }
+    }
+
+    private void clientSummonedParticles() {
+        RandomSource randomSource = this.getRandom();
+        if (this.getOwnerUUID().isPresent()) {
+            if (this.level().isClientSide) {
+                for (int i = 0; i < 1; ++i) {
+                    double d = this.getX() + (double) Mth.randomBetween(randomSource, -this.getBbWidth() / 2, this.getBbWidth() / 2);
+                    double e = this.getY() + (double) Mth.randomBetween(randomSource, 0f, this.getBbHeight());
+                    double f = this.getZ() + (double) Mth.randomBetween(randomSource, -this.getBbWidth() / 2, this.getBbWidth() / 2);
+                    this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, d, e, f, 0.0, 0.0, 0.0);
+                }
+            }
         }
     }
 
@@ -195,29 +224,89 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
         }
     }
 
-    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    public void addAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
-        if (this.ownerUUID != null) {
-            tag.putUUID("Owner", this.ownerUUID);
+
+    @Override
+    public ItemStack getArmor() {
+        return this.getItemBySlot(EquipmentSlot.CHEST);
+    }
+
+    public void setArmor(ItemStack stack) {
+        this.setItemSlot(EquipmentSlot.CHEST, stack);
+        if (!this.level().isClientSide) {
+            AttributeInstance armor = this.getAttribute(Attributes.ARMOR);
+            if (armor != null) {
+                armor.removeModifier(ARMOR_MODIFIER_UUID);
+                if (this.isArmor(stack)) {
+                    int i = ((HoglinArmorItem) stack.getItem()).getProtection();
+                    if (i != 0) {
+                        armor.addTransientModifier(new AttributeModifier(ARMOR_MODIFIER_UUID, "Horse armor bonus", i, AttributeModifier.Operation.ADDITION));
+                    }
+                }
+            }
         }
     }
 
-    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    public void readAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
-        if (tag.hasUUID("Owner")) {
-            this.ownerUUID = tag.getUUID("Owner");
+    @Override
+    public boolean canWearArmor() {
+        return true;
+    }
+
+    @Override
+    public boolean isArmor(ItemStack stack) {
+        return stack.getItem() instanceof HoglinArmorItem;
+    }
+
+    @Override
+    public SlotAccess getSlot(int slot) {
+        return slot == 102 ? new SlotAccess() {
+            @Override
+            public ItemStack get() {
+                return ZoglinMixin.this.getArmor();
+            }
+
+            @Override
+            public boolean set(ItemStack stack) {
+                ZoglinMixin.this.setArmor(stack);
+                return true;
+            }
+        } : super.getSlot(slot);
+    }
+
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        if (this.getOwnerUUID().isPresent()) {
+            tag.putUUID("Owner", this.getOwnerUUID().get());
         }
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+
+        if (tag.hasUUID("Owner")) {
+            this.setOwnerUUID(Optional.of(tag.getUUID("Owner")));
+        }
+    }
+
+    public void setOwnerUUID(Optional<UUID> uuid) {
+        this.entityData.set(DATA_UUID, uuid);
+    }
+
+    public Optional<UUID> getOwnerUUID() {
+        return this.entityData.get(DATA_UUID);
     }
 
     public void setOwner(@Nullable LivingEntity arg) {
         this.owner = arg;
-        this.ownerUUID = arg == null ? null : arg.getUUID();
+        this.setOwnerUUID(arg == null ? Optional.empty() : Optional.of(arg.getUUID()));
     }
 
     @Nullable
     public LivingEntity getOwner() {
-        if (this.owner == null && this.ownerUUID != null && this.level() instanceof ServerLevel) {
-            Entity entity = ((ServerLevel) this.level()).getEntity(this.ownerUUID);
+        if (this.owner == null && this.getOwnerUUID().isPresent() && this.level() instanceof ServerLevel) {
+            Entity entity = ((ServerLevel) this.level()).getEntity(this.getOwnerUUID().get());
             if (entity instanceof LivingEntity) {
                 this.owner = (LivingEntity) entity;
             }

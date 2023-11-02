@@ -8,4 +8,6 @@ public interface HasMountArmor {
     boolean canWearArmor();
 
     boolean isArmor(ItemStack stack);
+
+    void setArmor(ItemStack stack);
 }
