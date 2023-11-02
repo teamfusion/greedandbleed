@@ -301,15 +301,20 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
                         }
                         if (!(piglin instanceof Zoglin)) {
                             if (this.getWave() == 3) {
-                                this.wearArmorWithSummon(piglin, EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
-                                this.wearArmorWithSummon(piglin, EquipmentSlot.CHEST, new ItemStack(Items.GOLDEN_CHESTPLATE));
-                                this.wearArmorWithSummon(piglin, EquipmentSlot.LEGS, new ItemStack(Items.GOLDEN_LEGGINGS));
-                                this.wearArmorWithSummon(piglin, EquipmentSlot.FEET, new ItemStack(Items.GOLDEN_BOOTS));
-                            } else if (this.getWave() >= 4) {
+                                this.maybyWearArmorWithSummon(piglin, EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET), this.getWave() * 0.1F);
+                                this.maybyWearArmorWithSummon(piglin, EquipmentSlot.CHEST, new ItemStack(Items.GOLDEN_CHESTPLATE), this.getWave() * 0.1F);
+                                this.maybyWearArmorWithSummon(piglin, EquipmentSlot.LEGS, new ItemStack(Items.GOLDEN_LEGGINGS), this.getWave() * 0.1F);
+                                this.maybyWearArmorWithSummon(piglin, EquipmentSlot.FEET, new ItemStack(Items.GOLDEN_BOOTS), this.getWave() * 0.1F);
+                            } else if (this.getWave() == 5) {
                                 this.wearArmorWithSummon(piglin, EquipmentSlot.HEAD, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_HELMET), getWave() * 5, false));
                                 this.wearArmorWithSummon(piglin, EquipmentSlot.CHEST, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_CHESTPLATE), getWave() * 5, false));
                                 this.wearArmorWithSummon(piglin, EquipmentSlot.LEGS, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_LEGGINGS), getWave() * 5, false));
                                 this.wearArmorWithSummon(piglin, EquipmentSlot.FEET, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_BOOTS), getWave() * 5, false));
+                            } else if (this.getWave() >= 4) {
+                                this.maybyWearArmorWithSummon(piglin, EquipmentSlot.HEAD, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_HELMET), getWave() * 5, false), this.getWave() * 0.1F);
+                                this.maybyWearArmorWithSummon(piglin, EquipmentSlot.CHEST, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_CHESTPLATE), getWave() * 5, false), this.getWave() * 0.1F);
+                                this.maybyWearArmorWithSummon(piglin, EquipmentSlot.LEGS, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_LEGGINGS), getWave() * 5, false), this.getWave() * 0.1F);
+                                this.maybyWearArmorWithSummon(piglin, EquipmentSlot.FEET, EnchantmentHelper.enchantItem(random, new ItemStack(Items.GOLDEN_BOOTS), getWave() * 5, false), this.getWave() * 0.1F);
                             }
                         }
                         if (piglin instanceof SkeletalPiglin skeletalPiglin) {
@@ -344,6 +349,12 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
 
     protected void wearArmorWithSummon(Mob mob, EquipmentSlot equipmentSlot, ItemStack itemStack) {
         mob.setItemSlot(equipmentSlot, itemStack);
+    }
+
+    protected void maybyWearArmorWithSummon(Mob mob, EquipmentSlot equipmentSlot, ItemStack itemStack, float chance) {
+        if (this.random.nextFloat() < chance) {
+            mob.setItemSlot(equipmentSlot, itemStack);
+        }
     }
 
     static enum SummonType {
