@@ -7,7 +7,7 @@ public interface GreedAndBleedNetwork {
     ResourceLocation
             SCREEN_OPEN_PACKET = new ResourceLocation(GreedAndBleed.MOD_ID, "screen_open_packet");
     ResourceLocation
-            HURT_PACKET = new ResourceLocation(GreedAndBleed.MOD_ID, "screen_open_packet");
+            HURT_PACKET = new ResourceLocation(GreedAndBleed.MOD_ID, "hurt_packet");
     static void registerReceivers() {
         //NetworkManager.registerReceiver(Side.S2C, SCREEN_OPEN_PACKET, GreedAndBleedNetwork::onOpenScreen);
     }

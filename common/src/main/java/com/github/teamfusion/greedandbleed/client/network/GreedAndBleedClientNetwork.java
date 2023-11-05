@@ -33,7 +33,7 @@ public class GreedAndBleedClientNetwork implements GreedAndBleedNetwork {
     public static PacketSink ofTrackingEntity(final Supplier<Entity> entitySupplier) {
         return packet -> {
             final Entity entity = entitySupplier.get();
-            ((ServerChunkCache) entity.getCommandSenderWorld().getChunkSource()).broadcast(entity, packet);
+            ((ServerChunkCache) entity.getCommandSenderWorld().getChunkSource()).broadcastAndSend(entity, packet);
         };
     }
 
@@ -60,24 +60,22 @@ public class GreedAndBleedClientNetwork implements GreedAndBleedNetwork {
     }
 
     static void onOpenScreen(FriendlyByteBuf buf, NetworkManager.PacketContext context) {
-        Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer clientPlayer = Minecraft.getInstance().player;
         int id = buf.readInt();
-        int containerId = buf.readInt();
+        int container = buf.readInt();
         int containerId2 = buf.readInt();
-        minecraft.execute(() -> {
+
             Entity entity = null;
             if (Minecraft.getInstance().level != null) {
                 entity = Minecraft.getInstance().level.getEntity(id);
             }
             if (entity instanceof Hoglin hoglin) {
                 GreedAndBleed.LOGGER.debug("Client is opening mount inventory for {}", entity);
-                SimpleContainer inventory = new SimpleContainer(containerId);
+                SimpleContainer inventory = new SimpleContainer(container);
                 HoglinInventoryMenu hoglinInventoryContainer = new HoglinInventoryMenu(containerId2, inventory, clientPlayer.getInventory(), hoglin);
                 clientPlayer.containerMenu = hoglinInventoryContainer;
                 HoglinInventoryScreen hoglinInventoryScreen = new HoglinInventoryScreen(hoglinInventoryContainer, clientPlayer.getInventory(), hoglin);
                 Minecraft.getInstance().setScreen(hoglinInventoryScreen);
             }
-        });
     }
 }
