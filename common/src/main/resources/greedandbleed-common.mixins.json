@@ -21,7 +21,6 @@
     "PlayerSensorMixin",
     "PotionBrewingMixin",
     "ServerGamePacketListenerImplMixin",
-    "ServerPlayerMixin",
     "SkeletonMixin",
     "WoodTypeInvoker",
     "ZoglinMixin",
