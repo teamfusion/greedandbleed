@@ -64,6 +64,7 @@ public class GreedAndBleedClientNetwork implements GreedAndBleedNetwork {
         int id = buf.readInt();
         int container = buf.readInt();
         int containerId2 = buf.readInt();
+        Minecraft.getInstance().execute(() -> {
 
             Entity entity = null;
             if (Minecraft.getInstance().level != null) {
@@ -77,5 +78,6 @@ public class GreedAndBleedClientNetwork implements GreedAndBleedNetwork {
                 HoglinInventoryScreen hoglinInventoryScreen = new HoglinInventoryScreen(hoglinInventoryContainer, clientPlayer.getInventory(), hoglin);
                 Minecraft.getInstance().setScreen(hoglinInventoryScreen);
             }
+        });
     }
 }
