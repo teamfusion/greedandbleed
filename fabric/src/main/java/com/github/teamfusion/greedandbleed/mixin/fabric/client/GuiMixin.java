@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 public class GuiMixin {
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;jumpableVehicle()Lnet/minecraft/world/entity/PlayerRideableJumping;", shift = At.Shift.AFTER))
+    @Inject(method = "render", at = @At(value = "TAIL"))
     public void render(GuiGraphics guiGraphics, float f, CallbackInfo ci) {
-        if (Minecraft.getInstance().player.getControlledVehicle() instanceof ToleratingMount toleratingMount) {
+        if (Minecraft.getInstance().player.getVehicle() instanceof ToleratingMount toleratingMount) {
             RenderHelper.renderToleranceMeter(toleratingMount, guiGraphics);
         }
     }
