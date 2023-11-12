@@ -6,9 +6,9 @@ import com.github.teamfusion.greedandbleed.common.inventory.HoglinInventoryMenu;
 import com.mojang.authlib.GameProfile;
 import dev.architectury.networking.NetworkManager;
 import io.netty.buffer.Unpooled;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.animal.Animal;
@@ -19,8 +19,13 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import static dev.architectury.networking.NetworkManager.serverToClient;
+
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin extends Player implements CanOpenMountInventory {
+    @Shadow
+    public abstract ServerLevel serverLevel();
+
     @Shadow
     private int containerCounter;
 
@@ -37,14 +42,13 @@ public abstract class ServerPlayerMixin extends Player implements CanOpenMountIn
             }
 
             this.nextContainerCounter();
-
-            NetworkManager.sendToPlayer(serverPlayer, GreedAndBleedClientNetwork.SCREEN_OPEN_PACKET, Util.make(new FriendlyByteBuf(Unpooled.buffer()), buf -> {
-                buf.writeInt(hoglin.getId());
-                buf.writeInt(inventory.getContainerSize());
-                buf.writeInt(this.containerCounter);
-            }));
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeInt(hoglin.getId());
+            buf.writeInt(inventory.getContainerSize());
+            buf.writeInt(this.containerCounter);
             this.containerMenu = new HoglinInventoryMenu(this.containerCounter, inventory, this.getInventory(), hoglin);
             this.initMenu(this.containerMenu);
+            NetworkManager.collectPackets(GreedAndBleedClientNetwork.ofTrackingEntity(() -> serverPlayer), serverToClient(), GreedAndBleedClientNetwork.SCREEN_OPEN_PACKET, buf);
 
         }
     }

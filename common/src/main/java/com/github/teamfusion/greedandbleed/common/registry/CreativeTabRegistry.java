@@ -24,10 +24,12 @@ public class CreativeTabRegistry {
                             ItemRegistry.NETHERITE_HOGLIN_ARMOR,
                             ItemRegistry.HOGLIN_SADDLE,
                             ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK,
+                            ItemRegistry.AMULET,
                             ItemRegistry.HOGLET_SPAWN_EGG,
                             ItemRegistry.ZOGLET_SPAWN_EGG,
                             ItemRegistry.SKELET_SPAWN_EGG,
-                            ItemRegistry.SKELETAL_PIGLIN_SPAWN_EGG
+                            ItemRegistry.SKELETAL_PIGLIN_SPAWN_EGG,
+                            ItemRegistry.SHAMAN_PIGLIN_SPAWN_EGG
                     ).map(sup -> {
                         return sup.get().getDefaultInstance();
                     }).toList());
@@ -38,6 +40,10 @@ public class CreativeTabRegistry {
                             BlockRegistry.HOGDEW_PLANKS,
                             BlockRegistry.HOGDEW_PLANKS_STAIRS,
                             BlockRegistry.HOGDEW_PLANKS_SLAB,
+                            BlockRegistry.HOGDEW_FENCE,
+                            BlockRegistry.HOGDEW_FENCE_GATE,
+                            BlockRegistry.HOGDEW_TRAPDOOR,
+                            BlockRegistry.HOGDEW_DOOR,
                             BlockRegistry.HOGDEW_WART_BLOCK,
                             BlockRegistry.HOGDEW_CLUSTER,
                             BlockRegistry.HOGDEW_FUNGUS,

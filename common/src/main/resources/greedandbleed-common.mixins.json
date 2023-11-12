@@ -4,12 +4,15 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "client.HoglinRendererMixin",
+    "client.LivingEntityRenderer",
     "client.LocalPlayerMixin",
     "client.MultiPlayerGameModeMixin",
-    "client.RemotePlayerMixin"
+    "client.RemotePlayerMixin",
+    "client.ZoglinRendererMixin"
   ],
   "mixins": [
     "AbstractPiglinMixin",
+    "BlockSetTypeInvoker",
     "HoglinMixin",
     "HoglinSpecificSensorMixin",
     "LivingEntityMixin",
@@ -19,7 +22,10 @@
     "PotionBrewingMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerMixin",
+    "SkeletonMixin",
+    "WoodTypeInvoker",
     "ZoglinMixin",
+    "ZombieMixin",
     "ZombifiedPiglinMixin"
   ],
   "injectors": {

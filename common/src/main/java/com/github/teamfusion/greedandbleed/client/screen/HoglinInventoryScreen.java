@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,10 +19,18 @@ public class HoglinInventoryScreen extends AbstractContainerScreen<HoglinInvento
     private final Hoglin hoglin;
     private float xMouse;
     private float yMouse;
-
     public HoglinInventoryScreen(HoglinInventoryMenu hoglinInventoryMenu, Inventory inventory, Hoglin hoglin) {
         super(hoglinInventoryMenu, inventory, hoglin.getDisplayName());
         this.hoglin = hoglin;
+    }
+
+    public HoglinInventoryScreen(HoglinInventoryMenu hoglinInventoryMenu, Inventory inventory, Component component) {
+        super(hoglinInventoryMenu, inventory, component);
+        this.hoglin = hoglinInventoryMenu.getHoglin();
+    }
+
+    public boolean isPauseScreen() {
+        return false;
     }
 
     protected void renderBg(GuiGraphics poseStack, float f, int i, int j) {

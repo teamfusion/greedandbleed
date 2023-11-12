@@ -252,7 +252,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
         }
     }
 
-    private void setArmor(ItemStack stack) {
+    public void setArmor(ItemStack stack) {
         this.setItemSlot(EquipmentSlot.CHEST, stack);
         this.setDropChance(EquipmentSlot.CHEST, 0.0F);
     }

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:jigsaw",
+  "step": "underground_structures",
+  "start_pool": "greedandbleed:shaman_base/shaman_base_entrance",
+  "size": 6,
+  "max_distance_from_center": 72,
+  "biomes": "#greedandbleed:has_structure/shaman_base",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_thin",
+  "start_height": {
+    "absolute": 80
+  },
+  "use_expansion_hack": false
+}

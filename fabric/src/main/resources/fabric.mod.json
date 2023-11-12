@@ -17,6 +17,9 @@
     "main": [
       "com.github.teamfusion.greedandbleed.fabric.GreedAndBleedFabric"
     ],
+    "client": [
+      "com.github.teamfusion.greedandbleed.fabric.GreedAndBleedFabricClient"
+    ],
     "fabric-datagen": [
       "com.github.teamfusion.greedandbleed.data.DataGeneration"
     ]
@@ -27,6 +30,7 @@
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.20.1"
+    "minecraft": ">=1.20.1",
+    "fabric-screen-handler-api-v1": "*"
   }
 }

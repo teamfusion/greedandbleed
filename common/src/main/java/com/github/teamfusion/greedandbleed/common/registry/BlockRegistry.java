@@ -5,6 +5,7 @@ import com.github.teamfusion.greedandbleed.common.block.HogdewLumpBlock;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -22,6 +23,10 @@ public class BlockRegistry {
     public static final Supplier<Block> HOGDEW_PLANKS = createWithItem("hogdew_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
     public static final Supplier<Block> HOGDEW_PLANKS_STAIRS = createWithItem("hogdew_stairs", () -> new StairBlock(HOGDEW_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
     public static final Supplier<Block> HOGDEW_PLANKS_SLAB = createWithItem("hogdew_slab", () -> new SlabBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
+    public static final Supplier<Block> HOGDEW_FENCE = createWithItem("hogdew_fence", () -> new FenceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).forceSolidOn().instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
+    public static final Supplier<Block> HOGDEW_FENCE_GATE = createWithItem("hogdew_fence_gate", () -> new FenceGateBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).forceSolidOn().instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD), WoodTypeRegistry.HOGDEW));
+    public static final Supplier<Block> HOGDEW_TRAPDOOR = createWithItem("hogdew_trapdoor", () -> new TrapDoorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD), BlockSetTypeRegistry.HOGDEW));
+    public static final Supplier<Block> HOGDEW_DOOR = createWithItem("hogdew_door", () -> new DoorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD).noOcclusion().pushReaction(PushReaction.DESTROY), BlockSetTypeRegistry.HOGDEW));
     public static final Supplier<Block> HOGDEW_WART_BLOCK = createWithItem("hogdew_wart_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(1.0f).sound(SoundType.NETHER_WART)));
     public static final Supplier<Block> HOGDEW_CLUSTER = createWithItem("hogdew_cluster", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(1.0f).sound(SoundType.NETHER_WART)));
     public static final Supplier<Block> HOGDEW_STEM = createWithItem("hogdew_stem", () -> netherStem(MapColor.COLOR_PINK));
@@ -52,7 +57,11 @@ public class BlockRegistry {
 
     private static <T extends Block> Supplier<BlockItem> registerBlockItem(final Supplier<T> block) {
         return () -> {
-            return new BlockItem(Objects.requireNonNull(block.get()), new Item.Properties());
+            if (Objects.requireNonNull(block.get()) instanceof DoorBlock) {
+                return new DoubleHighBlockItem(Objects.requireNonNull(block.get()), new Item.Properties().stacksTo(16));
+            } else {
+                return new BlockItem(Objects.requireNonNull(block.get()), new Item.Properties());
+            }
         };
     }
 }

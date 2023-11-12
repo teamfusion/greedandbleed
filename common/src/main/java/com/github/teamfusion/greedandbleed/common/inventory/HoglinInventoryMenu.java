@@ -81,6 +81,10 @@ public class HoglinInventoryMenu extends AbstractContainerMenu {
         return this.hoglinContainer.stillValid(player) && this.hoglin.isAlive() && this.hoglin.distanceTo(player) < 8.0F;
     }
 
+    public Hoglin getHoglin() {
+        return hoglin;
+    }
+
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
         ItemStack itemstack = ItemStack.EMPTY;
