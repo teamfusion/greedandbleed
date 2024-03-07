@@ -410,7 +410,7 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
         float minSpeedFactor = 0.4F;
         float midSpeedFactor = minSpeedFactor * 1.75F;
         float maxSpeedFactor = minSpeedFactor * 2.5F;
-        float speedFactor = toleranceProgress > 0.66F ? maxSpeedFactor : toleranceProgress > 0.33F ? midSpeedFactor : maxSpeedFactor;
+        float speedFactor = toleranceProgress > 0.66F ? maxSpeedFactor : toleranceProgress > 0.33F ? midSpeedFactor : minSpeedFactor;
         return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * speedFactor;
     }
 
