@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class ItemRegistry {
     public static final CoreRegistry<Item> ITEMS = CoreRegistry.of(BuiltInRegistries.ITEM, GreedAndBleed.MOD_ID);
 
-    public static final Supplier<Item> CRIMSON_FUNGUS_ON_A_STICK = create("crimson_fungus_on_a_stick", () -> new GBOnAStickWithHoglinItem(new Item.Properties().durability(100), 1));
+    public static final Supplier<Item> CRIMSON_FUNGUS_ON_A_STICK = create("crimson_fungus_on_a_stick", () -> new GBOnAStickWithHoglinItem(new Item.Properties().durability(220), 1));
     public static final Supplier<Item> GOLDEN_HOGLIN_ARMOR = create("golden_hoglin_armor", () -> new HoglinArmorItem(7, "gold", new Item.Properties().stacksTo(1)));
     public static final Supplier<Item> NETHERITE_HOGLIN_ARMOR = create("netherite_hoglin_armor", () -> new HoglinArmorItem(11, "netherite", new Item.Properties().stacksTo(1)));
     public static final Supplier<Item> HOGLIN_SADDLE = create("hoglin_saddle", () -> new HoglinSaddleItem(new Item.Properties().stacksTo(1)));
