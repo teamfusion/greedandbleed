@@ -5,19 +5,28 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedNetwork;
+import com.github.teamfusion.greedandbleed.common.registry.EnchantmentRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeManager;
+import dev.architectury.event.events.common.LootEvent;
 import dev.architectury.registry.level.biome.BiomeModifications;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.loot.LootDataManager;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
+import org.jetbrains.annotations.Nullable;
 
 public class CommonSetup {
     public static void onBootstrap() {
@@ -44,6 +53,19 @@ public class CommonSetup {
             if (Biomes.SOUL_SAND_VALLEY.location() == biomeContext.getKey().get()) {
                 mutable.getSpawnProperties().addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.SKELETAL_PIGLIN.get(), 10, 4, 5));
                 mutable.getSpawnProperties().setSpawnCost(EntityTypeRegistry.SKELETAL_PIGLIN.get(), 0.7, 0.15);
+            }
+        });
+        LootEvent.MODIFY_LOOT_TABLE.register(new LootEvent.ModifyLootTable() {
+            LootPool.Builder pool = LootPool.lootPool().add(
+                    LootItem.lootTableItem(Items.ENCHANTED_BOOK)
+                            .apply(new EnchantRandomlyFunction.Builder().withEnchantment(EnchantmentRegistry.WOE_OF_SWINES.get()))
+            );
+
+            @Override
+            public void modifyLootTable(@Nullable LootDataManager lootDataManager, ResourceLocation id, LootEvent.LootTableModificationContext context, boolean builtin) {
+                if (id.equals(new ResourceLocation("chests/nether_bridge"))) {
+                    context.addPool(pool);
+                }
             }
         });
 
