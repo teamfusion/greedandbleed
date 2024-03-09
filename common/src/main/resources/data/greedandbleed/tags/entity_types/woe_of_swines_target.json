@@ -1,0 +1,14 @@
+{
+  "values": [
+    "minecraft:piglin",
+    "minecraft:piglin_brute",
+    "minecraft:zombified_piglin",
+    "greedandbleed:zoglet",
+    "greedandbleed:hoglet",
+    "greedandbleed:skoglet",
+    "greedandbleed:skeletal_piglin",
+    "greedandbleed:shaman_piglin",
+    "minecraft:hoglin",
+    "minecraft:zoglin"
+  ]
+}

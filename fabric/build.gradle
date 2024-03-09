@@ -2,6 +2,11 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
+def jarFileName = 'greedandbleed-fabric'
+
+archivesBaseName = jarFileName
+
+
 architectury {
     platformSetupLoomIde()
     fabric()
@@ -52,18 +57,13 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
     injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
-}
-
-jar {
-    classifier "dev"
 }
 
 sourcesJar {

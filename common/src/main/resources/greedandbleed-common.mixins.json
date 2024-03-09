@@ -16,6 +16,7 @@
     "HoglinMixin",
     "HoglinSpecificSensorMixin",
     "LivingEntityMixin",
+    "MobMixin",
     "PigMixin",
     "PlayerMixin",
     "PlayerSensorMixin",

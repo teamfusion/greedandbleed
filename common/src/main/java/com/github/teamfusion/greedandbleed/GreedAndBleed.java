@@ -15,6 +15,7 @@ public class GreedAndBleed {
         INSTANCE.bootstrap();
         PotionRegistry.MOB_EFFECT.register();
         PotionRegistry.POTION.register();
+        EnchantmentRegistry.ENCHANTMENT.register();
         EntityTypeRegistry.ENTITIES.register();
         BlockRegistry.BLOCKS.register();
         ItemRegistry.ITEMS.register();

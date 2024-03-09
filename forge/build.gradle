@@ -2,6 +2,10 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
+def jarFileName = 'greedandbleed-forge'
+
+archivesBaseName = jarFileName
+
 architectury {
     platformSetupLoomIde()
     forge()
@@ -32,6 +36,7 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
+    implementation(include("io.github.llamalad7:mixinextras-forge:0.3.5"))
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }
@@ -49,23 +54,19 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
-}
-
-jar {
-    classifier "dev"
 }
 
 sourcesJar {
     def commonSources = project(":common").sourcesJar
     dependsOn commonSources
     from commonSources.archiveFile.map { zipTree(it) }
+
 }
 
 components.java {
