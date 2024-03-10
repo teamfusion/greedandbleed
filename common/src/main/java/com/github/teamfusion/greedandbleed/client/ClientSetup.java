@@ -1,10 +1,7 @@
 package com.github.teamfusion.greedandbleed.client;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.client.models.AbstractHogletModel;
-import com.github.teamfusion.greedandbleed.client.models.GBHoglinModelComplete;
-import com.github.teamfusion.greedandbleed.client.models.ShamanPiglinModel;
-import com.github.teamfusion.greedandbleed.client.models.SkeletalPiglinModel;
+import com.github.teamfusion.greedandbleed.client.models.*;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.client.renderer.*;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
@@ -35,6 +32,8 @@ public class ClientSetup {
         RenderRegistry.entityModel(EntityTypeRegistry.ZOGLET, ZogletRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SKOGLET, SkogletRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SHAMAN_PIGLIN, ShamanPiglinRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.PYGMY, PygmyRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.HOGGART, HoggartRenderer::new);
         RenderRegistry.layerDefinition(HogletRenderer.MAIN, AbstractHogletModel::createBodyLayer);
 
         // SKELETAL PIGLIN RENDERER
@@ -45,6 +44,8 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(HOGLIN, () -> GBHoglinModelComplete.createBodyLayer(0.0F));
         RenderRegistry.layerDefinition(HOGLIN_ARMOR, () -> GBHoglinModelComplete.createBodyLayer(0.05F));
         RenderRegistry.layerDefinition(ShamanPiglinRenderer.MAIN, ShamanPiglinModel::createBodyLayer);
+        RenderRegistry.layerDefinition(PygmyRenderer.MAIN, PygmyModel::createBodyLayer);
+        RenderRegistry.layerDefinition(HoggartRenderer.MAIN, HoggartModel::createBodyLayer);
     }
 
     public static void onInitialized() {

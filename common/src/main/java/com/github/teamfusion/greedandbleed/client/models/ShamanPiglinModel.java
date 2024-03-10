@@ -71,12 +71,11 @@ public class ShamanPiglinModel<T extends ShamanPiglin> extends HierarchicalModel
         this.head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
         this.head.xRot = headPitch * ((float) Math.PI / 180.0F);
 
-        //TODO (?)  WALK IS PLACEHOLDER(I GUESS) FROM MY MOD BAGUS MOB
         this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         if (entity.walkAnimation.isMoving()) {
             this.animateWalk(HumanoidAnimations.WALK_SWING, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         } else {
-            this.animateWalk(ShamanAnimations.IDLE, ageInTicks, 1.0F, 2.0F, 2.5F);
+            this.animateWalk(ShamanAnimations.IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
         }
     }
 

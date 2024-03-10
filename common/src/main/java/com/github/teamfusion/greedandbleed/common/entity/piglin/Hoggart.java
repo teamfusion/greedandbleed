@@ -1,0 +1,94 @@
+package com.github.teamfusion.greedandbleed.common.entity.piglin;
+
+import com.github.teamfusion.greedandbleed.api.HoggartTaskManager;
+import com.github.teamfusion.greedandbleed.api.ITaskManager;
+import com.google.common.collect.ImmutableList;
+import com.mojang.serialization.Dynamic;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.sensing.Sensor;
+import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.piglin.PiglinArmPose;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+
+public class Hoggart extends GBPiglin {
+    protected static final ImmutableList<SensorType<? extends Sensor<? super Hoggart>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_BRUTE_SPECIFIC_SENSOR);
+    protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, new MemoryModuleType[]{MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS});
+
+    public Hoggart(EntityType<? extends Hoggart> entityType, Level level) {
+        super(entityType, level);
+    }
+
+    public static AttributeSupplier.Builder setCustomAttributes() {
+        return Monster.createMonsterAttributes()
+                .add(Attributes.MAX_HEALTH, 26.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.3D);
+    }
+
+    @Override
+    public boolean isBaby() {
+        return false;
+    }
+
+    @Override
+    public void setBaby(boolean baby) {
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        this.level().getProfiler().push("piglinBruteBrain");
+        this.getBrain().tick((ServerLevel) this.level(), this);
+        this.level().getProfiler().pop();
+        this.taskManager.updateActivity();
+        this.taskManager.initMemories();
+        super.customServerAiStep();
+    }
+
+    @Override
+    protected Brain.Provider<?> brainProvider() {
+        return Brain.provider(MEMORY_TYPES, SENSOR_TYPES);
+    }
+
+    protected Brain<?> makeBrain(Dynamic<?> dynamic) {
+        this.taskManager = this.createTaskManager(dynamic);
+        return this.taskManager.getBrain();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Brain<Hoggart> getBrain() {
+        return (Brain<Hoggart>) super.getBrain();
+    }
+
+
+    @Override
+    public ITaskManager<?> createTaskManager(Dynamic<?> dynamic) {
+        return new HoggartTaskManager(this, this.brainProvider().makeBrain(dynamic));
+    }
+
+    @Override
+    public void holdInMainHand(ItemStack stack) {
+
+    }
+
+    @Override
+    public void holdInOffHand(ItemStack stack) {
+
+    }
+
+    @Override
+    public PiglinArmPose getArmPose() {
+        return PiglinArmPose.DEFAULT;
+    }
+
+    @Override
+    protected void playConvertedSound() {
+
+    }
+}

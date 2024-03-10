@@ -29,7 +29,9 @@ public class CreativeTabRegistry {
                             ItemRegistry.ZOGLET_SPAWN_EGG,
                             ItemRegistry.SKELET_SPAWN_EGG,
                             ItemRegistry.SKELETAL_PIGLIN_SPAWN_EGG,
-                            ItemRegistry.SHAMAN_PIGLIN_SPAWN_EGG
+                            ItemRegistry.SHAMAN_PIGLIN_SPAWN_EGG,
+                            ItemRegistry.PIGMY_SPAWN_EGG,
+                            ItemRegistry.HOGGART_SPAWN_EGG
                     ).map(sup -> {
                         return sup.get().getDefaultInstance();
                     }).toList());

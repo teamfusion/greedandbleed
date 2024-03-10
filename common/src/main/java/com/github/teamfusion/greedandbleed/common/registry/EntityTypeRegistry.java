@@ -18,6 +18,8 @@ public class EntityTypeRegistry {
     public static final Supplier<EntityType<Zoglet>> ZOGLET = create("zoglet", EntityType.Builder.of(Zoglet::new, MobCategory.MONSTER).fireImmune().sized(0.6F, 0.55F));
     public static final Supplier<EntityType<Skoglet>> SKOGLET = create("skoglet", EntityType.Builder.of(Skoglet::new, MobCategory.MONSTER).sized(0.6F, 0.55F));
     public static final Supplier<EntityType<ShamanPiglin>> SHAMAN_PIGLIN = create("shaman_piglin", EntityType.Builder.of(ShamanPiglin::new, MobCategory.MONSTER).sized(0.6F, 1.95F));
+    public static final Supplier<EntityType<Pygmy>> PYGMY = create("pygmy", EntityType.Builder.of(Pygmy::new, MobCategory.MONSTER).sized(0.6F, 1.55F));
+    public static final Supplier<EntityType<Hoggart>> HOGGART = create("hoggart", EntityType.Builder.of(Hoggart::new, MobCategory.MONSTER).sized(0.6F, 1.95F));
 
     private static <T extends Entity> Supplier<EntityType<T>> create(String key, EntityType.Builder<T> builder) {
         return ENTITIES.create(key, () -> builder.build(key));
