@@ -7,7 +7,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
@@ -52,7 +51,7 @@ public class HoggartTaskManager<T extends Hoggart> extends PiglinTaskManager<T> 
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(HoggartTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
+        return ImmutableList.of(StartAttacking.create(HoggartTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors());
     }
 
     @Override

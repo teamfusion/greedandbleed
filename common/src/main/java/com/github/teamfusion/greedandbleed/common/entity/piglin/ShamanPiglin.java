@@ -50,7 +50,7 @@ import static dev.architectury.networking.NetworkManager.serverToClient;
 
 public class ShamanPiglin extends GBPiglin implements NeutralMob {
     protected static final ImmutableList<SensorType<? extends Sensor<? super ShamanPiglin>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_BRUTE_SPECIFIC_SENSOR);
-    protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, new MemoryModuleType[]{MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.HOME});
+    protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.HOME);
     private static final EntityDataAccessor<Integer> DATA_WAVE = SynchedEntityData.defineId(ShamanPiglin.class, EntityDataSerializers.INT);
 
     public static final UniformInt RANGED_INT = TimeUtil.rangeOfSeconds(20, 39);
@@ -131,7 +131,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
 
     @Override
     protected void customServerAiStep() {
-        this.level().getProfiler().push("piglinBruteBrain");
+        this.level().getProfiler().push("shamanBrain");
         this.getBrain().tick((ServerLevel) this.level(), this);
         this.level().getProfiler().pop();
         this.taskManager.updateActivity();
@@ -363,7 +363,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
         }
     }
 
-    static enum SummonType {
+    enum SummonType {
         SKELETON_PIGLIN(EntityTypeRegistry.SKELETAL_PIGLIN.get(), new int[]{0, 2, 2, 2, 2, 3}),
         ZOMBIFIED_PIGLIN(EntityType.ZOMBIFIED_PIGLIN, new int[]{0, 1, 0, 0, 2, 3}),
         ZOGLIN(EntityType.ZOGLIN, new int[]{0, 0, 0, 0, 1, 2});
@@ -372,7 +372,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
         final EntityType<? extends Mob> entityType;
         final int[] spawnsPerWaveBeforeBonus;
 
-        private SummonType(EntityType<? extends Mob> entityType, int[] is) {
+        SummonType(EntityType<? extends Mob> entityType, int[] is) {
             this.entityType = entityType;
             this.spawnsPerWaveBeforeBonus = is;
         }

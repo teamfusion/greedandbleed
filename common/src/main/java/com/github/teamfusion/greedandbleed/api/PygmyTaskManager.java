@@ -60,6 +60,7 @@ public class PygmyTaskManager<T extends Pygmy> extends PiglinTaskManager<T> {
         return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), MeleeAttack.create(20));
     }
 
+
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         return null;

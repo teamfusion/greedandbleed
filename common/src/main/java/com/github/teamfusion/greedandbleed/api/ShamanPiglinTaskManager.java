@@ -6,13 +6,11 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
@@ -60,7 +58,7 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(ShamanPiglinTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
+        return ImmutableList.of(StartAttacking.create(ShamanPiglinTaskManager::findNearestValidAttackTarget));
     }
 
     @Override
@@ -72,11 +70,6 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
         }, MeleeAttack.create(20)), BehaviorBuilder.triggerIf(predicate -> {
             return predicate.getWave() <= 5;
         }, SummonAttack.create()));
-    }
-
-    @Override
-    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
-        return ImmutableList.of();
     }
 
     @Override

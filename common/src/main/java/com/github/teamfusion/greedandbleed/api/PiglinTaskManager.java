@@ -40,7 +40,7 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
     protected static final UniformInt RETREAT_DURATION = TimeUtil.rangeOfSeconds(5, 20);
     protected static final UniformInt AVOID_ZOMBIFIED_DURATION = TimeUtil.rangeOfSeconds(5, 7);
     protected static final UniformInt BABY_AVOID_NEMESIS_DURATION = TimeUtil.rangeOfSeconds(5, 7);
-    
+
     public PiglinTaskManager(T mob, Brain<T> dynamicBrain) {
         super(mob, dynamicBrain);
     }
@@ -77,12 +77,12 @@ public abstract class PiglinTaskManager<T extends AbstractPiglin & HasTaskManage
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleLookBehaviors() {
         return ImmutableList.of(Pair.of(SetEntityLookTarget.create((livingEntity) -> {
             return livingEntity instanceof AbstractPiglin;
-        }, 8), 2), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1));
+        }, 8), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
-        return ImmutableList.of(Pair.of(RandomStroll.stroll(0.6F), 2));
+        return ImmutableList.of(Pair.of(RandomStroll.stroll(0.6F), 2), Pair.of(new DoNothing(30, 60), 1));
     }
 
     // STATIC HELPER METHODS
