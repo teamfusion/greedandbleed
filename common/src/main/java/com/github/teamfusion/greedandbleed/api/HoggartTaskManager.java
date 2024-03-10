@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoggart;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -12,9 +13,11 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
+import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
+import net.minecraft.world.level.GameRules;
 
 import java.util.List;
 import java.util.Optional;
@@ -72,10 +75,37 @@ public class HoggartTaskManager<T extends Hoggart> extends PiglinTaskManager<T> 
 
     @Override
     public void wasHurtBy(LivingEntity entity) {
-        if (entity instanceof AbstractPiglin) {
+        if (entity instanceof GBPygmy) {
             return;
         }
         maybeRetaliate(this.mob, entity);
+    }
+
+    public static void maybeRetaliate(AbstractPiglin piglin, LivingEntity targetIn) {
+        if (!piglin.getBrain().isActive(Activity.AVOID)) {
+            if (isAttackAllowed(piglin, targetIn)) {
+                if (!BehaviorUtils.isOtherTargetMuchFurtherAwayThanCurrentAttackTarget(piglin, targetIn, 4.0D)) {
+                    if (targetIn instanceof Player && piglin.level().getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
+                        setAngerTargetToNearestTargetablePlayerIfFound(piglin, targetIn);
+                        broadcastUniversalAnger(piglin);
+                    } else {
+                        setAngerTarget(piglin, targetIn);
+                        broadcastAngerTarget(piglin, targetIn);
+                    }
+
+                }
+            }
+        }
+    }
+
+    public static void broadcastAngerTarget(AbstractPiglin piglin, LivingEntity targetIn) {
+        getAdultPiglins(piglin).forEach((adultPiglin) -> {
+            if (!(targetIn instanceof Hoglin hoglin)
+                    || adultPiglin instanceof GBPygmy gbPiglin && gbPiglin.canHunt()
+                    && hoglin.canBeHunted()) {
+                setAngerTargetIfCloserThanCurrent(adultPiglin, targetIn);
+            }
+        });
     }
 
     @Override

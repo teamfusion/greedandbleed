@@ -16,6 +16,8 @@ public class GreedAndBleed {
         PotionRegistry.MOB_EFFECT.register();
         PotionRegistry.POTION.register();
         EnchantmentRegistry.ENCHANTMENT.register();
+        MemoryRegistry.MEMORY_MODULE_TYPES.register();
+        SensorRegistry.SENSOR_TYPES.register();
         EntityTypeRegistry.ENTITIES.register();
         BlockRegistry.BLOCKS.register();
         ItemRegistry.ITEMS.register();

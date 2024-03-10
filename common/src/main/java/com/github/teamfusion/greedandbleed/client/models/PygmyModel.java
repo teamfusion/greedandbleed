@@ -70,8 +70,11 @@ public class PygmyModel<T extends Pygmy> extends HierarchicalModel<T> implements
         this.head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
         this.head.xRot = headPitch * ((float) Math.PI / 180.0F);
 
-        this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
-
+        if (entity.isPassenger()) {
+            this.applyStatic(HumanoidAnimations.SIT);
+        } else {
+            this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+        }
         if (entity.isAggressive()) {
             if (entity.isLeftHanded()) {
                 this.applyStatic(HumanoidAnimations.ATTACK_LEFT);

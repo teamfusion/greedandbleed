@@ -34,6 +34,12 @@ public abstract class GBPiglin extends AbstractPiglin implements HasTaskManager 
     }
 
     @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_BABY_ID, false);
+    }
+
+    @Override
     public int getExperienceReward() {
         return this.xpReward;
     }

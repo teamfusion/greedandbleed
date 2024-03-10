@@ -12,14 +12,16 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 
 public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implements ArmedModel {
-    private final ModelPart Entity;
-    private final ModelPart hoggart;
+    public final ModelPart Entity;
+    public final ModelPart hoggart;
 
-    private final ModelPart body;
-    private final ModelPart head;
-    private final ModelPart right_arm;
-    private final ModelPart left_arm;
-    private final ModelPart piggy_backpack;
+    public final ModelPart body;
+    public final ModelPart head;
+    public final ModelPart right_arm;
+    public final ModelPart left_arm;
+    public final ModelPart right_leg;
+    public final ModelPart left_leg;
+    public final ModelPart piggy_backpack;
 
     public HoggartModel(ModelPart root) {
         this.Entity = root.getChild("Entities");
@@ -29,6 +31,8 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
         this.head = this.body.getChild("head");
         this.right_arm = this.body.getChild("right_arm");
         this.left_arm = this.body.getChild("left_arm");
+        this.right_leg = this.hoggart.getChild("right_leg");
+        this.left_leg = this.hoggart.getChild("left_leg");
         this.piggy_backpack = this.body.getChild("piggyback_backpack");
     }
 
@@ -80,8 +84,11 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
         this.head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
         this.head.xRot = headPitch * ((float) Math.PI / 180.0F);
 
-        this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
-
+        if (entity.isPassenger()) {
+            this.applyStatic(HumanoidAnimations.SIT);
+        } else {
+            this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+        }
         if (entity.isAggressive()) {
             if (entity.isLeftHanded()) {
                 this.applyStatic(HumanoidAnimations.ATTACK_LEFT);
