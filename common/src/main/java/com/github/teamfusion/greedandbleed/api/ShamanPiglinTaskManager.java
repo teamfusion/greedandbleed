@@ -6,6 +6,7 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -71,6 +72,11 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
         }, MeleeAttack.create(20)), BehaviorBuilder.triggerIf(predicate -> {
             return predicate.getWave() <= 5;
         }, SummonAttack.create()));
+    }
+
+    @Override
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
+        return ImmutableList.of();
     }
 
     @Override
