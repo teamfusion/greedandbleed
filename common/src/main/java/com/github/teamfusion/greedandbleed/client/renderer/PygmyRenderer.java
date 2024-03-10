@@ -17,7 +17,7 @@ public class PygmyRenderer<T extends Pygmy> extends MobRenderer<T, PygmyModel<T>
 
     @Override
     public ResourceLocation getTextureLocation(T entity) {
-        return new ResourceLocation(GreedAndBleed.MOD_ID, "textures/entity/piglin/pygmy/pygmy.png");
+        return new ResourceLocation(GreedAndBleed.MOD_ID, "textures/entity/piglin/pygmy/crimson_pygmy.png");
     }
 
     @Override

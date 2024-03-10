@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
 import com.github.teamfusion.greedandbleed.client.animation.HumanoidAnimations;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPiglin;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoggart;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HierarchicalModel;
@@ -10,7 +10,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class HoggartModel<T extends GBPiglin> extends HierarchicalModel<T> implements ArmedModel {
+public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implements ArmedModel {
     private final ModelPart Entity;
     private final ModelPart hoggart;
 
@@ -92,6 +92,10 @@ public class HoggartModel<T extends GBPiglin> extends HierarchicalModel<T> imple
         } else {
             this.animateWalk(HumanoidAnimations.IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
         }
+        if (entity.isBaby()) {
+            this.applyStatic(HumanoidAnimations.BABY);
+        }
+
         this.piggy_backpack.visible = false;
     }
 

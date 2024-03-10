@@ -17,7 +17,7 @@ public class HoggartRenderer<T extends Hoggart> extends MobRenderer<T, HoggartMo
 
     @Override
     public ResourceLocation getTextureLocation(T entity) {
-        return new ResourceLocation(GreedAndBleed.MOD_ID, "textures/entity/piglin/hoggart/hoggart.png");
+        return new ResourceLocation(GreedAndBleed.MOD_ID, "textures/entity/piglin/hoggart/crimson_hoggart.png");
     }
 
     @Override
