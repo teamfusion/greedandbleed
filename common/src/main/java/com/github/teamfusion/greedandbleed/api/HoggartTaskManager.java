@@ -14,7 +14,6 @@ import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
-import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.GameRules;
@@ -28,7 +27,7 @@ import java.util.Optional;
  * @author Thelnfamous1
  * @param <T> A class that extends LivingEntity
  */
-public class HoggartTaskManager<T extends Hoggart> extends PiglinTaskManager<T> {
+public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
     /**
      * Constructs a new TaskManager instance given a LivingEntity and a Brain.
      * Note that this should only be instantiated inside LivingEntity#makeBrain,
@@ -45,6 +44,13 @@ public class HoggartTaskManager<T extends Hoggart> extends PiglinTaskManager<T> 
 
     @Override
     public void initMemories() {
+    }
+
+    @Override
+    protected void initActivities() {
+        this.initCoreActivity(0);
+        this.initIdleActivity(10);
+        this.initFightActivity(10);
     }
 
     @Override
@@ -81,7 +87,7 @@ public class HoggartTaskManager<T extends Hoggart> extends PiglinTaskManager<T> 
         maybeRetaliate(this.mob, entity);
     }
 
-    public static void maybeRetaliate(AbstractPiglin piglin, LivingEntity targetIn) {
+    public static void maybeRetaliate(GBPygmy piglin, LivingEntity targetIn) {
         if (!piglin.getBrain().isActive(Activity.AVOID)) {
             if (isAttackAllowed(piglin, targetIn)) {
                 if (!BehaviorUtils.isOtherTargetMuchFurtherAwayThanCurrentAttackTarget(piglin, targetIn, 4.0D)) {
@@ -98,14 +104,49 @@ public class HoggartTaskManager<T extends Hoggart> extends PiglinTaskManager<T> 
         }
     }
 
-    public static void broadcastAngerTarget(AbstractPiglin piglin, LivingEntity targetIn) {
-        getAdultPiglins(piglin).forEach((adultPiglin) -> {
+    public static void broadcastAngerTarget(GBPygmy piglin, LivingEntity targetIn) {
+        getAdultPygmys(piglin).forEach((adultPiglin) -> {
             if (!(targetIn instanceof Hoglin hoglin)
-                    || adultPiglin instanceof GBPygmy gbPiglin && gbPiglin.canHunt()
+                    || piglin.canHunt()
                     && hoglin.canBeHunted()) {
                 setAngerTargetIfCloserThanCurrent(adultPiglin, targetIn);
             }
         });
+    }
+
+
+    public static void broadcastUniversalAnger(GBPygmy piglin) {
+        getAdultPygmys(piglin).forEach((adultPiglin) -> getNearestVisibleTargetablePlayer(adultPiglin).ifPresent((player) -> setAngerTarget(adultPiglin, player)));
+    }
+
+    public static void setAngerTarget(GBPygmy piglin, LivingEntity targetIn) {
+        if (isAttackAllowed(piglin, targetIn)) {
+            piglin.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
+            piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, targetIn.getUUID(), 600L);
+
+            if (targetIn instanceof Player && piglin.level().getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
+                piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.UNIVERSAL_ANGER, true, 600L);
+            }
+
+        }
+    }
+
+    public static void setAngerTargetToNearestTargetablePlayerIfFound(GBPygmy piglin, LivingEntity targetIn) {
+        Optional<Player> nearestPlayer = getNearestVisibleTargetablePlayer(piglin);
+        if (nearestPlayer.isPresent()) {
+            setAngerTarget(piglin, nearestPlayer.get());
+        } else {
+            setAngerTarget(piglin, targetIn);
+        }
+
+    }
+
+    public static void setAngerTargetIfCloserThanCurrent(GBPygmy piglin, LivingEntity targetIn) {
+        Optional<LivingEntity> angerTarget = getAngerTarget(piglin);
+        LivingEntity nearestTarget = BehaviorUtils.getNearestTarget(piglin, angerTarget, targetIn);
+        if (angerTarget.isEmpty() || angerTarget.get() != nearestTarget) {
+            setAngerTarget(piglin, nearestTarget);
+        }
     }
 
     @Override
@@ -113,7 +154,7 @@ public class HoggartTaskManager<T extends Hoggart> extends PiglinTaskManager<T> 
         return findNearestValidAttackTarget(this.mob);
     }
 
-    private static Optional<? extends LivingEntity> findNearestValidAttackTarget(AbstractPiglin abstractPiglin) {
+    private static Optional<? extends LivingEntity> findNearestValidAttackTarget(GBPygmy abstractPiglin) {
         Optional<LivingEntity> optional = BehaviorUtils.getLivingEntityFromUUIDMemory(abstractPiglin, MemoryModuleType.ANGRY_AT);
         if (optional.isPresent() && Sensor.isEntityAttackableIgnoringLineOfSight(abstractPiglin, optional.get())) {
             return optional;
@@ -125,13 +166,8 @@ public class HoggartTaskManager<T extends Hoggart> extends PiglinTaskManager<T> 
         return abstractPiglin.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS);
     }
 
-    private static Optional<? extends LivingEntity> getTargetIfWithinRange(AbstractPiglin abstractPiglin, MemoryModuleType<? extends LivingEntity> memoryModuleType) {
+    private static Optional<? extends LivingEntity> getTargetIfWithinRange(GBPygmy abstractPiglin, MemoryModuleType<? extends LivingEntity> memoryModuleType) {
         return abstractPiglin.getBrain().getMemory(memoryModuleType).filter(livingEntity -> livingEntity.closerThan(abstractPiglin, 18.0));
-    }
-
-    @Override
-    protected void initActivities() {
-        super.initActivities();
     }
 
     @Override

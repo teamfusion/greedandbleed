@@ -19,7 +19,6 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.piglin.PiglinArmPose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -113,11 +112,6 @@ public class Hoggart extends GBPygmy {
             }*/
         }
         return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
-    }
-
-    @Override
-    public PiglinArmPose getArmPose() {
-        return PiglinArmPose.DEFAULT;
     }
 
     @Override

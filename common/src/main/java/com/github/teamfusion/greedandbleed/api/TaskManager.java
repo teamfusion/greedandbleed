@@ -1,5 +1,7 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPygmy;
+import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.sounds.SoundEvent;
@@ -363,6 +365,15 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
     public static List<AbstractPiglin> getAdultPiglins(LivingEntity livingEntity) {
         return livingEntity.getBrain().getMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS).orElse(ImmutableList.of());
     }
+
+    public static List<GBPygmy> getVisibleAdultPygmys(LivingEntity livingEntity) {
+        return livingEntity.getBrain().getMemory(MemoryRegistry.NEAREST_VISIBLE_ADULT_PYGMYS.get()).orElse(ImmutableList.of());
+    }
+
+    public static List<GBPygmy> getAdultPygmys(LivingEntity livingEntity) {
+        return livingEntity.getBrain().getMemory(MemoryRegistry.NEARBY_ADULT_PYGMYS.get()).orElse(ImmutableList.of());
+    }
+
 
     public static Optional<Player> getNearestVisibleTargetablePlayer(LivingEntity livingEntity) {
         return livingEntity.getBrain().hasMemoryValue(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER) ? livingEntity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER) : Optional.empty();

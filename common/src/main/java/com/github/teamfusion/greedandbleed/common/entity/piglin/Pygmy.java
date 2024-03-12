@@ -18,7 +18,6 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.piglin.PiglinArmPose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -85,11 +84,6 @@ public class Pygmy extends GBPygmy {
     @Override
     protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
         return entityDimensions.height * 0.85F;
-    }
-
-    @Override
-    public PiglinArmPose getArmPose() {
-        return PiglinArmPose.DEFAULT;
     }
 
     @Override

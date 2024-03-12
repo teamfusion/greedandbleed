@@ -16,7 +16,6 @@ import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.WitherSkeleton;
-import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.Set;
 public class PygmySpecificSensor extends Sensor<LivingEntity> {
     @Override
     public Set<MemoryModuleType<?>> requires() {
-        return ImmutableSet.of(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT, MemoryModuleType.NEAREST_REPELLENT, MemoryRegistry.NEAREST_HOGLET.get(), MemoryRegistry.NEAREST_TAMED_HOGLET.get());
+        return ImmutableSet.of(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryRegistry.NEAREST_VISIBLE_ADULT_PYGMYS.get(), MemoryRegistry.NEARBY_ADULT_PYGMYS.get(), MemoryRegistry.NEAREST_HOGLET.get(), MemoryRegistry.NEAREST_TAMED_HOGLET.get());
     }
 
     @Override
@@ -37,8 +36,8 @@ public class PygmySpecificSensor extends Sensor<LivingEntity> {
         Optional<Hoglet> optional3 = Optional.empty();
         Optional<Mob> optional2 = Optional.empty();
         int i = 0;
-        ArrayList<AbstractPiglin> list = Lists.newArrayList();
-        ArrayList<AbstractPiglin> list2 = Lists.newArrayList();
+        ArrayList<GBPygmy> list = Lists.newArrayList();
+        ArrayList<GBPygmy> list2 = Lists.newArrayList();
         NearestVisibleLivingEntities nearestVisibleLivingEntities = brain.getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).orElse(NearestVisibleLivingEntities.empty());
         for (LivingEntity livingEntity22 : nearestVisibleLivingEntities.findAll(livingEntity -> true)) {
             if (livingEntity22 instanceof Hoglet hoglet) {
@@ -63,10 +62,8 @@ public class PygmySpecificSensor extends Sensor<LivingEntity> {
         brain.setMemory(MemoryRegistry.NEAREST_HOGLET.get(), optional);
         brain.setMemory(MemoryRegistry.NEAREST_TAMED_HOGLET.get(), optional3);
         brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS, optional2);
-        brain.setMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS, list2);
-        brain.setMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS, list2);
-        brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, list);
-        brain.setMemory(MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT, list.size());
+        brain.setMemory(MemoryRegistry.NEARBY_ADULT_PYGMYS.get(), list2);
+        brain.setMemory(MemoryRegistry.NEAREST_VISIBLE_ADULT_PYGMYS.get(), list);
     }
 }
 
