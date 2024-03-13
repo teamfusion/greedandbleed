@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.api;
 
 import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoggart;
+import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.sounds.SoundEvent;
@@ -159,8 +160,11 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
         if (optional.isPresent() && Sensor.isEntityAttackableIgnoringLineOfSight(abstractPiglin, optional.get())) {
             return optional;
         }
+        Optional<? extends LivingEntity> optional3 = getTargetIfWithinRange(abstractPiglin, MemoryRegistry.NEAREST_TAMED_HOGLET.get());
+
+
         Optional<? extends LivingEntity> optional2 = getTargetIfWithinRange(abstractPiglin, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER);
-        if (optional2.isPresent()) {
+        if (optional2.isPresent() && optional3.isEmpty()) {
             return optional2;
         }
         return abstractPiglin.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS);
