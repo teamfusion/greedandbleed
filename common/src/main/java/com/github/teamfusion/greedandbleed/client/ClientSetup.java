@@ -35,6 +35,7 @@ public class ClientSetup {
         RenderRegistry.entityModel(EntityTypeRegistry.PYGMY, PygmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.HOGGART, HoggartRenderer::new);
         RenderRegistry.layerDefinition(HogletRenderer.MAIN, AbstractHogletModel::createBodyLayer);
+        RenderRegistry.layerDefinition(HogletRenderer.MONSTER, MonsterHogletModel::createBodyLayer);
 
         // SKELETAL PIGLIN RENDERER
         RenderRegistry.entityModel(EntityTypeRegistry.SKELETAL_PIGLIN, SkeletalPiglinRenderer::new);

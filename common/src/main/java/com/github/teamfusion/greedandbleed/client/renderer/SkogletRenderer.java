@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class SkogletRenderer<T extends Skoglet> extends MobRenderer<T, AbstractHogletModel<T>> {
     public SkogletRenderer(EntityRendererProvider.Context context) {
-        super(context, new AbstractHogletModel<>(context.bakeLayer(HogletRenderer.MAIN)), 0.35F);
+        super(context, new AbstractHogletModel<>(context.bakeLayer(HogletRenderer.MONSTER)), 0.35F);
         this.addLayer(new HogletItemLayer<>(this, context.getItemInHandRenderer()));
     }
 
