@@ -2,9 +2,11 @@ package com.github.teamfusion.greedandbleed.api;
 
 import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Pygmy;
+import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -14,14 +16,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /***
  * An extensible class for initializing and handling a Brain for a LivingEntity.
@@ -53,11 +58,19 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
         this.initCoreActivity(0);
         this.initIdleActivity(10);
         this.initFightActivity(10);
+        this.initWorkActivity(10);
+    }
+
+    //I need work activity with condition so I'll override it
+    @Override
+    protected void initWorkActivity(int priorityStart) {
+        dynamicBrain.addActivityWithConditions(Activity.WORK, ImmutableList.of(Pair.of(1, StartAttacking.create(PygmyTaskManager::findNearestValidAttackTarget))), Set.of(Pair.of(MemoryRegistry.WORK_TIME.get(), MemoryStatus.VALUE_PRESENT)));
+
     }
 
     @Override
     protected List<BehaviorControl<? super T>> getCoreTasks() {
-        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create());
+        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
     }
 
     @Override
@@ -67,18 +80,36 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.0f), MeleeAttack.create(20));
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15f), MeleeAttack.create(20));
     }
 
+    @Override
+    protected List<BehaviorControl<? super T>> getWorkTasks() {
+        return super.getWorkTasks();
+    }
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (stack.is(ItemRegistry.PIGLIN_BELT.get())) {
+            this.addWorkTime(24000);
+            return InteractionResult.SUCCESS;
+        }
+
         return null;
+    }
+
+    public void addWorkTime(int time) {
+        if (this.mob.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
+            this.mob.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time + this.mob.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get());
+        } else {
+            this.mob.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time);
+        }
     }
 
     @Override
     public void updateActivity() {
-        this.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.FIGHT, Activity.IDLE));
+        this.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.FIGHT, Activity.WORK, Activity.IDLE));
         this.mob.setAggressive(this.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET));
     }
 
@@ -166,7 +197,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
 
         Optional<? extends LivingEntity> optional2 = getTargetIfWithinRange(abstractPiglin, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER);
-        if (optional2.isPresent() && optional3.isEmpty()) {
+        if (optional2.isPresent() && optional3.isEmpty() && abstractPiglin.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).isEmpty()) {
             return optional2;
         }
         return abstractPiglin.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS);

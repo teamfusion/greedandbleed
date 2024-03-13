@@ -5,6 +5,7 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.*;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.EnchantmentRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeManager;
@@ -66,6 +67,17 @@ public class CommonSetup {
             @Override
             public void modifyLootTable(@Nullable LootDataManager lootDataManager, ResourceLocation id, LootEvent.LootTableModificationContext context, boolean builtin) {
                 if (id.equals(new ResourceLocation("chests/nether_bridge"))) {
+                    context.addPool(pool);
+                }
+            }
+        });
+        LootEvent.MODIFY_LOOT_TABLE.register(new LootEvent.ModifyLootTable() {
+            LootPool.Builder pool = LootPool.lootPool().add(
+                    LootItem.lootTableItem(ItemRegistry.PIGLIN_BELT.get()));
+
+            @Override
+            public void modifyLootTable(@Nullable LootDataManager lootDataManager, ResourceLocation id, LootEvent.LootTableModificationContext context, boolean builtin) {
+                if (id.equals(new ResourceLocation("entities/piglin"))) {
                     context.addPool(pool);
                 }
             }

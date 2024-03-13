@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class HogletRenderer<T extends Hoglet> extends MobRenderer<T, HogletModel<T>> {
     public static final ModelLayerLocation MAIN = new ModelLayerLocation(new ResourceLocation(GreedAndBleed.MOD_ID, "hoglet"), "main");
+    public static final ModelLayerLocation MONSTER = new ModelLayerLocation(new ResourceLocation(GreedAndBleed.MOD_ID, "hoglet_monster"), "main");
 
     public HogletRenderer(EntityRendererProvider.Context context) {
         super(context, new HogletModel<>(context.bakeLayer(MAIN)), 0.35F);

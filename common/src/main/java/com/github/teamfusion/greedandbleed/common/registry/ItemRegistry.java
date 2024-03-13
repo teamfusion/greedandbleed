@@ -20,6 +20,7 @@ public class ItemRegistry {
     public static final Supplier<Item> NETHERITE_HOGLIN_ARMOR = create("netherite_hoglin_armor", () -> new HoglinArmorItem(11, "netherite", new Item.Properties().stacksTo(1)));
     public static final Supplier<Item> HOGLIN_SADDLE = create("hoglin_saddle", () -> new HoglinSaddleItem(new Item.Properties().stacksTo(1)));
     public static final Supplier<Item> AMULET = create("amulet", () -> new AmuletItem(new Item.Properties().stacksTo(1)));
+    public static final Supplier<Item> PIGLIN_BELT = create("piglin_belt", () -> new Item(new Item.Properties()));
 
     public static final Supplier<Item> SKELETAL_PIGLIN_SPAWN_EGG = create("skeletal_piglin_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SKELETAL_PIGLIN, 12698049, 4802889, new Item.Properties()));
     public static final Supplier<Item> HOGLET_SPAWN_EGG = create("hoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.HOGLET, 10051392, 16380836, new Item.Properties()));

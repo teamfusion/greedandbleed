@@ -14,6 +14,7 @@ import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.behavior.RunOne;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -25,10 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /***
  * An extensible class for initializing and handling a Brain for a LivingEntity.
@@ -99,6 +97,17 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
                 memoryModuleType);
     }
 
+    protected void initActivityWithConditions(List<Pair<Integer, BehaviorControl<? super T>>> taskList, Activity activity, Set<Pair<MemoryModuleType<?>, MemoryStatus>> condition) {
+        ImmutableList<Pair<Integer, BehaviorControl<? super T>>> immutableTaskList =
+                ImmutableList.copyOf(taskList);
+
+        Set<Pair<MemoryModuleType<?>, MemoryStatus>> conditions =
+                Set.copyOf(condition);
+        this.dynamicBrain.addActivityWithConditions(
+                activity,
+                immutableTaskList, conditions);
+    }
+
     /**
      * Initializes the CORE Activity for the dynamicBrain
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
@@ -120,7 +129,7 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
      * @param priorityStart The value to start generating priority values from in Brain#createPriorityPairs
      */
     //TODO: make initActivityWithConditions
-    protected void initWorkTasks(int priorityStart) {
+    protected void initWorkActivity(int priorityStart) {
         List<BehaviorControl<? super T>> workTasks = getWorkTasks();
         this.initActivity(workTasks, Activity.WORK, priorityStart);
     }
