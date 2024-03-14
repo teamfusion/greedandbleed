@@ -4,6 +4,7 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Pygmy;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.PoiRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
@@ -16,9 +17,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +27,6 @@ import net.minecraft.world.level.GameRules;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /***
  * An extensible class for initializing and handling a Brain for a LivingEntity.
@@ -64,13 +64,37 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
     //I need work activity with condition so I'll override it
     @Override
     protected void initWorkActivity(int priorityStart) {
-        dynamicBrain.addActivityWithConditions(Activity.WORK, ImmutableList.of(Pair.of(1, StartAttacking.create(PygmyTaskManager::findNearestValidAttackTarget))), Set.of(Pair.of(MemoryRegistry.WORK_TIME.get(), MemoryStatus.VALUE_PRESENT)));
+        dynamicBrain.addActivityAndRemoveMemoryWhenStopped(Activity.WORK, priorityStart, ImmutableList.of(StartAttacking.create(PygmyTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createWorkMovementBehaviors()), MemoryRegistry.WORK_TIME.get());
 
+    }
+
+    protected RunOne<T> createWorkMovementBehaviors() {
+        return new RunOne<>(
+                getWorkMovementBehaviors()
+        );
+    }
+
+    @Override
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleLookBehaviors() {
+        return ImmutableList.of(Pair.of(SetEntityLookTarget.create((livingEntity) -> {
+            return livingEntity instanceof AbstractPiglin;
+        }, 8), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1), Pair.of(new DoNothing(30, 60), 1));
+    }
+
+    @Override
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
+        return ImmutableList.of(Pair.of(RandomStroll.stroll(0.6F), 2), Pair.of(new DoNothing(30, 60), 1));
+    }
+
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
+        return ImmutableList.of(Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.75f, 1, 3), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.75f, 6), 2), Pair.of(AcquirePoi.create(poiTypeHolder -> {
+            return poiTypeHolder.is(PoiRegistry.PYGMY_STATION_KEY);
+        }, MemoryModuleType.JOB_SITE, false, Optional.empty()), 1), Pair.of(RandomStroll.stroll(0.6F), 2), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
     protected List<BehaviorControl<? super T>> getCoreTasks() {
-        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
+        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION_KEY), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
     }
 
     @Override
@@ -82,16 +106,11 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
     protected List<BehaviorControl<? super T>> getFightTasks() {
         return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15f), MeleeAttack.create(20));
     }
-
-    @Override
-    protected List<BehaviorControl<? super T>> getWorkTasks() {
-        return super.getWorkTasks();
-    }
-
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.is(ItemRegistry.PIGLIN_BELT.get())) {
+            stack.shrink(1);
             this.addWorkTime(24000);
             return InteractionResult.SUCCESS;
         }
@@ -105,6 +124,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
         } else {
             this.mob.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time);
         }
+        this.mob.getBrain().setActiveActivityIfPossible(Activity.WORK);
     }
 
     @Override
@@ -197,7 +217,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
 
         Optional<? extends LivingEntity> optional2 = getTargetIfWithinRange(abstractPiglin, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER);
-        if (optional2.isPresent() && optional3.isEmpty() && abstractPiglin.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).isEmpty()) {
+        if (optional2.isPresent() && optional3.isEmpty()) {
             return optional2;
         }
         return abstractPiglin.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS);

@@ -25,6 +25,7 @@ public class CreativeTabRegistry {
                             ItemRegistry.HOGLIN_SADDLE,
                             ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK,
                             ItemRegistry.AMULET,
+                            ItemRegistry.PIGLIN_BELT,
                             ItemRegistry.HOGLET_SPAWN_EGG,
                             ItemRegistry.ZOGLET_SPAWN_EGG,
                             ItemRegistry.SKELET_SPAWN_EGG,
@@ -49,7 +50,8 @@ public class CreativeTabRegistry {
                             BlockRegistry.HOGDEW_WART_BLOCK,
                             BlockRegistry.HOGDEW_CLUSTER,
                             BlockRegistry.HOGDEW_FUNGUS,
-                            BlockRegistry.HOGDEW_LUMPS
+                            BlockRegistry.HOGDEW_LUMPS,
+                            BlockRegistry.PYGMY_STATION
                     ).map(sup -> {
                         return sup.get().asItem().getDefaultInstance();
                     }).toList());

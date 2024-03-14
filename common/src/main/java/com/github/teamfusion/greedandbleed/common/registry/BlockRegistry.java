@@ -36,6 +36,8 @@ public class BlockRegistry {
 
     public static final Supplier<Block> HOGDEW_LUMPS = createWithItem("hogdew_lumps", () -> new HogdewLumpBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().strength(0.2f).sound(SoundType.FUNGUS).lightLevel(HogdewLumpBlock.emission(10)).pushReaction(PushReaction.DESTROY)));
 
+    public static final Supplier<Block> PYGMY_STATION = createWithItem("pygmy_station", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).strength(0.5f).sound(SoundType.NETHER_WOOD)));
+
     private static Block netherStem(MapColor mapColor) {
         return new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(blockState -> mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0f).sound(SoundType.STEM));
     }
