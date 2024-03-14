@@ -58,7 +58,7 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(ShamanPiglinTaskManager::findNearestValidAttackTarget));
+        return ImmutableList.of(StartAttacking.create(ShamanPiglinTaskManager::findNearestValidAttackTarget), StrollToPoi.create(MemoryModuleType.HOME, 0.75f, 1, 3));
     }
 
     @Override

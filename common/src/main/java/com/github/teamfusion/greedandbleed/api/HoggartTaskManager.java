@@ -5,16 +5,19 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoggart;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.GameRules;
@@ -67,6 +70,18 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
         return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15f), MeleeAttack.create(20));
+    }
+
+    @Override
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleLookBehaviors() {
+        return ImmutableList.of(Pair.of(SetEntityLookTarget.create((livingEntity) -> {
+            return livingEntity instanceof AbstractPiglin;
+        }, 8), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1), Pair.of(new DoNothing(30, 60), 1));
+    }
+
+    @Override
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
+        return ImmutableList.of(Pair.of(RandomStroll.stroll(0.6F), 2), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
