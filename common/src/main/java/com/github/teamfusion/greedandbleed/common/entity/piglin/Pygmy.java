@@ -70,7 +70,6 @@ public class Pygmy extends GBPygmy {
         this.getBrain().tick((ServerLevel) this.level(), this);
         this.level().getProfiler().pop();
         this.taskManager.updateActivity();
-        this.taskManager.initMemories();
         super.customServerAiStep();
     }
 
