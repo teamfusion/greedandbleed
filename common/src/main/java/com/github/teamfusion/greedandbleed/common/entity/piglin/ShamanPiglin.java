@@ -283,6 +283,16 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
         this.setRemainingPersistentAngerTime(RANGED_INT.sample(this.random));
     }
 
+    @Override
+    public boolean removeWhenFarAway(double distance) {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return false;
+    }
+
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {

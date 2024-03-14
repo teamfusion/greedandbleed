@@ -13,15 +13,16 @@ public class GreedAndBleed {
     public static final ModInstance INSTANCE = ModInstance.create(MOD_ID).common(CommonSetup::onBootstrap).postCommon(CommonSetup::onInitialized).client(ClientSetup::onBootstrap).postClient(ClientSetup::onInitialized).build();
     public static void bootstrap() {
         INSTANCE.bootstrap();
+
+        BlockRegistry.BLOCKS.register();
+        ItemRegistry.ITEMS.register();
+        EntityTypeRegistry.ENTITIES.register();
         PotionRegistry.MOB_EFFECT.register();
         PotionRegistry.POTION.register();
         EnchantmentRegistry.ENCHANTMENT.register();
         MemoryRegistry.MEMORY_MODULE_TYPES.register();
         SensorRegistry.SENSOR_TYPES.register();
-        BlockRegistry.BLOCKS.register();
-        ItemRegistry.ITEMS.register();
         PoiRegistry.POI_TYPES.register();
-        EntityTypeRegistry.ENTITIES.register();
         FeatureRegistry.FEATURES.register();
         CreativeTabRegistry.CREATIVE_TABS.register();
     }

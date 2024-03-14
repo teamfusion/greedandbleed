@@ -6,11 +6,13 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
@@ -58,7 +60,7 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(ShamanPiglinTaskManager::findNearestValidAttackTarget), StrollToPoi.create(MemoryModuleType.HOME, 0.75f, 1, 6), StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.75f, 3));
+        return ImmutableList.of(StartAttacking.create(ShamanPiglinTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors());
     }
 
     @Override
@@ -70,6 +72,18 @@ public class ShamanPiglinTaskManager<T extends ShamanPiglin> extends PiglinTaskM
         }, MeleeAttack.create(20)), BehaviorBuilder.triggerIf(predicate -> {
             return predicate.getWave() <= 5;
         }, SummonAttack.create()));
+    }
+
+    @Override
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleLookBehaviors() {
+        return ImmutableList.of(Pair.of(SetEntityLookTarget.create((livingEntity) -> {
+            return livingEntity instanceof AbstractPiglin;
+        }, 8), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1), Pair.of(new DoNothing(30, 60), 1));
+    }
+
+    @Override
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
+        return ImmutableList.of(Pair.of(StrollToPoi.create(MemoryModuleType.HOME, 0.75f, 5, 32), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.HOME, 0.6f, 3), 3), Pair.of(RandomStroll.stroll(0.6F), 4), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
