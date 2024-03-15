@@ -51,7 +51,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                 ThrownEnderpearl thrownPotion = new ThrownEnderpearl(level, player);
                 thrownPotion.setItem(itemstack2);
                 thrownPotion.setOwner(player);
-                thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 4.0f, 1.0F);
+                thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 2.5f, 1.0F);
                 level.addFreshEntity(thrownPotion);
             } else if (itemstack2.getItem() instanceof ExperienceBottleItem bottleItem) {
                 ThrownExperienceBottle thrownPotion = new ThrownExperienceBottle(level, player);
@@ -69,7 +69,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                 if (!((double) f < 0.1D)) {
                     if (!level.isClientSide) {
                         ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
-                        itemEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 4.0f, 1.0F);
+                        itemEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 2.5f, 1.0F);
                         itemEntity.setItem(itemstack2);
                         itemEntity.setOwner(player);
                         itemEntity.setBaseDamage(3.0F);
@@ -95,7 +95,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                     if (!level.isClientSide) {
 
                         ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
-                        itemEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 4F, 1.0F);
+                        itemEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 2.5F, 1.0F);
                         itemEntity.setItem(itemstack2);
                         itemEntity.setOwner(player);
 
