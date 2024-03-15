@@ -1,10 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.common.item.AmuletItem;
-import com.github.teamfusion.greedandbleed.common.item.GBOnAStickWithHoglinItem;
-import com.github.teamfusion.greedandbleed.common.item.HoglinArmorItem;
-import com.github.teamfusion.greedandbleed.common.item.HoglinSaddleItem;
+import com.github.teamfusion.greedandbleed.common.item.*;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,6 +18,11 @@ public class ItemRegistry {
     public static final Supplier<Item> HOGLIN_SADDLE = create("hoglin_saddle", () -> new HoglinSaddleItem(new Item.Properties().stacksTo(1)));
     public static final Supplier<Item> AMULET = create("amulet", () -> new AmuletItem(new Item.Properties().stacksTo(1)));
     public static final Supplier<Item> PIGLIN_BELT = create("piglin_belt", () -> new Item(new Item.Properties()));
+
+    public static final Supplier<Item> SLINGSHOT = create("slingshot", () -> new SlingshotItem(new Item.Properties()));
+
+    public static final Supplier<Item> PEBBLE = create("pebble", () -> new Item(new Item.Properties()));
+
 
     public static final Supplier<Item> SKELETAL_PIGLIN_SPAWN_EGG = create("skeletal_piglin_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SKELETAL_PIGLIN, 12698049, 4802889, new Item.Properties()));
     public static final Supplier<Item> HOGLET_SPAWN_EGG = create("hoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.HOGLET, 10051392, 16380836, new Item.Properties()));
