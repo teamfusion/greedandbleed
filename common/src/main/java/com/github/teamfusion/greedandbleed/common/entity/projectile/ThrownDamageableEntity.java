@@ -1,14 +1,18 @@
 package com.github.teamfusion.greedandbleed.common.entity.projectile;
 
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -42,6 +46,9 @@ public class ThrownDamageableEntity extends ThrowableItemProjectile {
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
         if (!this.level().isClientSide) {
+            if (this.getItem().is(Items.FIRE_CHARGE)) {
+                this.level().explode(this.getOwner(), this.getX(), this.getY(), this.getZ(), 0.8F, Level.ExplosionInteraction.NONE);
+            }
             this.level().broadcastEntityEvent(this, (byte) 3);
             this.discard();
         }
@@ -54,7 +61,14 @@ public class ThrownDamageableEntity extends ThrowableItemProjectile {
         float f = (float) this.getDeltaMovement().length();
         int i = Mth.ceil(Mth.clamp((double) f * this.baseDamage, 0.0D, 2.147483647E9D));
 
-        entity.hurt(this.damageSources().thrown(this, this.getOwner()), i);
+        if (i > 0) {
+            entity.hurt(this.damageSources().thrown(this, this.getOwner()), i);
+        }
+        if (entity instanceof LivingEntity living) {
+            if (this.getItem().is(Items.SPIDER_EYE) || this.getItem().is(Items.PUFFERFISH)) {
+                living.addEffect(new MobEffectInstance(MobEffects.POISON, 100), this.getOwner());
+            }
+        }
     }
 
 
@@ -68,6 +82,6 @@ public class ThrownDamageableEntity extends ThrowableItemProjectile {
 
     @Override
     protected Item getDefaultItem() {
-        return null;
+        return ItemRegistry.PEBBLE.get();
     }
 }
