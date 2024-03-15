@@ -34,11 +34,14 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
 
     public void releaseUsing(ItemStack stack, Level level, LivingEntity living, int usingTime) {
         if (living instanceof Player) {
+
             boolean flag2 = true;
             Player player = (Player) living;
+            boolean flag1 = player.getAbilities().instabuild;
             boolean flag = player.getAbilities().instabuild;
             ItemStack itemstack = player.getProjectile(stack);
-            ItemStack itemstack2 = player.getItemInHand(InteractionHand.OFF_HAND);
+            ItemStack itemstack2 = living.getUsedItemHand() == InteractionHand.MAIN_HAND ? player.getItemInHand(InteractionHand.OFF_HAND) : player.getItemInHand(InteractionHand.MAIN_HAND);
+
             RandomSource random = living.getRandom();
             int i = this.getUseDuration(stack) - usingTime;
             if (i < 0) return;
@@ -47,32 +50,32 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
             if (itemstack2.getItem() == Items.ENDER_PEARL) {
                 ThrownEnderpearl thrownPotion = new ThrownEnderpearl(level, player);
                 thrownPotion.setItem(itemstack2);
+                thrownPotion.setOwner(player);
                 thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 4.0f, 1.0F);
                 level.addFreshEntity(thrownPotion);
             } else if (itemstack2.getItem() instanceof ExperienceBottleItem bottleItem) {
                 ThrownExperienceBottle thrownPotion = new ThrownExperienceBottle(level, player);
                 thrownPotion.setItem(itemstack2);
+                thrownPotion.setOwner(player);
                 thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 2.0f, 1.0F);
                 level.addFreshEntity(thrownPotion);
             } else if (itemstack2.getItem() instanceof ThrowablePotionItem potionItem) {
                 ThrownPotion thrownPotion = new ThrownPotion(level, player);
                 thrownPotion.setItem(itemstack2);
+                thrownPotion.setOwner(player);
                 thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 2.0f, 1.0F);
                 level.addFreshEntity(thrownPotion);
             } else if (itemstack2.getItem() instanceof BlockItem) {
                 if (!((double) f < 0.1D)) {
-                    boolean flag1 = player.getAbilities().instabuild;
                     if (!level.isClientSide) {
                         ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
                         itemEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 4.0f, 1.0F);
                         itemEntity.setItem(itemstack2);
-
+                        itemEntity.setOwner(player);
                         itemEntity.setBaseDamage(3.0F);
 
                         level.addFreshEntity(itemEntity);
-                        stack.hurtAndBreak(1, player, (p_220009_1_) -> {
-                            p_220009_1_.broadcastBreakEvent(player.getUsedItemHand());
-                        });
+
                     }
 
                     level.playSound((Player) null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
@@ -89,12 +92,12 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                     itemstack2 = new ItemStack(ItemRegistry.PEBBLE.get());
                 }
                 if (!((double) f < 0.1D)) {
-                    boolean flag1 = player.getAbilities().instabuild;
                     if (!level.isClientSide) {
 
                         ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
-                        itemEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 1.15F, 1.0F);
+                        itemEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 4F, 1.0F);
                         itemEntity.setItem(itemstack2);
+                        itemEntity.setOwner(player);
 
                         if (itemstack2.getItem() == Items.EGG || itemstack2.getItem() == Items.SNOWBALL) {
                             //set egg and snowball damage
@@ -131,13 +134,6 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                     }
 
 
-                    if (!flag1 && !player.getAbilities().instabuild) {
-                        itemstack2.shrink(1);
-                        if (itemstack2.isEmpty()) {
-                            player.getInventory().removeItem(itemstack2);
-                        }
-                    }
-
 
                 }
             }
@@ -147,6 +143,18 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                 player.awardStat(Stats.ITEM_USED.get(this));
 
                 level.playSound((Player) null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+
+                stack.hurtAndBreak(1, player, (p_220009_1_) -> {
+                    p_220009_1_.broadcastBreakEvent(player.getUsedItemHand());
+                });
+
+                if (!flag1 && !player.getAbilities().instabuild) {
+                    itemstack2.shrink(1);
+                    if (itemstack2.isEmpty()) {
+                        player.getInventory().removeItem(itemstack2);
+                    }
+                }
+
             }
         }
     }
@@ -187,7 +195,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
 
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
-        ItemStack itemstack2 = player.getItemInHand(InteractionHand.OFF_HAND);
+        ItemStack itemstack2 = hand == InteractionHand.MAIN_HAND ? player.getItemInHand(InteractionHand.OFF_HAND) : player.getItemInHand(InteractionHand.MAIN_HAND);
         boolean flag = SLINGSHOT_ITEMS.test(itemstack2);
 
         if (!player.getAbilities().instabuild && !flag) {

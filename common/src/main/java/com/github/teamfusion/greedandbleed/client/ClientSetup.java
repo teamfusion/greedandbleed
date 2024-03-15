@@ -4,8 +4,10 @@ import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.*;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.client.renderer.*;
+import com.github.teamfusion.greedandbleed.common.item.SlingshotItem;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.platform.client.RenderRegistry;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -13,6 +15,7 @@ import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Objects;
@@ -49,6 +52,18 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(ShamanPiglinRenderer.MAIN, ShamanPiglinModel::createBodyLayer);
         RenderRegistry.layerDefinition(PygmyRenderer.MAIN, PygmyModel::createBodyLayer);
         RenderRegistry.layerDefinition(HoggartRenderer.MAIN, HoggartModel::createBodyLayer);
+        ItemProperties.register(ItemRegistry.SLINGSHOT.get(), new ResourceLocation("pull"), (itemStack, clientLevel, livingEntity, i) -> {
+            if (livingEntity == null) {
+                return 0.0f;
+            }
+            if (livingEntity.getUseItem() != itemStack) {
+                return 0.0f;
+            }
+            return SlingshotItem.getPowerForTime((itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()));
+        });
+        ItemProperties.register(ItemRegistry.SLINGSHOT.get(), new ResourceLocation("pulling"), (itemStack, clientLevel, livingEntity, i) -> {
+            return livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F;
+        });
     }
 
     public static void onInitialized() {

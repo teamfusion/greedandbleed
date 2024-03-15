@@ -19,7 +19,7 @@ public class ItemRegistry {
     public static final Supplier<Item> AMULET = create("amulet", () -> new AmuletItem(new Item.Properties().stacksTo(1)));
     public static final Supplier<Item> PIGLIN_BELT = create("piglin_belt", () -> new Item(new Item.Properties()));
 
-    public static final Supplier<Item> SLINGSHOT = create("slingshot", () -> new SlingshotItem(new Item.Properties()));
+    public static final Supplier<Item> SLINGSHOT = create("slingshot", () -> new SlingshotItem(new Item.Properties().durability(320)));
 
     public static final Supplier<Item> PEBBLE = create("pebble", () -> new Item(new Item.Properties()));
     public static final Supplier<Item> CRIMSON_FUNGUS = create("crimson_fungus", () -> new Item(new Item.Properties()));

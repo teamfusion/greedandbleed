@@ -27,6 +27,7 @@ public class CreativeTabRegistry {
                             ItemRegistry.AMULET,
                             ItemRegistry.SLINGSHOT,
                             ItemRegistry.PEBBLE,
+                            ItemRegistry.CRIMSON_FUNGUS,
                             ItemRegistry.PIGLIN_BELT,
                             ItemRegistry.HOGLET_SPAWN_EGG,
                             ItemRegistry.ZOGLET_SPAWN_EGG,

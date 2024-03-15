@@ -12,8 +12,8 @@
       ],
       "translation": [
         1.13,
-        3.2,
-        1.13
+        -6,
+        -5.13
       ],
       "scale": [
         0.68,
@@ -29,8 +29,8 @@
       ],
       "translation": [
         1.13,
-        3.2,
-        1.13
+        -5,
+        -5.13
       ],
       "scale": [
         0.68,
@@ -38,13 +38,5 @@
         0.68
       ]
     }
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "pulling": 1
-      },
-      "model": "greedandbleed:item/slingshot_shooting"
-    }
-  ]
+  }
 }
