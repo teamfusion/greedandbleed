@@ -1,18 +1,18 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "greedandbleed:item/slingshot_front"
+    "layer0": "greedandbleed:item/slingshot_back"
   },
   "display": {
     "firstperson_righthand": {
       "rotation": [
         0,
         0,
-        90
+        0
       ],
       "translation": [
         1.13,
-        -6,
+        3.2,
         -5.13
       ],
       "scale": [
@@ -25,11 +25,11 @@
       "rotation": [
         0,
         0,
-        0
+        -10
       ],
       "translation": [
         1.13,
-        -5,
+        2.2,
         -5.13
       ],
       "scale": [

@@ -189,7 +189,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
     }
 
     public UseAnim getUseAnimation(ItemStack p_77661_1_) {
-        return UseAnim.CROSSBOW;
+        return UseAnim.BOW;
     }
 
 
@@ -198,7 +198,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
         ItemStack itemstack2 = hand == InteractionHand.MAIN_HAND ? player.getItemInHand(InteractionHand.OFF_HAND) : player.getItemInHand(InteractionHand.MAIN_HAND);
         boolean flag = SLINGSHOT_ITEMS.test(itemstack2);
 
-        if (!player.getAbilities().instabuild && !flag) {
+        if (!flag) {
             return InteractionResultHolder.fail(itemstack);
         } else {
             player.startUsingItem(hand);
