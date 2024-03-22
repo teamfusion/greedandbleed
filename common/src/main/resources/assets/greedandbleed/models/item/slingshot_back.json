@@ -1,19 +1,19 @@
 {
-  "parent": "item/generated",
+  "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "greedandbleed:item/slingshot_front"
+    "layer0": "greedandbleed:item/slingshot_back"
   },
   "display": {
     "firstperson_righthand": {
       "rotation": [
         0,
         0,
-        0
+        90
       ],
       "translation": [
         1.13,
         2.2,
-        -5.13
+        1.13
       ],
       "scale": [
         0.68,
@@ -25,12 +25,12 @@
       "rotation": [
         0,
         0,
-        -10
+        0
       ],
       "translation": [
         1.13,
         2.2,
-        -5.13
+        1.13
       ],
       "scale": [
         0.68,
@@ -38,5 +38,13 @@
         0.68
       ]
     }
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "pulling": 1
+      },
+      "model": "greedandbleed:item/slingshot_back_shooting"
+    }
+  ]
 }

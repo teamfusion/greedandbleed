@@ -5,6 +5,7 @@ import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -60,7 +61,7 @@ public class ThrownDamageableEntity extends ThrowableItemProjectile {
 
     @Override
     protected void onHitBlock(BlockHitResult blockHitResult) {
-        if (this.getItem().getItem() instanceof ItemNameBlockItem blockItem) {
+        if (this.getItem().getItem() instanceof ItemNameBlockItem blockItem && this.getItem().is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) {
             if (this.level().getBlockState(blockHitResult.getBlockPos()).is(Blocks.FARMLAND)) {
                 if (blockHitResult.getDirection() == Direction.UP) {
                     this.level().setBlock(blockHitResult.getBlockPos().above(), blockItem.getBlock().defaultBlockState(), 3);

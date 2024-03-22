@@ -1,7 +1,7 @@
 {
-  "parent": "item/generated",
+  "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "greedandbleed:item/slingshot_front"
+    "layer0": "greedandbleed:item/slingshot_back"
   },
   "display": {
     "firstperson_righthand": {

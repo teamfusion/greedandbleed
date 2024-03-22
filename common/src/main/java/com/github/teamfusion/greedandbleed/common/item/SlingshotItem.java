@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -22,7 +23,7 @@ import java.util.function.Predicate;
 
 public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
     public static final Predicate<ItemStack> SLINGSHOT_ITEMS = (itemStack) -> {
-        return itemStack.getItem() == ItemRegistry.PEBBLE.get() || itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.EMERALD || itemStack.getItem() == Items.BRICK || itemStack.getItem() == Items.GOLD_INGOT || itemStack.getItem() == Items.IRON_INGOT || itemStack.getItem() == Items.NETHERITE_INGOT || itemStack.getItem() == Items.COPPER_INGOT || itemStack.getItem() == Items.GOLD_NUGGET || itemStack.getItem() == Items.IRON_NUGGET || itemStack.getItem() == Items.RAW_GOLD || itemStack.getItem() == Items.RAW_COPPER || itemStack.getItem() == Items.RAW_IRON || itemStack.getItem() == Items.EGG || itemStack.getItem() == Items.SNOWBALL || itemStack.getItem() == Items.PUFFERFISH || itemStack.getItem() == Items.SPIDER_EYE || itemStack.getItem() instanceof BlockItem || itemStack.getItem() instanceof ThrowablePotionItem || itemStack.getItem() instanceof ExperienceBottleItem || itemStack.getItem() == Items.ENDER_PEARL;
+        return itemStack.getItem() == ItemRegistry.PEBBLE.get() || itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.EMERALD || itemStack.getItem() == Items.BRICK || itemStack.getItem() == Items.NETHER_BRICK || itemStack.getItem() == Items.GOLD_INGOT || itemStack.getItem() == Items.IRON_INGOT || itemStack.getItem() == Items.NETHERITE_INGOT || itemStack.getItem() == Items.COPPER_INGOT || itemStack.getItem() == Items.GOLD_NUGGET || itemStack.getItem() == Items.IRON_NUGGET || itemStack.getItem() == Items.RAW_GOLD || itemStack.getItem() == Items.RAW_COPPER || itemStack.getItem() == Items.RAW_IRON || itemStack.getItem() == Items.EGG || itemStack.getItem() == Items.SNOWBALL || itemStack.getItem() == Items.PUFFERFISH || itemStack.getItem() == Items.SPIDER_EYE || itemStack.getItem() instanceof BlockItem || itemStack.getItem() instanceof ThrowablePotionItem || itemStack.getItem() instanceof ExperienceBottleItem || itemStack.getItem() == Items.ENDER_PEARL || itemStack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS);
     };
 
     private boolean startSoundPlayed = false;
@@ -103,7 +104,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                             //set egg and snowball damage
                             itemEntity.setBaseDamage(1F);
                         }
-                        if (itemstack2.getItem() == Items.FIRE_CHARGE) {
+                        if (itemstack2.getItem() == Items.FIRE_CHARGE || itemstack2.is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) {
                             itemEntity.setBaseDamage(0F);
                         }
                         if (itemstack2.getItem() == Items.GOLD_NUGGET || itemstack2.getItem() == Items.IRON_NUGGET) {
@@ -115,7 +116,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                         if (itemstack2.getItem() == Items.RAW_GOLD || itemstack2.getItem() == Items.RAW_IRON || itemstack2.getItem() == Items.RAW_COPPER) {
                             itemEntity.setBaseDamage(2.5F);
                         }
-                        if (itemstack2.getItem() == Items.BRICK || itemstack2.getItem() == Items.IRON_INGOT || itemstack2.getItem() == Items.COPPER_INGOT) {
+                        if (itemstack2.getItem() == Items.BRICK || itemstack2.getItem() == Items.NETHER_BRICK || itemstack2.getItem() == Items.IRON_INGOT || itemstack2.getItem() == Items.COPPER_INGOT) {
                             itemEntity.setBaseDamage(3F);
                         }
                         if (itemstack2.getItem() == Items.NETHERITE_INGOT || itemstack2.getItem() == Items.GOLD_INGOT) {
