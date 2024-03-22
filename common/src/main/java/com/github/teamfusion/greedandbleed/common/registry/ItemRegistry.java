@@ -23,6 +23,7 @@ public class ItemRegistry {
 
     public static final Supplier<Item> PEBBLE = create("pebble", () -> new Item(new Item.Properties()));
     public static final Supplier<Item> CRIMSON_FUNGUS = create("crimson_fungus", () -> new Item(new Item.Properties()));
+    public static final Supplier<Item> SLINGSHOT_POUCH = create("slingshot_pouch", () -> new SlingshotPouchItem(new Item.Properties().stacksTo(1)));
 
 
     public static final Supplier<Item> SKELETAL_PIGLIN_SPAWN_EGG = create("skeletal_piglin_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SKELETAL_PIGLIN, 12698049, 4802889, new Item.Properties()));

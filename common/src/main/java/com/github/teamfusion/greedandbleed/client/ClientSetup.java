@@ -5,6 +5,7 @@ import com.github.teamfusion.greedandbleed.client.models.*;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.client.renderer.*;
 import com.github.teamfusion.greedandbleed.common.item.SlingshotItem;
+import com.github.teamfusion.greedandbleed.common.item.SlingshotPouchItem;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
@@ -63,6 +64,9 @@ public class ClientSetup {
         });
         ItemProperties.register(ItemRegistry.SLINGSHOT.get(), new ResourceLocation("pulling"), (itemStack, clientLevel, livingEntity, i) -> {
             return livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F;
+        });
+        ItemProperties.register(ItemRegistry.SLINGSHOT_POUCH.get(), new ResourceLocation("full"), (itemStack, clientLevel, livingEntity, i) -> {
+            return SlingshotPouchItem.getFullnessDisplay(itemStack) > 0.0F ? 1.0F : 0.0F;
         });
     }
 

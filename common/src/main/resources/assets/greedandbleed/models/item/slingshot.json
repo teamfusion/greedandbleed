@@ -1,14 +1,14 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "greedandbleed:item/slingshot_front"
+    "layer0": "greedandbleed:item/slingshot"
   },
   "display": {
     "firstperson_righthand": {
       "rotation": [
         0,
         0,
-        90
+        0
       ],
       "translation": [
         1.13,
@@ -42,9 +42,24 @@
   "overrides": [
     {
       "predicate": {
-        "pulling": 1
+        "pulling": 1,
+        "pull": 0.25
       },
-      "model": "greedandbleed:item/slingshot_shooting"
+      "model": "greedandbleed:item/slingshot_shooting_1"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.5
+      },
+      "model": "greedandbleed:item/slingshot_shooting_2"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.75
+      },
+      "model": "greedandbleed:item/slingshot_shooting_3"
     }
   ]
 }

@@ -27,7 +27,7 @@ import static net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDir
 @Mixin(ItemRenderer.class)
 public class ItemRendererMixin {
 
-    private static final ModelResourceLocation SLINGSHOT_MODEL = new ModelResourceLocation(GreedAndBleed.MOD_ID, "slingshot_back_shooting", "inventory");
+    private static final ModelResourceLocation SLINGSHOT_MODEL = new ModelResourceLocation(GreedAndBleed.MOD_ID, "slingshot_back", "inventory");
     @Shadow
     @Final
     private ItemModelShaper itemModelShaper;
@@ -40,7 +40,8 @@ public class ItemRendererMixin {
             if (bl2) {
                 if (itemStack.is(ItemRegistry.SLINGSHOT.get())) {
                     poseStack.pushPose();
-                    bakedModel = Minecraft.getInstance().getModelManager().getModel(SLINGSHOT_MODEL);
+                    BakedModel bakedModel1 = Minecraft.getInstance().getModelManager().getModel(SLINGSHOT_MODEL);
+                    bakedModel = bakedModel1.getOverrides().resolve(bakedModel1, itemStack, null, Minecraft.getInstance().player, 0);
                     bakedModel.getTransforms().getTransform(itemDisplayContext).apply(bl, poseStack);
                     poseStack.translate(-0.5F, -0.5F, -0.5F);
                     boolean bl3 = true;

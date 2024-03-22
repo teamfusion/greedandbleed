@@ -1,0 +1,14 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "greedandbleed:item/slingshot_pouch"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "full": 1
+      },
+      "model": "greedandbleed:item/slingshot_pouch_full"
+    }
+  ]
+}

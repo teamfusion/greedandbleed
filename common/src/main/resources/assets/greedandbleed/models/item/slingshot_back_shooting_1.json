@@ -38,28 +38,5 @@
         0.68
       ]
     }
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "pulling": 1,
-        "pull": 0.25
-      },
-      "model": "greedandbleed:item/slingshot_back_shooting_1"
-    },
-    {
-      "predicate": {
-        "pulling": 1,
-        "pull": 0.5
-      },
-      "model": "greedandbleed:item/slingshot_back_shooting_2"
-    },
-    {
-      "predicate": {
-        "pulling": 1,
-        "pull": 0.75
-      },
-      "model": "greedandbleed:item/slingshot_back_shooting_3"
-    }
-  ]
+  }
 }

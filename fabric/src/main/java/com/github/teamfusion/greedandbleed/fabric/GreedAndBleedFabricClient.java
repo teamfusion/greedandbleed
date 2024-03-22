@@ -13,7 +13,7 @@ public class GreedAndBleedFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         ModelLoadingRegistry.INSTANCE.registerModelProvider((manager, out) -> {
             out.accept(new ModelResourceLocation(
-                    new ResourceLocation(GreedAndBleed.MOD_ID, "slingshot_back_shooting"),
+                    new ResourceLocation(GreedAndBleed.MOD_ID, "slingshot_back"),
                     "inventory"));
         });
     }
