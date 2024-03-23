@@ -8,7 +8,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -29,7 +28,7 @@ import java.util.stream.Stream;
 
 public class SlingshotPouchItem extends Item {
     public static final String TAG_ITEMS = "Items";
-    public static final int MAX_WEIGHT = 64 * 4;
+    public static final int MAX_WEIGHT = 64 * 6;
     private static final int BUNDLE_IN_BUNDLE_WEIGHT = 4;
     private static final int BAR_COLOR = Mth.color(0.4f, 0.4f, 1.0f);
 
@@ -38,7 +37,7 @@ public class SlingshotPouchItem extends Item {
     }
 
     public static float getFullnessDisplay(ItemStack itemStack) {
-        return (float) SlingshotPouchItem.getContentWeight(itemStack) / 64 * 4.0f;
+        return (float) SlingshotPouchItem.getContentWeight(itemStack) / 64 * 6.0f;
     }
 
     @Override
@@ -50,8 +49,8 @@ public class SlingshotPouchItem extends Item {
         if (itemStack22.isEmpty()) {
             this.playRemoveOneSound(player);
             SlingshotPouchItem.removeOne(itemStack).ifPresent(itemStack2 -> SlingshotPouchItem.add(itemStack, slot.safeInsert((ItemStack) itemStack2)));
-        } else if (itemStack22.getItem().canFitInsideContainerItems()) {
-            int i = (64 * 4 - SlingshotPouchItem.getContentWeight(itemStack)) / SlingshotPouchItem.getWeight(itemStack22);
+        } else if (itemStack22.getItem().canFitInsideContainerItems() && SlingshotItem.SLINGSHOT_ITEMS.test(itemStack22)) {
+            int i = (64 * 6 - SlingshotPouchItem.getContentWeight(itemStack)) / SlingshotPouchItem.getWeight(itemStack22);
             int j = SlingshotPouchItem.add(itemStack, slot.safeTake(itemStack22.getCount(), i, player));
             if (j > 0) {
                 this.playInsertSound(player);
@@ -70,7 +69,7 @@ public class SlingshotPouchItem extends Item {
                 this.playRemoveOneSound(player);
                 slotAccess.set((ItemStack) itemStack);
             });
-        } else {
+        } else if (SlingshotItem.SLINGSHOT_ITEMS.test(itemStack22)) {
             int i = SlingshotPouchItem.add(itemStack2, itemStack22);
             if (i > 0) {
                 this.playInsertSound(player);
@@ -83,11 +82,6 @@ public class SlingshotPouchItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
-        if (SlingshotPouchItem.dropContents(itemStack, player)) {
-            this.playDropContentsSound(player);
-            player.awardStat(Stats.ITEM_USED.get(this));
-            return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
-        }
         return InteractionResultHolder.fail(itemStack);
     }
 
@@ -98,7 +92,7 @@ public class SlingshotPouchItem extends Item {
 
     @Override
     public int getBarWidth(ItemStack itemStack) {
-        return Math.min(1 + 12 * SlingshotPouchItem.getContentWeight(itemStack) / 64 * 4, 13);
+        return Math.min(1 + 12 * SlingshotPouchItem.getContentWeight(itemStack) / (64 * 6), 13);
     }
 
     @Override
@@ -116,19 +110,21 @@ public class SlingshotPouchItem extends Item {
         }
         int i = SlingshotPouchItem.getContentWeight(itemStack);
         int j = SlingshotPouchItem.getWeight(itemStack2);
-        int k = Math.min(itemStack2.getCount(), (64 * 4 - i) / j);
+        int k = Math.min(itemStack2.getCount(), (64 * 6 - i) / j);
         if (k == 0) {
             return 0;
         }
         ListTag listTag = compoundTag.getList(TAG_ITEMS, 10);
         Optional<CompoundTag> optional = SlingshotPouchItem.getMatchingItem(itemStack2, listTag);
-        if (optional.isPresent()) {
+        if (optional.isPresent() && itemStack2.getCount() < 64) {
             CompoundTag compoundTag2 = optional.get();
-            ItemStack itemStack3 = ItemStack.of(compoundTag2);
+            CompoundTag compoundTag3 = compoundTag2.copy();
+            ItemStack itemStack3 = ItemStack.of(compoundTag3);
             itemStack3.grow(k);
-            itemStack3.save(compoundTag2);
             listTag.remove(compoundTag2);
-            listTag.add(0, compoundTag2);
+            itemStack3.save(compoundTag3);
+            listTag.add(0, compoundTag3);
+
         } else {
             ItemStack itemStack4 = itemStack2.copyWithCount(k);
             CompoundTag compoundTag3 = new CompoundTag();
@@ -149,7 +145,7 @@ public class SlingshotPouchItem extends Item {
     private static int getWeight(ItemStack itemStack) {
         CompoundTag compoundTag;
         if (SlingshotItem.SLINGSHOT_ITEMS.test(itemStack)) {
-            return 64 * 4 / itemStack.getMaxStackSize();
+            return 64 / itemStack.getMaxStackSize();
         }
         if (itemStack.hasTag() && (compoundTag = BlockItem.getBlockEntityData(itemStack)) != null && !compoundTag.getList("Bees", 10).isEmpty()) {
             return 64 * 10;
@@ -241,7 +237,7 @@ public class SlingshotPouchItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack itemStack, Level level, List<Component> list, TooltipFlag tooltipFlag) {
-        list.add(Component.translatable("item.minecraft.bundle.fullness", SlingshotPouchItem.getContentWeight(itemStack), 64 * 4).withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("item.minecraft.bundle.fullness", SlingshotPouchItem.getContentWeight(itemStack), 64 * 6).withStyle(ChatFormatting.GRAY));
     }
 
     @Override

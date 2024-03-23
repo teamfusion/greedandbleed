@@ -19,6 +19,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -61,13 +62,13 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                 ThrownExperienceBottle thrownPotion = new ThrownExperienceBottle(level, player);
                 thrownPotion.setItem(itemstack2);
                 thrownPotion.setOwner(player);
-                thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 2.0f, 1.0F);
+                thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 1.5f, 1.0F);
                 level.addFreshEntity(thrownPotion);
             } else if (itemstack2.getItem() instanceof ThrowablePotionItem potionItem) {
                 ThrownPotion thrownPotion = new ThrownPotion(level, player);
                 thrownPotion.setItem(itemstack2);
                 thrownPotion.setOwner(player);
-                thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 2.0f, 1.0F);
+                thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 1.5f, 1.0F);
                 level.addFreshEntity(thrownPotion);
             } else if (itemstack2.getItem() instanceof BlockItem) {
                 if (!((double) f < 0.1D)) {
@@ -82,9 +83,9 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
 
                     }
                 }
-            } else if (!itemstack2.isEmpty() || flag) {
+            } else if (!itemstack2.isEmpty() && SLINGSHOT_ITEMS.test(itemstack2)) {
                 //normal slingshot mechanic here
-                if (itemstack2.isEmpty() || itemstack2.getItem() == Items.ARROW) {
+                if (itemstack2.isEmpty() || !SLINGSHOT_ITEMS.test(itemstack2)) {
                     itemstack2 = new ItemStack(ItemRegistry.PEBBLE.get());
                 }
                 if (!((double) f < 0.1D)) {
@@ -127,7 +128,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
 
 
                 }
-            } else if (!itemstack.isEmpty()) {
+            } else if (!itemstack.isEmpty() || flag) {
                 flag3 = true;
                 flag2 = false;
                 //using pouch item
@@ -141,13 +142,13 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                     ThrownExperienceBottle thrownPotion = new ThrownExperienceBottle(level, player);
                     thrownPotion.setItem(itemstack);
                     thrownPotion.setOwner(player);
-                    thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 2.0f, 1.0F);
+                    thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 1.5f, 1.0F);
                     level.addFreshEntity(thrownPotion);
                 } else if (itemstack.getItem() instanceof ThrowablePotionItem potionItem) {
                     ThrownPotion thrownPotion = new ThrownPotion(level, player);
                     thrownPotion.setItem(itemstack);
                     thrownPotion.setOwner(player);
-                    thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 2.0f, 1.0F);
+                    thrownPotion.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0F, f * 1.5f, 1.0F);
                     level.addFreshEntity(thrownPotion);
                 } else if (itemstack.getItem() instanceof BlockItem) {
                     if (!((double) f < 0.1D)) {
@@ -162,9 +163,9 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
 
                         }
                     }
-                } else if (!itemstack.isEmpty() || flag) {
+                } else if (!itemstack.isEmpty() && SLINGSHOT_ITEMS.test(itemstack) || flag) {
                     //normal slingshot mechanic here
-                    if (itemstack.isEmpty() || itemstack.getItem() == Items.ARROW) {
+                    if (itemstack.isEmpty() || !SLINGSHOT_ITEMS.test(itemstack)) {
                         itemstack = new ItemStack(ItemRegistry.PEBBLE.get());
                     }
                     if (!((double) f < 0.1D)) {
@@ -310,8 +311,9 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
             ItemStack itemStack2 = player.getInventory().getItem(i);
             Stream<ItemStack> stream = SlingshotPouchItem.getContents(itemStack2);
 
-            for (int i2 = 0; i2 < stream.toList().size(); ++i2) {
-                ItemStack itemStack3 = stream.toList().get(i2);
+            List<ItemStack> list = stream.toList();
+            for (int i2 = 0; i2 < list.size(); ++i2) {
+                ItemStack itemStack3 = list.get(i2);
                 if (!SLINGSHOT_ITEMS.test(itemStack3)) continue;
                 return itemStack3;
             }

@@ -26,6 +26,7 @@ public class CreativeTabRegistry {
                             ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK,
                             ItemRegistry.AMULET,
                             ItemRegistry.SLINGSHOT,
+                            ItemRegistry.SLINGSHOT_POUCH,
                             ItemRegistry.PEBBLE,
                             ItemRegistry.CRIMSON_FUNGUS,
                             ItemRegistry.PIGLIN_BELT,
