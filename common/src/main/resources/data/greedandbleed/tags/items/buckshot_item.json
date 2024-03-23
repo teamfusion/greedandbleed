@@ -1,7 +1,8 @@
 {
   "values": [
-    "minecraft:poisonous_potato",
-    "minecraft:pufferfish",
-    "minecraft:spider_eye"
+    "minecraft:pumpkin_seeds",
+    "minecraft:melon_seeds",
+    "minecraft:wheat_seeds",
+    "minecraft:beetroot_seeds"
   ]
 }
