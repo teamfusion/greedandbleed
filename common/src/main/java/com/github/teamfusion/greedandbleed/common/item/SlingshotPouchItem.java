@@ -180,6 +180,7 @@ public class SlingshotPouchItem extends Item {
         if (listTag.isEmpty()) {
             itemStack.removeTagKey(TAG_ITEMS);
         }
+        listTag.remove(getSelectedItem(itemStack));
         return Optional.of(itemStack2);
     }
 
@@ -199,6 +200,7 @@ public class SlingshotPouchItem extends Item {
         if (listTag.isEmpty()) {
             itemStack.removeTagKey(TAG_ITEMS);
         }
+        listTag.remove(getSelectedItem(itemStack));
         return Optional.of(itemStack2);
     }
 
@@ -255,5 +257,47 @@ public class SlingshotPouchItem extends Item {
 
     private void playDropContentsSound(Entity entity) {
         entity.playSound(SoundEvents.BUNDLE_DROP_CONTENTS, 0.8f, 0.8f + entity.level().getRandom().nextFloat() * 0.4f);
+    }
+
+    public static int getSelectedItem(ItemStack p_40885_) {
+        CompoundTag compoundtag = p_40885_.getOrCreateTag();
+        if (compoundtag.contains("ItemSelect")) {
+            return compoundtag.getInt("ItemSelect");
+        }
+
+        return 0;
+    }
+
+    public static void setSelectedItem(int select, ItemStack p_40885_) {
+        CompoundTag compoundtag = p_40885_.getOrCreateTag();
+        compoundtag.putInt("ItemSelect", select);
+    }
+
+
+    public static boolean cycle(ItemStack stack) {
+        return cycle(1, stack);
+    }
+
+    public static boolean cycle(boolean clockWise, ItemStack stack) {
+        return cycle(clockWise ? 1 : -1, stack);
+    }
+
+    public static boolean cycle(int slotsMoved, ItemStack stack) {
+        int originalSlot = getSelectedItem(stack);
+        var content = getContents(stack).toList();
+        CompoundTag selected;
+        if (slotsMoved == 0) {
+            if (content.isEmpty()) return false;
+        }
+        int maxSlots = content.size();
+        if (maxSlots <= 0) {
+            return false;
+        }
+        slotsMoved = slotsMoved % maxSlots;
+        setSelectedItem((maxSlots + (getSelectedItem(stack) + slotsMoved)) % maxSlots, stack);
+        for (int i = 0; i < maxSlots; i++) {
+            setSelectedItem((maxSlots + (getSelectedItem(stack) + (slotsMoved >= 0 ? 1 : -1))) % maxSlots, stack);
+        }
+        return originalSlot != getSelectedItem(stack);
     }
 }

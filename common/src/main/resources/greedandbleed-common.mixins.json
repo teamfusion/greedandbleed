@@ -3,6 +3,7 @@
   "package": "com.github.teamfusion.greedandbleed.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "client.GuiMixin",
     "client.HoglinRendererMixin",
     "client.ItemRendererMixin",
     "client.LivingEntityRenderer",
