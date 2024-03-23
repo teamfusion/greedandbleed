@@ -341,12 +341,19 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
 
         for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
             ItemStack itemStack2 = player.getInventory().getItem(i);
-            Stream<ItemStack> stream = SlingshotPouchItem.getContents(itemStack2);
+            if (itemStack2.is(ItemRegistry.SLINGSHOT_POUCH.get())) {
+                Stream<ItemStack> stream = SlingshotPouchItem.getContents(itemStack2);
 
-            List<ItemStack> list = stream.toList();
-            ItemStack itemStack3 = list.get(SlingshotPouchItem.getSelectedItem(itemStack2));
-            if (!SLINGSHOT_ITEMS.test(itemStack3)) continue;
-            return itemStack3;
+                List<ItemStack> list = stream.toList();
+
+                if (list.isEmpty() || list.size() <= SlingshotPouchItem.getSelectedItem(itemStack2)) {
+                    continue;
+                }
+
+                ItemStack itemStack3 = list.get(SlingshotPouchItem.getSelectedItem(itemStack2));
+                if (!SLINGSHOT_ITEMS.test(itemStack3)) continue;
+                return itemStack3;
+            }
         }
         return player.getAbilities().instabuild ? new ItemStack(ItemRegistry.PEBBLE.get()) : ItemStack.EMPTY;
     }

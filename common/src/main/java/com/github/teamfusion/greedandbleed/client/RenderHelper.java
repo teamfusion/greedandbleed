@@ -1,9 +1,9 @@
 package com.github.teamfusion.greedandbleed.client;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
 import com.github.teamfusion.greedandbleed.common.item.SlingshotPouchItem;
+import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedServerNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,25 +22,23 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static dev.architectury.networking.NetworkManager.clientToServer;
-
 public class RenderHelper {
     public static final ResourceLocation TOLERANCE_METER_LOCATION = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/tolerance_meter.png");
     private static Gui ingameGui;
     private static Minecraft minecraft;
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(GreedAndBleed.MOD_ID, "hud/pouch");
-    private static final ResourceLocation TEXTURE_SELECT = new ResourceLocation(GreedAndBleed.MOD_ID, "hud/pouch_selected");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/hud/pouch.png");
+    private static final ResourceLocation TEXTURE_SELECT = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/hud/pouch_selected.png");
 
 
-    public static boolean onMouseScrolled(double scrollDelta) {
+    public static boolean onMouseScrolled(Minecraft minecraft, double scrollDelta) {
 
-        Player player = Minecraft.getInstance().player;
+        Player player = minecraft.player;
         ItemStack pouch = player.getMainHandItem().is(ItemRegistry.SLINGSHOT_POUCH.get()) ? player.getMainHandItem() : player.getOffhandItem().is(ItemRegistry.SLINGSHOT_POUCH.get()) ? player.getOffhandItem() : ItemStack.EMPTY;
-        if (pouch.getItem() == ItemRegistry.SLINGSHOT_POUCH.get()) {
+        if (player.isShiftKeyDown() && pouch.getItem() == ItemRegistry.SLINGSHOT_POUCH.get()) {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             buf.writeInt(scrollDelta > 0 ? -1 : 1);
-            NetworkManager.collectPackets(GreedAndBleedClientNetwork.ofTrackingEntity(() -> player), clientToServer(), GreedAndBleedClientNetwork.SCREEN_OPEN_PACKET, buf);
+            NetworkManager.sendToServer(GreedAndBleedServerNetwork.SELECT_SYNC_PACKET, buf);
             return true;
         }
         return false;
@@ -49,10 +47,11 @@ public class RenderHelper {
     private static void renderSlot(GuiGraphics graphics, int pX, int pY, ItemStack itemStack) {
         if (!itemStack.isEmpty()) {
             graphics.renderItem(itemStack, pX, pY);
+            graphics.renderItemDecorations(Minecraft.getInstance().font, itemStack, pX, pY);
         }
     }
 
-    public static void renderItemContent(GuiGraphics graphics, float partialTicks, int screenWidth, int screenHeight) {
+    public static void renderItemContent(GuiGraphics graphics, int screenWidth, int screenHeight) {
 
         if (Minecraft.getInstance().getCameraEntity() instanceof Player player) {
             ItemStack pouch = player.getMainHandItem().is(ItemRegistry.SLINGSHOT_POUCH.get()) ? player.getMainHandItem() : player.getOffhandItem().is(ItemRegistry.SLINGSHOT_POUCH.get()) ? player.getOffhandItem() : ItemStack.EMPTY;
@@ -64,39 +63,29 @@ public class RenderHelper {
                 int selected = SlingshotPouchItem.getSelectedItem(pouch);
                 List<ItemStack> list = SlingshotPouchItem.getContents(pouch).toList();
                 int slots = list.size();
-                int centerX = screenWidth / 2;
-
-                poseStack.pushPose();
-                poseStack.translate(0, 0, -90);
-
                 int uWidth = slots * 20 + 2;
-                int px = uWidth / 2 - 91 - 26;
+                int px = screenWidth / 2 - 91 - 29;
                 int py = screenHeight - 16 - 3 - 16;
 
 
                 //TODO Config
                 px += 0;
                 py += 0;
-                poseStack.popPose();
-
                 int i1 = 1;
                 for (int i = 0; i < slots; ++i) {
-                    int jy = centerX - py + 3 - i * 20;
+                    int jy = py - 10 - i * 20;
                     if (!list.isEmpty() && list.size() > i) {
-                        renderSlot(graphics, px + 12, jy + 20, list.get(i));
-                        if (selected == i) {
-                            graphics.blit(TEXTURE_SELECT, px, jy, 0, 0, 22, 22);
-                        } else {
-                            graphics.blit(TEXTURE, px, jy, 0, 0, 22, 22);
-                        }
+                        renderSlot(graphics, px + 3, jy + 3, list.get(i));
+                        graphics.blit(TEXTURE, px, jy, 0, 0, 22, 22, 22, 22);
+
                     } else {
-                        renderSlot(graphics, px + 12, jy + 20, null);
-                        if (selected == i) {
-                            graphics.blit(TEXTURE_SELECT, px, jy, 0, 0, 22, 22);
-                        } else {
-                            graphics.blit(TEXTURE, px, jy, 0, 0, 22, 22);
-                        }
+                        renderSlot(graphics, px + 3, jy + 3, null);
+                        graphics.blit(TEXTURE, px, jy, 0, 0, 22, 22, 22, 22);
                     }
+                }
+                if (selected < slots) {
+                    int jy = py - 10 - selected * 20;
+                    graphics.blit(TEXTURE_SELECT, px - 1, jy - 1, 0, 0, 24, 24, 24, 24);
                 }
 
 
@@ -131,9 +120,9 @@ public class RenderHelper {
     }
 
 
-    public static void renderSlingshotPouchSlot(GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
+    public static void renderSlingshotPouchSlot(GuiGraphics guiGraphics, float partialTick) {
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isShiftKeyDown()) {
-            renderItemContent(guiGraphics, partialTick,
+            renderItemContent(guiGraphics,
                     Minecraft.getInstance().getWindow().getGuiScaledWidth(),
                     Minecraft.getInstance().getWindow().getGuiScaledHeight());
         }

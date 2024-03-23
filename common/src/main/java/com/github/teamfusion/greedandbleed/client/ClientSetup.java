@@ -10,8 +10,6 @@ import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.platform.client.RenderRegistry;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientScreenInputEvent;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -69,12 +67,6 @@ public class ClientSetup {
         });
         ItemProperties.register(ItemRegistry.SLINGSHOT_POUCH.get(), new ResourceLocation("full"), (itemStack, clientLevel, livingEntity, i) -> {
             return SlingshotPouchItem.getFullnessDisplay(itemStack) > 0.0F ? 1.0F : 0.0F;
-        });
-        ClientScreenInputEvent.MOUSE_SCROLLED_PRE.register((client, screen, mouseX, mouseY, amount) -> {
-            if (client.player != null && client.player.isShiftKeyDown() && RenderHelper.onMouseScrolled(mouseY)) {
-                RenderHelper.onMouseScrolled(mouseY);
-            }
-            return EventResult.interruptTrue();
         });
     }
 

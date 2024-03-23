@@ -25,6 +25,6 @@ public class GuiMixin {
         if (Minecraft.getInstance().player.getVehicle() instanceof ToleratingMount toleratingMount) {
             RenderHelper.renderToleranceMeter(toleratingMount, guiGraphics);
         }
-        RenderHelper.renderSlingshotPouchSlot(guiGraphics, Minecraft.getInstance().getDeltaFrameTime(), screenWidth, screenHeight);
+        RenderHelper.renderSlingshotPouchSlot(guiGraphics, f);
     }
 }

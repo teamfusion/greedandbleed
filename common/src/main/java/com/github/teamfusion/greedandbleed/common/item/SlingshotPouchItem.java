@@ -180,7 +180,7 @@ public class SlingshotPouchItem extends Item {
         if (listTag.isEmpty()) {
             itemStack.removeTagKey(TAG_ITEMS);
         }
-        listTag.remove(getSelectedItem(itemStack));
+        compoundTag.remove("ItemSelect");
         return Optional.of(itemStack2);
     }
 
@@ -200,7 +200,7 @@ public class SlingshotPouchItem extends Item {
         if (listTag.isEmpty()) {
             itemStack.removeTagKey(TAG_ITEMS);
         }
-        listTag.remove(getSelectedItem(itemStack));
+        compoundTag.remove("ItemSelect");
         return Optional.of(itemStack2);
     }
 

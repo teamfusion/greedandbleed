@@ -9,6 +9,7 @@
     "client.LivingEntityRenderer",
     "client.LocalPlayerMixin",
     "client.MinecraftMixin",
+    "client.MouseMixin",
     "client.MultiPlayerGameModeMixin",
     "client.RemotePlayerMixin",
     "client.ZoglinRendererMixin"
