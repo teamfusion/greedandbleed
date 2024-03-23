@@ -78,7 +78,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                 fireball.setOwner(living);
                 Vec3 vec3 = living.getLookAngle();
                 fireball.xPower = vec3.x * 0.05F * f;
-                fireball.yPower = vec3.y * 0.05F * f;
+                fireball.yPower = -0.03F;
                 fireball.zPower = vec3.z * 0.05F * f;
                 fireball.moveTo(living.getX(), living.getY() + living.getEyeHeight(), living.getZ(), living.getYRot(), living.getXRot());
                 fireball.shootFromRotation(living, living.getXRot(), living.getYRot(), -5.0F, f * 1.5f, 1.0F);
@@ -174,7 +174,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                     fireball.moveTo(living.getX(), living.getY() + living.getEyeHeight(), living.getZ(), living.getYRot(), living.getXRot());
                     Vec3 vec3 = living.getLookAngle();
                     fireball.xPower = vec3.x * 0.05F * f;
-                    fireball.yPower = vec3.y * 0.05F * f;
+                    fireball.yPower = -0.03F;
                     fireball.zPower = vec3.z * 0.05F * f;
                     fireball.shootFromRotation(living, living.getXRot(), living.getYRot(), -5.0F, f * 1.5f, 1.0F);
                     level.addFreshEntity(fireball);
