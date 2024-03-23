@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.item;
 
 import com.github.teamfusion.greedandbleed.common.entity.projectile.ThrownDamageableEntity;
+import com.github.teamfusion.greedandbleed.common.registry.GBItemTags;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -85,45 +86,49 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                 }
             } else if (!itemstack2.isEmpty() && SLINGSHOT_ITEMS.test(itemstack2)) {
                 //normal slingshot mechanic here
-                if (itemstack2.isEmpty() || !SLINGSHOT_ITEMS.test(itemstack2)) {
+                if (itemstack2.isEmpty()) {
                     itemstack2 = new ItemStack(ItemRegistry.PEBBLE.get());
                 }
                 if (!((double) f < 0.1D)) {
                     if (!level.isClientSide) {
 
-                        ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
-                        itemEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 2.5F, 1.0F);
-                        itemEntity.setItem(itemstack2);
-                        itemEntity.setOwner(player);
+                        int j = itemstack2.is(GBItemTags.BUCKSHOT_ITEM) ? 3 : 1;
+                        for (int k = 0; k < j; ++k) {
+                            ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
+                            itemEntity.shootFromRotation(player, player.getXRot() + (random.nextFloat() - random.nextFloat()) * k * 5F, player.getYRot() + (random.nextFloat() - random.nextFloat()) * k * 5F, 0.0F, f * 2.5F, 1.0F);
+                            itemEntity.setItem(itemstack2);
+                            itemEntity.setOwner(player);
 
-                        if (itemstack2.getItem() == Items.EGG || itemstack2.getItem() == Items.SNOWBALL) {
-                            //set egg and snowball damage
-                            itemEntity.setBaseDamage(1F);
-                        }
-                        if (itemstack2.getItem() == Items.FIRE_CHARGE || itemstack2.is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) {
-                            itemEntity.setBaseDamage(0F);
-                        }
-                        if (itemstack2.getItem() == Items.GOLD_NUGGET || itemstack2.getItem() == Items.IRON_NUGGET) {
-                            itemEntity.setBaseDamage(2F);
-                        }
-                        if (itemstack2.getItem() == Items.PUFFERFISH || itemstack2.getItem() == Items.SPIDER_EYE) {
-                            itemEntity.setBaseDamage(2F);
-                        }
-                        if (itemstack2.getItem() == Items.RAW_GOLD || itemstack2.getItem() == Items.RAW_IRON || itemstack2.getItem() == Items.RAW_COPPER) {
-                            itemEntity.setBaseDamage(2.5F);
-                        }
-                        if (itemstack2.getItem() == Items.BRICK || itemstack2.getItem() == Items.NETHER_BRICK || itemstack2.getItem() == Items.IRON_INGOT || itemstack2.getItem() == Items.COPPER_INGOT) {
-                            itemEntity.setBaseDamage(3F);
-                        }
-                        if (itemstack2.getItem() == Items.NETHERITE_INGOT || itemstack2.getItem() == Items.GOLD_INGOT) {
-                            itemEntity.setBaseDamage(4F);
-                        }
-                        if (itemstack2.getItem() == Items.DIAMOND || itemstack2.getItem() == Items.EMERALD) {
-                            itemEntity.setBaseDamage(3F);
-                        }
 
-                        level.addFreshEntity(itemEntity);
+                            if (itemstack2.getItem() == Items.EGG || itemstack2.getItem() == Items.SNOWBALL) {
+                                //set egg and snowball damage
+                                itemEntity.setBaseDamage(1F);
+                            }
+                            if (itemstack2.getItem() == Items.FIRE_CHARGE || itemstack2.is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) {
+                                itemEntity.setBaseDamage(0F);
+                            }
+                            if (itemstack2.getItem() == Items.GOLD_NUGGET || itemstack2.getItem() == Items.IRON_NUGGET) {
+                                itemEntity.setBaseDamage(2F);
+                            }
+                            if (itemstack2.getItem() == Items.PUFFERFISH || itemstack2.getItem() == Items.SPIDER_EYE) {
+                                itemEntity.setBaseDamage(2F);
+                            }
+                            if (itemstack2.getItem() == Items.RAW_GOLD || itemstack2.getItem() == Items.RAW_IRON || itemstack2.getItem() == Items.RAW_COPPER) {
+                                itemEntity.setBaseDamage(2.5F);
+                            }
+                            if (itemstack2.getItem() == Items.BRICK || itemstack2.getItem() == Items.NETHER_BRICK || itemstack2.getItem() == Items.IRON_INGOT || itemstack2.getItem() == Items.COPPER_INGOT) {
+                                itemEntity.setBaseDamage(3F);
+                            }
+                            if (itemstack2.getItem() == Items.NETHERITE_INGOT || itemstack2.getItem() == Items.GOLD_INGOT) {
+                                itemEntity.setBaseDamage(4F);
+                            }
+                            if (itemstack2.getItem() == Items.DIAMOND || itemstack2.getItem() == Items.EMERALD) {
+                                itemEntity.setBaseDamage(3F);
+                            }
 
+                            level.addFreshEntity(itemEntity);
+
+                        }
                     }
 
 
@@ -165,44 +170,47 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                     }
                 } else if (!itemstack.isEmpty() && SLINGSHOT_ITEMS.test(itemstack) || flag) {
                     //normal slingshot mechanic here
-                    if (itemstack.isEmpty() || !SLINGSHOT_ITEMS.test(itemstack)) {
+                    if (itemstack.isEmpty() || !SLINGSHOT_ITEMS.test(itemstack) && !SLINGSHOT_ITEMS.test(itemstack2)) {
                         itemstack = new ItemStack(ItemRegistry.PEBBLE.get());
                     }
                     if (!((double) f < 0.1D)) {
                         if (!level.isClientSide) {
 
-                            ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
-                            itemEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 2.5F, 1.0F);
-                            itemEntity.setItem(itemstack);
-                            itemEntity.setOwner(player);
+                            int j = itemstack.is(GBItemTags.BUCKSHOT_ITEM) ? 3 : 1;
+                            for (int k = 0; k < j; ++k) {
+                                ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
+                                itemEntity.shootFromRotation(player, player.getXRot() + (random.nextFloat() - random.nextFloat()) * k * 5F, player.getYRot() + (random.nextFloat() - random.nextFloat()) * k * 5F, 0.0F, f * 2.5F, 1.0F);
+                                itemEntity.setItem(itemstack);
+                                itemEntity.setOwner(player);
 
-                            if (itemstack.getItem() == Items.EGG || itemstack.getItem() == Items.SNOWBALL) {
-                                //set egg and snowball damage
-                                itemEntity.setBaseDamage(1F);
-                            }
-                            if (itemstack.getItem() == Items.FIRE_CHARGE || itemstack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) {
-                                itemEntity.setBaseDamage(0F);
-                            }
-                            if (itemstack.getItem() == Items.GOLD_NUGGET || itemstack.getItem() == Items.IRON_NUGGET) {
-                                itemEntity.setBaseDamage(2F);
-                            }
-                            if (itemstack.getItem() == Items.PUFFERFISH || itemstack.getItem() == Items.SPIDER_EYE) {
-                                itemEntity.setBaseDamage(2F);
-                            }
-                            if (itemstack.getItem() == Items.RAW_GOLD || itemstack.getItem() == Items.RAW_IRON || itemstack.getItem() == Items.RAW_COPPER) {
-                                itemEntity.setBaseDamage(2.5F);
-                            }
-                            if (itemstack.getItem() == Items.BRICK || itemstack.getItem() == Items.NETHER_BRICK || itemstack.getItem() == Items.IRON_INGOT || itemstack.getItem() == Items.COPPER_INGOT) {
-                                itemEntity.setBaseDamage(3F);
-                            }
-                            if (itemstack.getItem() == Items.NETHERITE_INGOT || itemstack.getItem() == Items.GOLD_INGOT) {
-                                itemEntity.setBaseDamage(4F);
-                            }
-                            if (itemstack.getItem() == Items.DIAMOND || itemstack.getItem() == Items.EMERALD) {
-                                itemEntity.setBaseDamage(3F);
-                            }
+                                if (itemstack.getItem() == Items.EGG || itemstack.getItem() == Items.SNOWBALL) {
+                                    //set egg and snowball damage
+                                    itemEntity.setBaseDamage(1F);
+                                }
+                                if (itemstack.getItem() == Items.FIRE_CHARGE || itemstack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) {
+                                    itemEntity.setBaseDamage(0F);
+                                }
+                                if (itemstack.getItem() == Items.GOLD_NUGGET || itemstack.getItem() == Items.IRON_NUGGET) {
+                                    itemEntity.setBaseDamage(2F);
+                                }
+                                if (itemstack.getItem() == Items.PUFFERFISH || itemstack.getItem() == Items.SPIDER_EYE) {
+                                    itemEntity.setBaseDamage(2F);
+                                }
+                                if (itemstack.getItem() == Items.RAW_GOLD || itemstack.getItem() == Items.RAW_IRON || itemstack.getItem() == Items.RAW_COPPER) {
+                                    itemEntity.setBaseDamage(2.5F);
+                                }
+                                if (itemstack.getItem() == Items.BRICK || itemstack.getItem() == Items.NETHER_BRICK || itemstack.getItem() == Items.IRON_INGOT || itemstack.getItem() == Items.COPPER_INGOT) {
+                                    itemEntity.setBaseDamage(3F);
+                                }
+                                if (itemstack.getItem() == Items.NETHERITE_INGOT || itemstack.getItem() == Items.GOLD_INGOT) {
+                                    itemEntity.setBaseDamage(4F);
+                                }
+                                if (itemstack.getItem() == Items.DIAMOND || itemstack.getItem() == Items.EMERALD) {
+                                    itemEntity.setBaseDamage(3F);
+                                }
 
-                            level.addFreshEntity(itemEntity);
+                                level.addFreshEntity(itemEntity);
+                            }
                         }
                     }
                 }
