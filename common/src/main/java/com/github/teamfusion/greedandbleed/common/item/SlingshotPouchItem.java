@@ -175,7 +175,7 @@ public class SlingshotPouchItem extends Item {
         if (itemStack2.isEmpty()) {
             listTag.remove(0);
         } else {
-            listTag.set(0, itemStack.save(new CompoundTag()));
+            listTag.set(0, itemStack2.save(new CompoundTag()));
         }
         if (listTag.isEmpty()) {
             itemStack.removeTagKey(TAG_ITEMS);

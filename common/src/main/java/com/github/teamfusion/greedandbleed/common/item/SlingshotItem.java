@@ -246,9 +246,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                 });
 
                 if (!flag1 && !player.getAbilities().instabuild) {
-                    if (itemstack.isEmpty()) {
-                        SlingshotPouchItem.removeOneCountItem(this.getPouch(player));
-                    }
+                    SlingshotPouchItem.removeOneCountItem(this.getPouch(player));
                 }
 
             }
