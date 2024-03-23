@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
     public static final Predicate<ItemStack> SLINGSHOT_ITEMS = (itemStack) -> {
-        return itemStack.getItem() == ItemRegistry.PEBBLE.get() || itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.EMERALD || itemStack.getItem() == Items.BRICK || itemStack.getItem() == Items.NETHER_BRICK || itemStack.getItem() == Items.GOLD_INGOT || itemStack.getItem() == Items.IRON_INGOT || itemStack.getItem() == Items.NETHERITE_INGOT || itemStack.getItem() == Items.COPPER_INGOT || itemStack.getItem() == Items.GOLD_NUGGET || itemStack.getItem() == Items.IRON_NUGGET || itemStack.getItem() == Items.RAW_GOLD || itemStack.getItem() == Items.RAW_COPPER || itemStack.getItem() == Items.RAW_IRON || itemStack.getItem() == Items.EGG || itemStack.getItem() == Items.SNOWBALL || itemStack.getItem() == Items.PUFFERFISH || itemStack.getItem() == Items.SPIDER_EYE || itemStack.getItem() instanceof BlockItem || itemStack.getItem() instanceof ThrowablePotionItem || itemStack.getItem() instanceof ExperienceBottleItem || itemStack.getItem() == Items.ENDER_PEARL || itemStack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS) || itemStack.is(Items.FIRE_CHARGE);
+        return itemStack.getItem() == ItemRegistry.PEBBLE.get() || itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.EMERALD || itemStack.getItem() == Items.BRICK || itemStack.getItem() == Items.NETHER_BRICK || itemStack.getItem() == Items.GOLD_INGOT || itemStack.getItem() == Items.IRON_INGOT || itemStack.getItem() == Items.NETHERITE_INGOT || itemStack.getItem() == Items.COPPER_INGOT || itemStack.getItem() == Items.GOLD_NUGGET || itemStack.getItem() == Items.IRON_NUGGET || itemStack.getItem() == Items.RAW_GOLD || itemStack.getItem() == Items.RAW_COPPER || itemStack.getItem() == Items.RAW_IRON || itemStack.getItem() == Items.EGG || itemStack.getItem() == Items.SNOWBALL || itemStack.getItem() == Items.PUFFERFISH || itemStack.getItem() == Items.SPIDER_EYE || itemStack.getItem() instanceof BlockItem || itemStack.getItem() instanceof ThrowablePotionItem || itemStack.getItem() instanceof ExperienceBottleItem || itemStack.getItem() == Items.ENDER_PEARL || itemStack.is(GBItemTags.BUCKSHOT_ITEM) || itemStack.is(Items.FIRE_CHARGE) || itemStack.is(Items.POISONOUS_POTATO);
     };
 
     private boolean startSoundPlayed = false;
@@ -83,7 +83,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                 fireball.moveTo(living.getX(), living.getY() + living.getEyeHeight(), living.getZ(), living.getYRot(), living.getXRot());
                 fireball.shootFromRotation(living, living.getXRot(), living.getYRot(), -5.0F, f * 1.5f, 1.0F);
                 level.addFreshEntity(fireball);
-            } else if (itemstack2.getItem() instanceof BlockItem) {
+            } else if (itemstack2.getItem() instanceof BlockItem && !itemstack2.is(GBItemTags.BUCKSHOT_ITEM)) {
                 if (!((double) f < 0.1D)) {
                     if (!level.isClientSide) {
                         ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
@@ -178,7 +178,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
                     fireball.zPower = vec3.z * 0.05F * f;
                     fireball.shootFromRotation(living, living.getXRot(), living.getYRot(), -5.0F, f * 1.5f, 1.0F);
                     level.addFreshEntity(fireball);
-                } else if (itemstack.getItem() instanceof BlockItem) {
+                } else if (itemstack.getItem() instanceof BlockItem && !itemstack2.is(GBItemTags.BUCKSHOT_ITEM)) {
                     if (!((double) f < 0.1D)) {
                         if (!level.isClientSide) {
                             ThrownDamageableEntity itemEntity = new ThrownDamageableEntity(level, living);
