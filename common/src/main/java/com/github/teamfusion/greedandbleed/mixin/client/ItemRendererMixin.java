@@ -5,67 +5,50 @@ import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static net.minecraft.client.renderer.entity.ItemRenderer.getFoilBuffer;
-import static net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect;
-
 @Mixin(ItemRenderer.class)
 public class ItemRendererMixin {
+    @Unique private static final ModelResourceLocation SLINGSHOT_MODEL = new ModelResourceLocation(GreedAndBleed.MOD_ID, "slingshot_back", "inventory");
 
-    private static final ModelResourceLocation SLINGSHOT_MODEL = new ModelResourceLocation(GreedAndBleed.MOD_ID, "slingshot_back", "inventory");
-    @Shadow
-    @Final
-    private ItemModelShaper itemModelShaper;
-
-
-    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void render(ItemStack itemStack, ItemDisplayContext itemDisplayContext, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BakedModel bakedModel, CallbackInfo ci) {
-        if (!itemStack.isEmpty()) {
-            boolean bl2 = itemDisplayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND || itemDisplayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
-            if (bl2) {
-                if (itemStack.is(ItemRegistry.SLINGSHOT.get())) {
+    @Inject(
+        method = "render",
+        at = @At("HEAD"),
+        cancellable = true
+    )
+    public void render(ItemStack stack, ItemDisplayContext displayContext, boolean leftHanded, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, BakedModel model, CallbackInfo ci) {
+        if (!stack.isEmpty()) {
+            boolean isFirstPerson = displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND || displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+            if (isFirstPerson) {
+                if (stack.is(ItemRegistry.SLINGSHOT.get())) {
                     poseStack.pushPose();
-                    BakedModel bakedModel1 = Minecraft.getInstance().getModelManager().getModel(SLINGSHOT_MODEL);
-                    bakedModel = bakedModel1.getOverrides().resolve(bakedModel1, itemStack, null, Minecraft.getInstance().player, 0);
-                    bakedModel.getTransforms().getTransform(itemDisplayContext).apply(bl, poseStack);
+                    BakedModel slingshotModel = Minecraft.getInstance().getModelManager().getModel(SLINGSHOT_MODEL);
+                    model = slingshotModel.getOverrides().resolve(slingshotModel, stack, null, Minecraft.getInstance().player, 0);
+                    model.getTransforms().getTransform(displayContext).apply(leftHanded, poseStack);
                     poseStack.translate(-0.5F, -0.5F, -0.5F);
-                    boolean bl3 = true;
 
-                    RenderType renderType = Sheets.translucentItemSheet();
-                    VertexConsumer vertexConsumer;
-                    if (bl3) {
-                        vertexConsumer = getFoilBufferDirect(multiBufferSource, renderType, true, itemStack.hasFoil());
-                    } else {
-                        vertexConsumer = getFoilBuffer(multiBufferSource, renderType, true, itemStack.hasFoil());
-                    }
+                    VertexConsumer vertices = ItemRenderer.getFoilBufferDirect(buffer, Sheets.translucentItemSheet(), true, stack.hasFoil());
 
-                    this.renderModelLists(bakedModel, itemStack, i, j, poseStack, vertexConsumer);
+                    this.renderModelLists(model, stack, combinedLight, combinedOverlay, poseStack, vertices);
                     poseStack.popPose();
                     ci.cancel();
                 }
             }
-
-
         }
     }
 
     @Shadow
-    private void renderModelLists(BakedModel bakedModel, ItemStack itemStack, int i, int j, PoseStack poseStack, VertexConsumer vertexConsumer) {
-
-    }
+    private void renderModelLists(BakedModel bakedModel, ItemStack itemStack, int i, int j, PoseStack poseStack, VertexConsumer vertexConsumer) {}
 }

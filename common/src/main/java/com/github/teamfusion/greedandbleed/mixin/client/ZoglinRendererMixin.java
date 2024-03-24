@@ -22,6 +22,6 @@ public abstract class ZoglinRendererMixin extends MobRenderer<Zoglin, HoglinMode
     @Inject(method = ("<init>"), at = @At("TAIL"))
     public void init(EntityRendererProvider.Context context, CallbackInfo callbackInfo) {
         ZoglinRenderer hoglinRenderer = (ZoglinRenderer) ((Object) this);
-        this.addLayer(new HoglinArmorLayer(hoglinRenderer, context.getModelSet()));
+        this.addLayer(new HoglinArmorLayer<>(hoglinRenderer, context.getModelSet()));
     }
 }

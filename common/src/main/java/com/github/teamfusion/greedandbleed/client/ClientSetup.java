@@ -53,26 +53,27 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(ShamanPiglinRenderer.MAIN, ShamanPiglinModel::createBodyLayer);
         RenderRegistry.layerDefinition(PygmyRenderer.MAIN, PygmyModel::createBodyLayer);
         RenderRegistry.layerDefinition(HoggartRenderer.MAIN, HoggartModel::createBodyLayer);
-        ItemProperties.register(ItemRegistry.SLINGSHOT.get(), new ResourceLocation("pull"), (itemStack, clientLevel, livingEntity, i) -> {
-            if (livingEntity == null) {
-                return 0.0f;
-            }
-            if (livingEntity.getUseItem() != itemStack) {
-                return 0.0f;
-            }
-            return SlingshotItem.getPowerForTime((itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()));
-        });
-        ItemProperties.register(ItemRegistry.SLINGSHOT.get(), new ResourceLocation("pulling"), (itemStack, clientLevel, livingEntity, i) -> {
-            return livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F;
-        });
-        ItemProperties.register(ItemRegistry.SLINGSHOT_POUCH.get(), new ResourceLocation("full"), (itemStack, clientLevel, livingEntity, i) -> {
-            return SlingshotPouchItem.getFullnessDisplay(itemStack) > 0.0F ? 1.0F : 0.0F;
-        });
     }
 
     public static void onInitialized() {
         RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_FUNGUS.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_LUMPS.get()));
         RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()));
         RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_TRAPDOOR.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_TRAPDOOR.get()));
+
+        ItemProperties.register(ItemRegistry.SLINGSHOT.get(), new ResourceLocation("pull"), (stack, level, entity, seed) -> {
+            if (entity == null) {
+                return 0.0f;
+            }
+            if (entity.getUseItem() != stack) {
+                return 0.0f;
+            }
+            return SlingshotItem.getPowerForTime(stack.getUseDuration() - entity.getUseItemRemainingTicks());
+        });
+        ItemProperties.register(ItemRegistry.SLINGSHOT.get(), new ResourceLocation("pulling"), (stack, level, entity, seed) -> {
+            return entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
+        });
+        ItemProperties.register(ItemRegistry.SLINGSHOT_POUCH.get(), new ResourceLocation("full"), (stack, level, entity, seed) -> {
+            return SlingshotPouchItem.getFullnessDisplay(stack) > 0.0F ? 1.0F : 0.0F;
+        });
     }
 }

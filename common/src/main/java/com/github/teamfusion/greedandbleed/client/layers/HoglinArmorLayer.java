@@ -22,14 +22,13 @@ public class HoglinArmorLayer<M extends Mob & HoglinBase, T extends EntityModel<
 
     public HoglinArmorLayer(RenderLayerParent<M, T> renderLayerParent, EntityModelSet entityModelSet) {
         super(renderLayerParent);
-        this.model = new GBHoglinModelComplete(entityModelSet.bakeLayer(ClientSetup.HOGLIN_ARMOR));
+        this.model = new GBHoglinModelComplete<>(entityModelSet.bakeLayer(ClientSetup.HOGLIN_ARMOR));
     }
 
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, M hoglin, float f, float g, float h, float j, float k, float l) {
         if (hoglin instanceof HasMountArmor armor) {
             ItemStack itemStack = armor.getArmor();
-            if (itemStack.getItem() instanceof HoglinArmorItem) {
-                HoglinArmorItem hoglinArmorItem = (HoglinArmorItem) itemStack.getItem();
+            if (itemStack.getItem() instanceof HoglinArmorItem hoglinArmorItem) {
                 this.getParentModel().copyPropertiesTo(this.model);
                 this.model.prepareMobModel(hoglin, f, g, h);
                 this.model.setupAnim(hoglin, f, g, j, k, l);
