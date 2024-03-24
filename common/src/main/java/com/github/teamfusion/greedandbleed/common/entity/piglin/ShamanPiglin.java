@@ -94,7 +94,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
 
 
     @Override
-    protected Brain.Provider<?> brainProvider() {
+    protected Brain.Provider<ShamanPiglin> brainProvider() {
         return Brain.provider(MEMORY_TYPES, SENSOR_TYPES);
     }
 
@@ -244,7 +244,7 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
 
     @Override
     public ITaskManager<?> createTaskManager(Dynamic<?> dynamic) {
-        return new ShamanPiglinTaskManager(this, this.brainProvider().makeBrain(dynamic));
+        return new ShamanPiglinTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
     }
 
     @Override

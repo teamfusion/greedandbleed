@@ -37,7 +37,7 @@ public class RenderHelper {
         ItemStack pouch = player.getMainHandItem().is(ItemRegistry.SLINGSHOT_POUCH.get()) ? player.getMainHandItem() : player.getOffhandItem().is(ItemRegistry.SLINGSHOT_POUCH.get()) ? player.getOffhandItem() : ItemStack.EMPTY;
         if (player.isShiftKeyDown() && pouch.getItem() == ItemRegistry.SLINGSHOT_POUCH.get()) {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            buf.writeInt(scrollDelta > 0 ? -1 : 1);
+            buf.writeInt(scrollDelta > 0 ? 1 : -1);
             NetworkManager.sendToServer(GreedAndBleedServerNetwork.SELECT_SYNC_PACKET, buf);
             return true;
         }
@@ -121,11 +121,9 @@ public class RenderHelper {
 
 
     public static void renderSlingshotPouchSlot(GuiGraphics guiGraphics, float partialTick) {
-        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isShiftKeyDown()) {
-            renderItemContent(guiGraphics,
+        renderItemContent(guiGraphics,
                     Minecraft.getInstance().getWindow().getGuiScaledWidth(),
                     Minecraft.getInstance().getWindow().getGuiScaledHeight());
-        }
     }
 
     public static void renderToleranceMeter(ToleratingMount toleratingMount, GuiGraphics guiGraphics) {

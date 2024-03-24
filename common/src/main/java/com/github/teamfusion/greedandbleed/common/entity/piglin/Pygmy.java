@@ -74,7 +74,7 @@ public class Pygmy extends GBPygmy {
     }
 
     @Override
-    protected Brain.Provider<?> brainProvider() {
+    protected Brain.Provider<Pygmy> brainProvider() {
         return Brain.provider(MEMORY_TYPES, SENSOR_TYPES);
     }
 
@@ -92,7 +92,7 @@ public class Pygmy extends GBPygmy {
 
     @Override
     public ITaskManager<?> createTaskManager(Dynamic<?> dynamic) {
-        return new PygmyTaskManager(this, this.brainProvider().makeBrain(dynamic));
+        return new PygmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
     }
 
     @Override

@@ -58,7 +58,7 @@ public class Hoggart extends GBPygmy {
     }
 
     @Override
-    protected Brain.Provider<?> brainProvider() {
+    protected Brain.Provider<Hoggart> brainProvider() {
         return Brain.provider(MEMORY_TYPES, SENSOR_TYPES);
     }
 
@@ -76,7 +76,7 @@ public class Hoggart extends GBPygmy {
 
     @Override
     public ITaskManager<?> createTaskManager(Dynamic<?> dynamic) {
-        return new HoggartTaskManager(this, this.brainProvider().makeBrain(dynamic));
+        return new HoggartTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
     }
 
     @Override
