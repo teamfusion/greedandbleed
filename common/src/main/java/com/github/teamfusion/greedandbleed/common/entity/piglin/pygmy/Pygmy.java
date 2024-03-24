@@ -155,8 +155,8 @@ public class Pygmy extends GBPygmy implements RangedAttackMob {
         double e = livingEntity.getX() - this.getX();
         double g = livingEntity.getEyeY() - this.getEyeY();
         double h = livingEntity.getZ() - this.getZ();
-        snowball.shoot(e, g, h, 1.6f, 3.0f);
-        snowball.setItem(new ItemStack(ItemRegistry.CRIMSON_FUNGUS.get()));
+        snowball.shoot(e, g, h, 1.4f, 12.0f - this.level().getDifficulty().getId() * 3F);
+        snowball.setItem(livingEntity.getOffhandItem().copy());
         this.playSound(SoundEvents.SNOW_GOLEM_SHOOT, 1.0f, 0.4f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
         this.level().addFreshEntity(snowball);
     }
