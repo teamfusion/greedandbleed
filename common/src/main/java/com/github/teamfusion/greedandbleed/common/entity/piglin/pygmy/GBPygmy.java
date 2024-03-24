@@ -1,7 +1,8 @@
-package com.github.teamfusion.greedandbleed.common.entity.piglin;
+package com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy;
 
 import com.github.teamfusion.greedandbleed.api.HasTaskManager;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPiglin;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;

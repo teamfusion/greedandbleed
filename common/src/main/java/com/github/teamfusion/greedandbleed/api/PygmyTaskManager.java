@@ -1,7 +1,8 @@
 package com.github.teamfusion.greedandbleed.api;
 
-import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPygmy;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.Pygmy;
+import com.github.teamfusion.greedandbleed.common.entity.brain.SlingshotAttack;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PoiRegistry;
@@ -104,7 +105,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15f), MeleeAttack.create(20));
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15f), MeleeAttack.create(20), new SlingshotAttack<>());
     }
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {

@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain.sensor;
 
-import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;

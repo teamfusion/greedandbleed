@@ -27,6 +27,8 @@ public class CreativeTabRegistry {
                             ItemRegistry.AMULET,
                             ItemRegistry.SLINGSHOT,
                             ItemRegistry.SLINGSHOT_POUCH,
+                            ItemRegistry.CLUB,
+                            ItemRegistry.STONE_CLUB,
                             ItemRegistry.PEBBLE,
                             ItemRegistry.CRIMSON_FUNGUS,
                             ItemRegistry.PIGLIN_BELT,

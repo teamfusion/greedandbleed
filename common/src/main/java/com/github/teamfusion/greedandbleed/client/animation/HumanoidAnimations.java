@@ -123,4 +123,13 @@ public class HumanoidAnimations {
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(-61.373F, 15.4697F, 8.2834F), AnimationChannel.Interpolations.LINEAR)
             ))
             .build();
+    public static final AnimationDefinition RANGE_ATTACK = AnimationDefinition.Builder.withLength(0.0F)
+            .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                    new Keyframe(0.0F, KeyframeAnimations.degreeVec(-63.843F, 29.7621F, 13.7012F), AnimationChannel.Interpolations.LINEAR)
+            ))
+            .addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                    new Keyframe(0.0F, KeyframeAnimations.degreeVec(-62.2688F, -24.7391F, -12.4075F), AnimationChannel.Interpolations.LINEAR)
+            ))
+            .build();
+
 }

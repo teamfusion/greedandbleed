@@ -1,8 +1,8 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.BuiltInRegistries;

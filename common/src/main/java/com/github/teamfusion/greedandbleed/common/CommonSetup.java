@@ -1,7 +1,11 @@
 package com.github.teamfusion.greedandbleed.common;
 
 import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.*;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.BuckshotSlingshotBehavior;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotBehavior;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;

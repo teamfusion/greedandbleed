@@ -1,8 +1,9 @@
-package com.github.teamfusion.greedandbleed.common.entity.piglin;
+package com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy;
 
 import com.github.teamfusion.greedandbleed.api.HoggartTaskManager;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.SensorRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
@@ -10,7 +11,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -81,12 +84,12 @@ public class Hoggart extends GBPygmy {
 
     @Override
     public void holdInMainHand(ItemStack stack) {
-
+        this.setItemInHand(InteractionHand.MAIN_HAND, stack);
     }
 
     @Override
     public void holdInOffHand(ItemStack stack) {
-
+        this.setItemInHand(InteractionHand.OFF_HAND, stack);
     }
 
     @Nullable
@@ -110,7 +113,13 @@ public class Hoggart extends GBPygmy {
                 serverLevelAccessor.addFreshEntity(hoglin);
             }*/
         }
+        this.populateDefaultEquipmentSlots(serverLevelAccessor.getRandom(), difficultyInstance);
         return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
+    }
+
+    @Override
+    protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyInstance) {
+        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemRegistry.CLUB.get()));
     }
 
     @Override

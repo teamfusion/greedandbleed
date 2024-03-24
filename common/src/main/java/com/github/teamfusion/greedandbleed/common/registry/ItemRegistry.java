@@ -1,16 +1,14 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.common.item.AmuletItem;
-import com.github.teamfusion.greedandbleed.common.item.GBOnAStickWithHoglinItem;
-import com.github.teamfusion.greedandbleed.common.item.HoglinArmorItem;
-import com.github.teamfusion.greedandbleed.common.item.HoglinSaddleItem;
+import com.github.teamfusion.greedandbleed.common.item.*;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchItem;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Tiers;
 
 import java.util.function.Supplier;
 
@@ -29,7 +27,8 @@ public class ItemRegistry {
     public static final Supplier<Item> PEBBLE = create("pebble", () -> new Item(new Item.Properties()));
     public static final Supplier<Item> CRIMSON_FUNGUS = create("crimson_fungus", () -> new Item(new Item.Properties()));
     public static final Supplier<Item> SLINGSHOT_POUCH = create("slingshot_pouch", () -> new SlingshotPouchItem(new Item.Properties().stacksTo(1)));
-
+    public static final Supplier<Item> CLUB = create("club", () -> new ClubItem(Tiers.GOLD, new Item.Properties().stacksTo(1).durability(82)));
+    public static final Supplier<Item> STONE_CLUB = create("stone_club", () -> new ClubItem(Tiers.STONE, new Item.Properties().stacksTo(1).durability(102)));
 
     public static final Supplier<Item> SKELETAL_PIGLIN_SPAWN_EGG = create("skeletal_piglin_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SKELETAL_PIGLIN, 12698049, 4802889, new Item.Properties()));
     public static final Supplier<Item> HOGLET_SPAWN_EGG = create("hoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.HOGLET, 10051392, 16380836, new Item.Properties()));

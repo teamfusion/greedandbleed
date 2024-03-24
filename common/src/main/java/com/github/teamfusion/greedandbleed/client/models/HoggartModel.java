@@ -2,7 +2,7 @@ package com.github.teamfusion.greedandbleed.client.models;
 
 import com.github.teamfusion.greedandbleed.client.animation.HoggartAnimations;
 import com.github.teamfusion.greedandbleed.client.animation.HumanoidAnimations;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HierarchicalModel;

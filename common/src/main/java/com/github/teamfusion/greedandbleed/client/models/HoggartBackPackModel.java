@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
-import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
 import net.minecraft.client.model.geom.ModelPart;
 
 public class HoggartBackPackModel<T extends Hoggart> extends HoggartModel<T> {

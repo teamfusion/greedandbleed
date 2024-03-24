@@ -53,7 +53,7 @@ public class SlingshotBehavior {
         Projectile slingshotProjectile = this.getProjectile(level, pos, shooter, stack, power);
 
         slingshotProjectile.setOwner(shooter);
-        slingshotProjectile.shootFromRotation(shooter, shooter.getXRot() + (shooter.getRandom().nextFloat() - shooter.getRandom().nextFloat()) * 5F, shooter.getYRot() + (shooter.getRandom().nextFloat() - shooter.getRandom().nextFloat()) * 5F, this.getXRot(), power * this.getMaxPower(), 1.0F);
+        slingshotProjectile.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot(), this.getXRot(), power * this.getMaxPower(), 1.0F);
         this.addProjectileEffects(level, shooter, slingshotProjectile, stack);
         level.addFreshEntity(slingshotProjectile);
     }

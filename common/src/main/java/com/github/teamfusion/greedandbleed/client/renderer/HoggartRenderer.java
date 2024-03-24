@@ -4,10 +4,11 @@ import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.HoggartBackPackModel;
 import com.github.teamfusion.greedandbleed.client.models.HoggartModel;
 import com.github.teamfusion.greedandbleed.client.renderer.layer.SecondModelLayer;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class HoggartRenderer<T extends Hoggart> extends MobRenderer<T, HoggartModel<T>> {
@@ -18,6 +19,7 @@ public class HoggartRenderer<T extends Hoggart> extends MobRenderer<T, HoggartMo
     public HoggartRenderer(EntityRendererProvider.Context context) {
         super(context, new HoggartModel<>(context.bakeLayer(MAIN)), 0.3F);
         this.addLayer(new SecondModelLayer<>(this, TEXTURE_BACKPACK, new HoggartBackPackModel<>(context.bakeLayer(MAIN))));
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override

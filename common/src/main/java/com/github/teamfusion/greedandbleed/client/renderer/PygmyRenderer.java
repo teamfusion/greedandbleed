@@ -2,10 +2,11 @@ package com.github.teamfusion.greedandbleed.client.renderer;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.PygmyModel;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.Pygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class PygmyRenderer<T extends Pygmy> extends MobRenderer<T, PygmyModel<T>> {
@@ -13,6 +14,7 @@ public class PygmyRenderer<T extends Pygmy> extends MobRenderer<T, PygmyModel<T>
 
     public PygmyRenderer(EntityRendererProvider.Context context) {
         super(context, new PygmyModel<>(context.bakeLayer(MAIN)), 0.3F);
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override

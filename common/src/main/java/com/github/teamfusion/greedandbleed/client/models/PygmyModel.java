@@ -1,7 +1,8 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
 import com.github.teamfusion.greedandbleed.client.animation.HumanoidAnimations;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.Pygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
+import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HierarchicalModel;
@@ -76,10 +77,14 @@ public class PygmyModel<T extends Pygmy> extends HierarchicalModel<T> implements
             this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         }
         if (entity.isAggressive()) {
-            if (entity.isLeftHanded()) {
-                this.applyStatic(HumanoidAnimations.ATTACK_LEFT);
+            if (entity.isHolding(ItemRegistry.SLINGSHOT.get())) {
+                this.applyStatic(HumanoidAnimations.RANGE_ATTACK);
             } else {
-                this.applyStatic(HumanoidAnimations.ATTACK_RIGHT);
+                if (entity.isLeftHanded()) {
+                    this.applyStatic(HumanoidAnimations.ATTACK_LEFT);
+                } else {
+                    this.applyStatic(HumanoidAnimations.ATTACK_RIGHT);
+                }
             }
         } else if (entity.walkAnimation.isMoving()) {
             this.animateWalk(HumanoidAnimations.WALK_SWING, limbSwing, limbSwingAmount, 2.0F, 2.5F);
