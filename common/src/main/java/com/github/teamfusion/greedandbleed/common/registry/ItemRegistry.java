@@ -1,7 +1,12 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.common.item.*;
+import com.github.teamfusion.greedandbleed.common.item.AmuletItem;
+import com.github.teamfusion.greedandbleed.common.item.GBOnAStickWithHoglinItem;
+import com.github.teamfusion.greedandbleed.common.item.HoglinArmorItem;
+import com.github.teamfusion.greedandbleed.common.item.HoglinSaddleItem;
+import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
+import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchItem;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;

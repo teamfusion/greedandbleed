@@ -2,7 +2,7 @@ package com.github.teamfusion.greedandbleed.client;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
-import com.github.teamfusion.greedandbleed.common.item.SlingshotPouchItem;
+import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchItem;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedServerNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;

@@ -1,4 +1,4 @@
-package com.github.teamfusion.greedandbleed.common.item;
+package com.github.teamfusion.greedandbleed.common.item.slingshot;
 
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.ChatFormatting;
@@ -49,7 +49,7 @@ public class SlingshotPouchItem extends Item {
         if (itemStack22.isEmpty()) {
             this.playRemoveOneSound(player);
             SlingshotPouchItem.removeOne(itemStack).ifPresent(itemStack2 -> SlingshotPouchItem.add(itemStack, slot.safeInsert((ItemStack) itemStack2)));
-        } else if (itemStack22.getItem().canFitInsideContainerItems() && SlingshotItem.SLINGSHOT_ITEMS.test(itemStack22)) {
+        } else if (itemStack22.getItem().canFitInsideContainerItems() && SlingshotItem.getAmmoBehavior(itemStack22.getItem()) != null) {
             int i = (64 * 6 - SlingshotPouchItem.getContentWeight(itemStack)) / SlingshotPouchItem.getWeight(itemStack22);
             int j = SlingshotPouchItem.add(itemStack, slot.safeTake(itemStack22.getCount(), i, player));
             if (j > 0) {
@@ -69,7 +69,7 @@ public class SlingshotPouchItem extends Item {
                 this.playRemoveOneSound(player);
                 slotAccess.set((ItemStack) itemStack);
             });
-        } else if (SlingshotItem.SLINGSHOT_ITEMS.test(itemStack22)) {
+        } else if (SlingshotItem.getAmmoBehavior(itemStack22.getItem()) != null) {
             int i = SlingshotPouchItem.add(itemStack2, itemStack22);
             if (i > 0) {
                 this.playInsertSound(player);
@@ -139,12 +139,12 @@ public class SlingshotPouchItem extends Item {
         if (itemStack.is(ItemRegistry.SLINGSHOT_POUCH.get())) {
             return Optional.empty();
         }
-        return listTag.stream().filter(CompoundTag.class::isInstance).map(CompoundTag.class::cast).filter(compoundTag -> ItemStack.isSameItemSameTags(ItemStack.of(compoundTag), itemStack)).findFirst();
+        return listTag.stream().filter(CompoundTag.class::isInstance).map(CompoundTag.class::cast).filter(compoundTag -> ItemStack.isSameItemSameTags(ItemStack.of(compoundTag), itemStack) && itemStack.getCount() + ItemStack.of(compoundTag).getCount() < 64).findFirst();
     }
 
     private static int getWeight(ItemStack itemStack) {
         CompoundTag compoundTag;
-        if (SlingshotItem.SLINGSHOT_ITEMS.test(itemStack)) {
+        if (SlingshotItem.getAmmoBehavior(itemStack.getItem()) != null) {
             return 64 / itemStack.getMaxStackSize();
         }
         if (itemStack.hasTag() && (compoundTag = BlockItem.getBlockEntityData(itemStack)) != null && !compoundTag.getList("Bees", 10).isEmpty()) {
@@ -174,13 +174,13 @@ public class SlingshotPouchItem extends Item {
 
         if (itemStack2.isEmpty()) {
             listTag.remove(0);
+            compoundTag.remove("ItemSelect");
         } else {
             listTag.set(0, itemStack2.save(new CompoundTag()));
         }
         if (listTag.isEmpty()) {
             itemStack.removeTagKey(TAG_ITEMS);
         }
-        compoundTag.remove("ItemSelect");
         return Optional.of(itemStack2);
     }
 

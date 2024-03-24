@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.network;
 
-import com.github.teamfusion.greedandbleed.common.item.SlingshotPouchItem;
+import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchItem;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;

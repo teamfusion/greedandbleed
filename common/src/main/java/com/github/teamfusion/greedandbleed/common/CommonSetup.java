@@ -2,6 +2,9 @@ package com.github.teamfusion.greedandbleed.common;
 
 import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.*;
+import com.github.teamfusion.greedandbleed.common.item.slingshot.BuckshotSlingshotBehavior;
+import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotBehavior;
+import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedNetwork;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedServerNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.EnchantmentRegistry;
@@ -12,13 +15,18 @@ import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeManager;
 import dev.architectury.event.events.common.LootEvent;
 import dev.architectury.registry.level.biome.BiomeModifications;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.projectile.*;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -26,6 +34,7 @@ import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class CommonSetup {
@@ -39,7 +48,105 @@ public class CommonSetup {
         MobRegistry.attributes(EntityTypeRegistry.HOGGART, Hoggart::setCustomAttributes);
     }
 
+    public static void onAmmoInit() {
+        SlingshotItem.registerAmmo(Items.EGG, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.SNOWBALL, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(ItemRegistry.CRIMSON_FUNGUS.get(), new SlingshotBehavior());
+        SlingshotItem.registerAmmo(ItemRegistry.PEBBLE.get(), new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.POISONOUS_POTATO, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.PUFFERFISH, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.SPIDER_EYE, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.IRON_NUGGET, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.GOLD_NUGGET, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.RAW_IRON, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.RAW_GOLD, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.RAW_COPPER, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.IRON_INGOT, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.GOLD_INGOT, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.COPPER_INGOT, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.NETHERITE_INGOT, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.DIAMOND, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.EMERALD, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.BRICK, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.NETHER_BRICK, new SlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.BEETROOT_SEEDS, new BuckshotSlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.MELON_SEEDS, new BuckshotSlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.PUMPKIN_SEEDS, new BuckshotSlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.WHEAT_SEEDS, new BuckshotSlingshotBehavior());
+        SlingshotItem.registerAmmo(Items.SPLASH_POTION, new SlingshotBehavior() {
+            @Override
+            public float getXRot() {
+                return 10F;
+            }
+
+            @Override
+            public float getMaxPower() {
+                return 1.5F;
+            }
+
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                return new ThrownPotion(level, shooter);
+            }
+        });
+        SlingshotItem.registerAmmo(Items.EXPERIENCE_BOTTLE, new SlingshotBehavior() {
+            @Override
+            public float getXRot() {
+                return 10F;
+            }
+
+            @Override
+            public float getMaxPower() {
+                return 1.5F;
+            }
+
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                return new ThrownExperienceBottle(level, shooter);
+            }
+        });
+        SlingshotItem.registerAmmo(Items.FIRE_CHARGE, new SlingshotBehavior() {
+
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                LargeFireball largeFireball = new LargeFireball(EntityType.FIREBALL, level);
+                Vec3 vec3 = shooter.getViewVector(1.0F);
+                largeFireball.xPower = vec3.x * 0.05F * power;
+                largeFireball.yPower = vec3.y * 0.05F * power;
+                largeFireball.zPower = vec3.z * 0.05F * power;
+                largeFireball.setPos(shooter.getX(), shooter.getEyeY(), shooter.getZ());
+                return largeFireball;
+            }
+        });
+        SlingshotItem.registerAmmo(Items.LINGERING_POTION, new SlingshotBehavior() {
+            @Override
+            public float getXRot() {
+                return 10F;
+            }
+
+            @Override
+            public float getMaxPower() {
+                return 1.5F;
+            }
+
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                return new ThrownPotion(level, shooter);
+            }
+        });
+
+        SlingshotItem.registerAmmo(Items.ENDER_PEARL, new SlingshotBehavior() {
+
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                return new ThrownEnderpearl(level, shooter);
+            }
+        });
+    }
+
     public static void onInitialized() {
+        onAmmoInit();
+
         PotionRegistry.init();
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hoglet::checkHogletSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.ZOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
