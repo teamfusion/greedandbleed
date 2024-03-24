@@ -1,0 +1,18 @@
+{
+  "parent": "item/generated",
+  "loader": "forge:separate_transforms",
+  "textures": {
+    "layer0": "greedandbleed:item/slingshot"
+  },
+  "base": {
+    "parent": "greedandbleed:item/slingshot_front_shooting_1"
+  },
+  "perspectives": {
+    "firstperson_righthand": {
+      "parent": "greedandbleed:item/slingshot_back_shooting_1"
+    },
+    "firstperson_lefthand": {
+      "parent": "greedandbleed:item/slingshot_back_shooting_1"
+    }
+  }
+}

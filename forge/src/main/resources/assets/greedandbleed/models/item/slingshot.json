@@ -1,0 +1,41 @@
+{
+  "parent": "item/generated",
+  "loader": "forge:separate_transforms",
+  "textures": {
+    "layer0": "greedandbleed:item/slingshot"
+  },
+  "base": {
+    "parent": "greedandbleed:item/slingshot_front"
+  },
+  "perspectives": {
+    "firstperson_righthand": {
+      "parent": "greedandbleed:item/slingshot_back"
+    },
+    "firstperson_lefthand": {
+      "parent": "greedandbleed:item/slingshot_back"
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.25
+      },
+      "model": "greedandbleed:item/slingshot_shooting_1"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.5
+      },
+      "model": "greedandbleed:item/slingshot_shooting_2"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.75
+      },
+      "model": "greedandbleed:item/slingshot_shooting_3"
+    }
+  ]
+}

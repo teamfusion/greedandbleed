@@ -1,4 +1,4 @@
-package com.github.teamfusion.greedandbleed.mixin.client;
+package com.github.teamfusion.greedandbleed.mixin.fabric.client;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
