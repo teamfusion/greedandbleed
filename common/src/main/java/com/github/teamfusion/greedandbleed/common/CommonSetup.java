@@ -116,7 +116,7 @@ public class CommonSetup {
                 LargeFireball largeFireball = new LargeFireball(EntityType.FIREBALL, level);
                 Vec3 vec3 = shooter.getViewVector(1.0F);
                 largeFireball.xPower = vec3.x * 0.05F * power;
-                largeFireball.yPower = vec3.y * 0.05F * power;
+                largeFireball.yPower = -0.03F;
                 largeFireball.zPower = vec3.z * 0.05F * power;
                 largeFireball.setPos(shooter.getX(), shooter.getEyeY(), shooter.getZ());
                 return largeFireball;
