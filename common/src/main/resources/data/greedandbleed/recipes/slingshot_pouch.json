@@ -1,19 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "X#X",
+    " X ",
     "X X",
-    " X "
+    "XXX"
   ],
   "key": {
     "#": {
       "item": "minecraft:leather"
-    },
-    "X": {
-      "item": "minecraft:stick"
     }
   },
   "result": {
-    "item": "greedandbleed:slingshot"
+    "item": "greedandbleed:slingshot_pouch"
   }
 }
