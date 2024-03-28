@@ -168,15 +168,15 @@ public class SlingshotPouchItem extends Item {
             return Optional.empty();
         }
         boolean i = false;
-        CompoundTag compoundTag2 = listTag.getCompound(0);
+        CompoundTag compoundTag2 = listTag.getCompound(SlingshotPouchItem.getSelectedItem(itemStack));
         ItemStack itemStack2 = ItemStack.of(compoundTag2);
         itemStack2.shrink(1);
 
         if (itemStack2.isEmpty()) {
-            listTag.remove(0);
+            listTag.remove(SlingshotPouchItem.getSelectedItem(itemStack));
             compoundTag.remove("ItemSelect");
         } else {
-            listTag.set(0, itemStack2.save(new CompoundTag()));
+            listTag.set(SlingshotPouchItem.getSelectedItem(itemStack), itemStack2.save(new CompoundTag()));
         }
         if (listTag.isEmpty()) {
             itemStack.removeTagKey(TAG_ITEMS);
