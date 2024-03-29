@@ -59,7 +59,7 @@ public class SlingshotBehavior {
     }
 
     public float getMaxPower() {
-        return 1.0F;
+        return 2.5F;
     }
 
     public float getXRot() {

@@ -110,12 +110,6 @@ public class CommonSetup {
             }
         });
         SlingshotItem.registerAmmo(Items.FIRE_CHARGE, new SlingshotBehavior() {
-
-            @Override
-            public float getMaxPower() {
-                return 2.0F;
-            }
-
             @Override
             public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
                 LargeFireball largeFireball = new LargeFireball(EntityType.FIREBALL, level);

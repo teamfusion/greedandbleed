@@ -75,7 +75,7 @@ public class ThrownDamageableEntity extends ThrowableItemProjectile {
         super.onHitEntity(entityHitResult);
         Entity entity = entityHitResult.getEntity();
         float f = (float) this.getDeltaMovement().length();
-        int i = Mth.ceil(Mth.clamp((double) f * this.baseDamage, 0.0D, 2.147483647E9D));
+        int i = Mth.ceil(Mth.clamp((double) f * this.baseDamage, 0.0D, 2.147483647E9D) * 0.5F);
 
         if (i > 0) {
             entity.hurt(this.damageSources().thrown(this, this.getOwner()), i);
