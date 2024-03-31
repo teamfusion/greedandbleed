@@ -95,6 +95,9 @@ public class PygmyModel<T extends Pygmy> extends HierarchicalModel<T> implements
         if (entity.isBaby()) {
             this.applyStatic(HumanoidAnimations.BABY);
         }
+        this.animateWalk(HumanoidAnimations.EAR_MOVING, limbSwing, limbSwingAmount, 1.0F, 1.5F);
+
+        this.animateWalk(HumanoidAnimations.EAR_IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
     }
 
     @Override

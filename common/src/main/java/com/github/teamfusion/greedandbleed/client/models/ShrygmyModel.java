@@ -95,6 +95,9 @@ public class ShrygmyModel<T extends Shrygmy> extends HierarchicalModel<T> implem
         if (entity.isBaby()) {
             this.applyStatic(HumanoidAnimations.BABY);
         }
+        this.animateWalk(HumanoidAnimations.EAR_MOVING, limbSwing, limbSwingAmount, 1.0F, 1.5F);
+
+        this.animateWalk(HumanoidAnimations.EAR_IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
     }
 
     @Override

@@ -105,6 +105,9 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
         }
 
         this.piggy_backpack.visible = false;
+        this.animateWalk(HumanoidAnimations.EAR_MOVING, limbSwing, limbSwingAmount, 1.0F, 1.5F);
+
+        this.animateWalk(HumanoidAnimations.EAR_IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
     }
 
     @Override
