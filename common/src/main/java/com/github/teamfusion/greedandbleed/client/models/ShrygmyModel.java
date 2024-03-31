@@ -53,7 +53,7 @@ public class ShrygmyModel<T extends Shrygmy> extends HierarchicalModel<T> implem
         PartDefinition left_arm = body.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(32, 36).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 10.0F, 5.0F, new CubeDeformation(0.25F))
                 .texOffs(16, 36).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 10.0F, 5.0F, new CubeDeformation(0.5F)), PartPose.offset(5.0F, 2.0F, 0.0F));
 
-        PartDefinition right_arm2 = body.addOrReplaceChild("right_arm2", CubeListBuilder.create().texOffs(0, 36).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 10.0F, 5.0F, new CubeDeformation(0.25F))
+        PartDefinition right_arm2 = body.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(0, 36).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 10.0F, 5.0F, new CubeDeformation(0.25F))
                 .texOffs(56, 20).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 10.0F, 5.0F, new CubeDeformation(0.5F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
 
         PartDefinition right_leg = body.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(48, 51).addBox(2.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.25F))

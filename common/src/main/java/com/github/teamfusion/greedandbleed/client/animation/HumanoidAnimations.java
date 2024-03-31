@@ -93,13 +93,13 @@ public class HumanoidAnimations {
             .build();
 
     public static final AnimationDefinition ATTACK_LEFT = AnimationDefinition.Builder.withLength(0.0F).looping()
-            .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+            .addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(-117.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
             ))
             .build();
 
     public static final AnimationDefinition ATTACK_RIGHT = AnimationDefinition.Builder.withLength(0.0F).looping()
-            .addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+            .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(-117.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
             ))
             .build();
