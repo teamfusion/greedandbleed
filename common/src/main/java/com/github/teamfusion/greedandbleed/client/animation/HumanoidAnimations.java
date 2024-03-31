@@ -11,6 +11,7 @@ import net.minecraft.client.animation.KeyframeAnimations;
  * @author bagu_chan
  */
 public class HumanoidAnimations {
+
     public static final AnimationDefinition WALK_SWING = AnimationDefinition.Builder.withLength(1f).looping()
             .addAnimation("right_arm",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -91,13 +92,13 @@ public class HumanoidAnimations {
             ))
             .build();
 
-    public static final AnimationDefinition ATTACK_RIGHT = AnimationDefinition.Builder.withLength(0.0F).looping()
+    public static final AnimationDefinition ATTACK_LEFT = AnimationDefinition.Builder.withLength(0.0F).looping()
             .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(-117.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
             ))
             .build();
 
-    public static final AnimationDefinition ATTACK_LEFT = AnimationDefinition.Builder.withLength(0.0F).looping()
+    public static final AnimationDefinition ATTACK_RIGHT = AnimationDefinition.Builder.withLength(0.0F).looping()
             .addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(-117.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
             ))
@@ -123,6 +124,7 @@ public class HumanoidAnimations {
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(-61.373F, 15.4697F, 8.2834F), AnimationChannel.Interpolations.LINEAR)
             ))
             .build();
+
     public static final AnimationDefinition RANGE_ATTACK = AnimationDefinition.Builder.withLength(0.0F)
             .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(-63.843F, 29.7621F, 13.7012F), AnimationChannel.Interpolations.LINEAR)

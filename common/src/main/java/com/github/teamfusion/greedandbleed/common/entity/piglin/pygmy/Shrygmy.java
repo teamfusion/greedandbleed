@@ -1,8 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy;
 
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
-import com.github.teamfusion.greedandbleed.api.PygmyTaskManager;
-import com.github.teamfusion.greedandbleed.common.entity.projectile.ThrownDamageableEntity;
+import com.github.teamfusion.greedandbleed.api.ShrygmyTaskManager;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.SensorRegistry;
@@ -24,19 +23,18 @@ import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
-public class Pygmy extends GBPygmy implements RangedAttackMob {
-    protected static final ImmutableList<SensorType<? extends Sensor<? super Pygmy>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorRegistry.PYGMY_SPECIFIC_SENSOR.get());
+public class Shrygmy extends GBPygmy {
+    protected static final ImmutableList<SensorType<? extends Sensor<? super Shrygmy>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorRegistry.PYGMY_SPECIFIC_SENSOR.get());
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS
             , MemoryRegistry.NEAREST_HOGLET.get(), MemoryRegistry.NEAREST_TAMED_HOGLET.get()
             , MemoryModuleType.LIKED_PLAYER, MemoryRegistry.WORK_TIME.get(), MemoryModuleType.JOB_SITE);
-    public Pygmy(EntityType<? extends Pygmy> entityType, Level level) {
+
+    public Shrygmy(EntityType<? extends Shrygmy> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -48,7 +46,7 @@ public class Pygmy extends GBPygmy implements RangedAttackMob {
     public static AttributeSupplier.Builder setCustomAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 12.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.ATTACK_DAMAGE, 2.0F);
+                .add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.ATTACK_DAMAGE, 2.5F);
     }
 
     public void die(DamageSource p_35419_) {
@@ -81,7 +79,7 @@ public class Pygmy extends GBPygmy implements RangedAttackMob {
     }
 
     @Override
-    protected Brain.Provider<Pygmy> brainProvider() {
+    protected Brain.Provider<Shrygmy> brainProvider() {
         return Brain.provider(MEMORY_TYPES, SENSOR_TYPES);
     }
 
@@ -92,14 +90,14 @@ public class Pygmy extends GBPygmy implements RangedAttackMob {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Brain<Pygmy> getBrain() {
-        return (Brain<Pygmy>) super.getBrain();
+    public Brain<Shrygmy> getBrain() {
+        return (Brain<Shrygmy>) super.getBrain();
     }
 
 
     @Override
     public ITaskManager<?> createTaskManager(Dynamic<?> dynamic) {
-        return new PygmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
+        return new ShrygmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
     }
 
     @Override
@@ -131,29 +129,11 @@ public class Pygmy extends GBPygmy implements RangedAttackMob {
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyInstance) {
-        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemRegistry.SLINGSHOT.get()));
-        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemRegistry.CRIMSON_FUNGUS.get()));
-    }
-
-    @Override
-    public boolean canFireProjectileWeapon(ProjectileWeaponItem projectileWeaponItem) {
-        return projectileWeaponItem == ItemRegistry.SLINGSHOT.get();
+        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemRegistry.CLUB.get()));
     }
 
     @Override
     public float getVoicePitch() {
         return super.getVoicePitch() + 0.25F;
-    }
-
-    @Override
-    public void performRangedAttack(LivingEntity livingEntity, float f) {
-        ThrownDamageableEntity snowball = new ThrownDamageableEntity(this.level(), this);
-        double e = livingEntity.getX() - this.getX();
-        double g = livingEntity.getEyeY() - this.getEyeY();
-        double h = livingEntity.getZ() - this.getZ();
-        snowball.shoot(e, g, h, 1.4f, 12.0f - this.level().getDifficulty().getId() * 3F);
-        snowball.setItem(livingEntity.getOffhandItem().copy());
-        this.playSound(SoundEvents.SNOW_GOLEM_SHOOT, 1.0f, 0.4f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
-        this.level().addFreshEntity(snowball);
     }
 }

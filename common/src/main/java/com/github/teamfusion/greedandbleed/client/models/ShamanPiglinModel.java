@@ -47,13 +47,13 @@ public class ShamanPiglinModel<T extends ShamanPiglin> extends HierarchicalModel
                 .texOffs(8, 73).addBox(4.75F, -10.5841F, -2.3484F, 2.0F, 8.0F, 2.0F, new CubeDeformation(-0.25F))
                 .texOffs(0, 73).addBox(-7.0F, -10.5841F, -2.3484F, 2.0F, 8.0F, 2.0F, new CubeDeformation(-0.25F)), PartPose.offsetAndRotation(0.25F, -3.5F, 1.3333F, 1.2217F, 0.0F, 0.0F));
 
-        PartDefinition left_ear = head.addOrReplaceChild("left_ear", CubeListBuilder.create().texOffs(16, 78).addBox(-1.5F, 0.5F, -2.0F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition right_ear = head.addOrReplaceChild("right_ear", CubeListBuilder.create().texOffs(16, 78).addBox(-1.5F, 0.5F, -2.0F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(16, 73).addBox(-1.5F, 4.5F, -2.0F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 83).addBox(-1.5F, 1.5F, 1.0F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 83).addBox(-1.5F, 1.5F, -2.0F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(26, 78).addBox(-2.5F, 3.5F, -1.0F, 3.0F, 3.0F, 1.0F, new CubeDeformation(-0.25F)), PartPose.offsetAndRotation(-3.5F, -6.5F, 0.0F, 0.0F, 0.0F, 0.2618F));
 
-        PartDefinition right_ear = head.addOrReplaceChild("right_ear", CubeListBuilder.create().texOffs(32, 57).addBox(0.5F, 0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition left_ear = head.addOrReplaceChild("left_ear", CubeListBuilder.create().texOffs(32, 57).addBox(0.5F, 0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(26, 78).addBox(-0.5F, 3.5F, -1.0F, 3.0F, 3.0F, 1.0F, new CubeDeformation(-0.25F)), PartPose.offsetAndRotation(3.5F, -6.5F, 0.0F, 0.0F, 0.0F, -0.2618F));
 
         PartDefinition skirt = Entity.addOrReplaceChild("skirt", CubeListBuilder.create().texOffs(48, 25).addBox(-4.0F, -12.5F, -2.0F, 8.0F, 10.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));

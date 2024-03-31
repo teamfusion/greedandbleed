@@ -4,6 +4,7 @@ import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.*;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
 import com.github.teamfusion.greedandbleed.common.entity.projectile.ThrownDamageableEntity;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,6 +23,7 @@ public class EntityTypeRegistry {
     public static final Supplier<EntityType<Skoglet>> SKOGLET = create("skoglet", EntityType.Builder.of(Skoglet::new, MobCategory.MONSTER).sized(0.6F, 0.55F));
     public static final Supplier<EntityType<ShamanPiglin>> SHAMAN_PIGLIN = create("shaman_piglin", EntityType.Builder.of(ShamanPiglin::new, MobCategory.MONSTER).sized(0.6F, 1.95F));
     public static final Supplier<EntityType<Pygmy>> PYGMY = create("pygmy", EntityType.Builder.of(Pygmy::new, MobCategory.MONSTER).sized(0.6F, 1.55F));
+    public static final Supplier<EntityType<Shrygmy>> SHRYGMY = create("shrygmy", EntityType.Builder.of(Shrygmy::new, MobCategory.MONSTER).sized(0.6F, 1.55F));
     public static final Supplier<EntityType<Hoggart>> HOGGART = create("hoggart", EntityType.Builder.of(Hoggart::new, MobCategory.MONSTER).sized(0.6F, 1.95F));
     public static final Supplier<EntityType<ThrownDamageableEntity>> THROWN_DAMAGEABLE = create("thrown_damageable_projectile", EntityType.Builder.<ThrownDamageableEntity>of(ThrownDamageableEntity::new, MobCategory.MISC).sized(0.3F, 0.3F));
 

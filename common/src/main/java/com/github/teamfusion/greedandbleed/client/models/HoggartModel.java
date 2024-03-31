@@ -50,18 +50,18 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
                 .texOffs(0, 0).addBox(0.0F, -15.0F, -7.0F, 0.0F, 15.0F, 15.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 0).addBox(-5.0F, -4.0F, -7.0F, 10.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -12.0F, 0.0F));
 
-        PartDefinition right_tusk = head.addOrReplaceChild("right_tusk", CubeListBuilder.create().texOffs(57, 27).addBox(0.0F, -10.0F, -1.0F, 2.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(4.0F, -1.0F, -5.0F));
+        PartDefinition left_tusk = head.addOrReplaceChild("left_tusk", CubeListBuilder.create().texOffs(57, 27).addBox(0.0F, -10.0F, -1.0F, 2.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(4.0F, -1.0F, -5.0F));
 
-        PartDefinition left_tusk = head.addOrReplaceChild("left_tusk", CubeListBuilder.create().texOffs(50, 16).addBox(-2.0F, -10.0F, -1.0F, 2.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-4.0F, -1.0F, -5.0F));
+        PartDefinition right_tusk = head.addOrReplaceChild("right_tusk", CubeListBuilder.create().texOffs(50, 16).addBox(-2.0F, -10.0F, -1.0F, 2.0F, 11.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(-4.0F, -1.0F, -5.0F));
 
-        PartDefinition right_ear = head.addOrReplaceChild("right_ear", CubeListBuilder.create().texOffs(36, 59).addBox(0.0F, -0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.0F, -5.5F, 0.0F, 0.0F, 0.0F, -0.5236F));
+        PartDefinition left_ear = head.addOrReplaceChild("left_ear", CubeListBuilder.create().texOffs(36, 59).addBox(0.0F, -0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.0F, -5.5F, 0.0F, 0.0F, 0.0F, -0.5236F));
 
-        PartDefinition left_ear = head.addOrReplaceChild("left_ear", CubeListBuilder.create().texOffs(58, 16).addBox(-1.0F, -0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.0F, -5.5F, 0.0F, 0.0F, 0.0F, 0.5236F));
+        PartDefinition right_ear = head.addOrReplaceChild("right_ear", CubeListBuilder.create().texOffs(58, 16).addBox(-1.0F, -0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.0F, -5.5F, 0.0F, 0.0F, 0.0F, 0.5236F));
 
-        PartDefinition right_arm = body.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(55, 54).addBox(0.0F, -1.0F, -2.5F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F))
+        PartDefinition left_arm = body.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(55, 54).addBox(0.0F, -1.0F, -2.5F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 49).addBox(0.0F, -1.0F, -2.5F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.25F)), PartPose.offset(5.0F, -11.0F, 1.0F));
 
-        PartDefinition left_arm = body.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(40, 42).addBox(-5.0F, -1.0F, -2.5F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(-5.0F, -11.0F, 1.0F));
+        PartDefinition right_arm = body.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(40, 42).addBox(-5.0F, -1.0F, -2.5F, 5.0F, 12.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(-5.0F, -11.0F, 1.0F));
 
         PartDefinition piggyback_backpack = body.addOrReplaceChild("piggyback_backpack", CubeListBuilder.create(), PartPose.offset(4.0F, -8.5F, 6.0F));
 

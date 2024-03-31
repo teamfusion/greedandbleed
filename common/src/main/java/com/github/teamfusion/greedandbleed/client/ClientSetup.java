@@ -38,6 +38,7 @@ public class ClientSetup {
         RenderRegistry.entityModel(EntityTypeRegistry.SKOGLET, SkogletRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SHAMAN_PIGLIN, ShamanPiglinRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.PYGMY, PygmyRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.SHRYGMY, ShrygmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.HOGGART, HoggartRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.THROWN_DAMAGEABLE, ThrownItemRenderer::new);
         RenderRegistry.layerDefinition(HogletRenderer.MAIN, AbstractHogletModel::createBodyLayer);
@@ -52,6 +53,7 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(HOGLIN_ARMOR, () -> GBHoglinModelComplete.createBodyLayer(0.05F));
         RenderRegistry.layerDefinition(ShamanPiglinRenderer.MAIN, ShamanPiglinModel::createBodyLayer);
         RenderRegistry.layerDefinition(PygmyRenderer.MAIN, PygmyModel::createBodyLayer);
+        RenderRegistry.layerDefinition(ShrygmyRenderer.MAIN, ShrygmyModel::createBodyLayer);
         RenderRegistry.layerDefinition(HoggartRenderer.MAIN, HoggartModel::createBodyLayer);
     }
 
