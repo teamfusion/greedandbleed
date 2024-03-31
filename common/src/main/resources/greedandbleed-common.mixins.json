@@ -16,6 +16,7 @@
   "mixins": [
     "AbstractPiglinMixin",
     "BlockSetTypeInvoker",
+    "HoglinAiMixin",
     "HoglinMixin",
     "HoglinSpecificSensorMixin",
     "LivingEntityMixin",

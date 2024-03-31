@@ -100,6 +100,9 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
         if (entity instanceof GBPygmy) {
             return;
         }
+        if (entity instanceof Hoglin) {
+            return;
+        }
         maybeRetaliate(this.mob, entity);
     }
 
