@@ -3,6 +3,7 @@ package com.github.teamfusion.greedandbleed.api;
 import com.github.teamfusion.greedandbleed.common.entity.brain.SlingshotAttack;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
+import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PoiRegistry;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
+import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
@@ -105,7 +107,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15f), MeleeAttack.create(20), new SlingshotAttack<>());
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasSlingshot, BackUpIfTooClose.create(5, 0.75f)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15f), MeleeAttack.create(20), new SlingshotAttack<>());
     }
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
@@ -245,5 +247,9 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
         }
 
         return SoundEvents.PIGLIN_AMBIENT;
+    }
+
+    private static boolean hasSlingshot(LivingEntity arg) {
+        return arg.isHolding(is -> is.getItem() instanceof SlingshotItem);
     }
 }
