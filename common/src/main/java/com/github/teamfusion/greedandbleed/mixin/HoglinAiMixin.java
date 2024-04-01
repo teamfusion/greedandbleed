@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(HoglinAi.class)
 public class HoglinAiMixin {
 
-    @Inject(method = "wasHurtBy", at = @At("HEAD"))
-    protected static void wasHurtBy(Hoglin hoglin, LivingEntity livingEntity, CallbackInfo ci) {
+    @Inject(method = "wasHurtBy", at = @At("HEAD"), cancellable = true)
+    private static void wasHurtBy(Hoglin hoglin, LivingEntity livingEntity, CallbackInfo ci) {
         if (livingEntity instanceof Pygmy) {
             ci.cancel();
         }
