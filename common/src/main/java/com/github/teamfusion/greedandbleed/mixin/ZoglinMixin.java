@@ -1,11 +1,11 @@
 package com.github.teamfusion.greedandbleed.mixin;
 
 import com.github.teamfusion.greedandbleed.common.entity.HasMountArmor;
+import com.github.teamfusion.greedandbleed.common.entity.IConvertToNormal;
 import com.github.teamfusion.greedandbleed.common.entity.ICrawlSpawn;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
 import com.github.teamfusion.greedandbleed.common.item.HoglinArmorItem;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -28,11 +28,11 @@ import net.minecraft.world.entity.monster.Zoglin;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -42,15 +42,20 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(Zoglin.class)
-public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, ICrawlSpawn, HasMountArmor {
+public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, ICrawlSpawn, HasMountArmor, IConvertToNormal {
     private static final UUID ARMOR_MODIFIER_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
     private static final EntityDataAccessor<Optional<UUID>> DATA_UUID = SynchedEntityData.defineId(Zoglin.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Nullable
     private LivingEntity owner;
+    @Unique
     protected int timeWithImmunity;
+    @Unique
+    protected boolean canConvertToNormal;
 
+    @Unique
     private float spawnScale;
+    @Unique
     private float spawnScaleO;
 
     protected ZoglinMixin(EntityType<? extends Monster> entityType, Level level) {
@@ -79,9 +84,12 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
         if (!this.level().isClientSide()) {
 
             if (this.hasEffect(PotionRegistry.IMMUNITY.get()) && this.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
-                if (hasCorrectConvert()) {
+                if (gb$hasCorrectConvert()) {
                     if (++timeWithImmunity > 300) {
                         finishImmunity((ServerLevel) this.level());
+                    }
+                    if (this.level() instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getRandomX(this.getBbWidth() / 2), this.getRandomY(), this.getRandomZ(this.getBbWidth() / 2), 2, 1.0F, 0D, 0D, 0D);
                     }
                 } else if (timeWithImmunity > 0) {
                     --this.timeWithImmunity;
@@ -165,17 +173,12 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
         return this.spawnScale;
     }
 
-    private boolean hasCorrectConvert() {
-        int j = 0;
-        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-        for (int l = (int) this.getY() - 4; l < (int) this.getY() + 4; ++l) {
-            BlockState blockState = this.level().getBlockState(mutableBlockPos.set(this.getX(), l, this.getZ()));
-            if (blockState.is(Blocks.SOUL_FIRE)) {
-                this.level().removeBlock(mutableBlockPos.set(this.getX(), l, this.getZ()), false);
-                return true;
-            }
-        }
-        return false;
+    public boolean gb$hasCorrectConvert() {
+        return this.canConvertToNormal;
+    }
+
+    public void gb$setCanConvertToNormal(boolean canConvertToNormal) {
+        this.canConvertToNormal = canConvertToNormal;
     }
 
     protected void finishImmunity(ServerLevel serverLevel) {
@@ -279,6 +282,7 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
         if (this.getOwnerUUID().isPresent()) {
             tag.putUUID("Owner", this.getOwnerUUID().get());
         }
+        tag.putBoolean("CanConvertToNormal", this.canConvertToNormal);
     }
 
     @Override
@@ -288,6 +292,7 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
         if (tag.hasUUID("Owner")) {
             this.setOwnerUUID(Optional.of(tag.getUUID("Owner")));
         }
+        this.gb$setCanConvertToNormal(tag.getBoolean("CanConvertToNormal"));
     }
 
     public void setOwnerUUID(Optional<UUID> uuid) {

@@ -34,7 +34,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -46,6 +48,13 @@ import java.util.function.Predicate;
 @SuppressWarnings("WrongEntityDataParameterClass")
 @Mixin(Hoglin.class)
 public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEquipable, ToleratingMount, ContainerListener, HasMountArmor, HasMountInventory {
+
+    @Shadow
+    @Final
+    private static EntityDataAccessor<Boolean> DATA_IMMUNE_TO_ZOMBIFICATION;
+
+    @Shadow
+    protected abstract boolean isImmuneToZombification();
 
     private static final EntityDataAccessor<Boolean> DATA_HAS_SADDLE = SynchedEntityData.defineId(Hoglin.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(Hoglin.class, EntityDataSerializers.INT);
@@ -221,6 +230,18 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
         }
 
         this.updateContainerEquipment();
+    }
+
+    @Inject(method = "getBreedOffspring", at = @At("RETURN"), cancellable = true)
+    private void breedOffSpring(ServerLevel serverLevel, AgeableMob ageableMob, CallbackInfoReturnable<AgeableMob> cir) {
+        AgeableMob baby = cir.getReturnValue();
+        if (ageableMob instanceof Hoglin hoglin && hoglin.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION)) {
+            if (this.isImmuneToZombification()) {
+                if (baby instanceof Hoglin babyHoglin) {
+                    babyHoglin.setImmuneToZombification(true);
+                }
+            }
+        }
     }
 
     @Inject(method = "doHurtTarget", at = @At("HEAD"))

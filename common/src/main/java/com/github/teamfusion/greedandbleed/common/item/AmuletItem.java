@@ -1,11 +1,14 @@
 package com.github.teamfusion.greedandbleed.common.item;
 
+import com.github.teamfusion.greedandbleed.common.entity.IConvertToNormal;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
@@ -63,6 +66,20 @@ public class AmuletItem extends Item {
         return super.useOn(useOnContext);
     }
 
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack itemStack, Player player, LivingEntity livingEntity, InteractionHand interactionHand) {
+        if (livingEntity instanceof IConvertToNormal convertToNormal) {
+            if (livingEntity.hasEffect(PotionRegistry.IMMUNITY.get()) && livingEntity.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+                if (!convertToNormal.gb$hasCorrectConvert()) {
+                    convertToNormal.gb$setCanConvertToNormal(true);
+                }
+                player.getCooldowns().addCooldown(this, 80);
+                return InteractionResult.sidedSuccess(player.level().isClientSide);
+            }
+        }
+        return super.interactLivingEntity(itemStack, player, livingEntity, interactionHand);
+    }
 
     public ItemStack getSoulSand(Player player) {
         for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {

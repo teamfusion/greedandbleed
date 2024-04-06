@@ -1,14 +1,15 @@
 package com.github.teamfusion.greedandbleed.mixin;
 
+import com.github.teamfusion.greedandbleed.common.entity.IConvertToNormal;
 import com.github.teamfusion.greedandbleed.common.entity.ICrawlSpawn;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
 import com.github.teamfusion.greedandbleed.common.entity.goal.DoNothingGoal;
 import com.github.teamfusion.greedandbleed.common.entity.goal.TracedOwnerHurtByTargetGoal;
 import com.github.teamfusion.greedandbleed.common.entity.goal.TracedOwnerHurtTargetGoal;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -28,11 +29,11 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -41,15 +42,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(ZombifiedPiglin.class)
-public abstract class ZombifiedPiglinMixin extends Monster implements TraceAndSetOwner, ICrawlSpawn {
+public abstract class ZombifiedPiglinMixin extends Monster implements TraceAndSetOwner, ICrawlSpawn, IConvertToNormal {
     private static final EntityDataAccessor<Optional<UUID>> DATA_UUID = SynchedEntityData.defineId(ZombifiedPiglin.class, EntityDataSerializers.OPTIONAL_UUID);
-
+    @Unique
     protected int timeWithImmunity;
     @Nullable
     private LivingEntity owner;
-
+    @Unique
     private float spawnScale;
+    @Unique
     private float spawnScaleO;
+    @Unique
+    protected boolean canConvertToNormal;
 
     protected ZombifiedPiglinMixin(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
@@ -175,9 +179,12 @@ public abstract class ZombifiedPiglinMixin extends Monster implements TraceAndSe
         if (!this.level().isClientSide()) {
 
             if (this.hasEffect(PotionRegistry.IMMUNITY.get()) && this.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
-                if (hasCorrectConvert()) {
+                if (gb$hasCorrectConvert()) {
                     if (++timeWithImmunity > 300) {
-                        finishImmunity((ServerLevel) this.level());
+                        gb$finishImmunity((ServerLevel) this.level());
+                    }
+                    if (this.level() instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getRandomX(this.getBbWidth() / 2), this.getRandomY(), this.getRandomZ(this.getBbWidth() / 2), 2, 1.0F, 0D, 0D, 0D);
                     }
                 } else if (timeWithImmunity > 0) {
                     --this.timeWithImmunity;
@@ -186,20 +193,26 @@ public abstract class ZombifiedPiglinMixin extends Monster implements TraceAndSe
         }
     }
 
-    private boolean hasCorrectConvert() {
-        int j = 0;
-        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-        for (int l = (int) this.getY() - 4; l < (int) this.getY() + 4; ++l) {
-            BlockState blockState = this.level().getBlockState(mutableBlockPos.set(this.getX(), l, this.getZ()));
-            if (blockState.is(Blocks.SOUL_FIRE)) {
-                this.level().removeBlock(mutableBlockPos.set(this.getX(), l, this.getZ()), false);
-                return true;
-            }
-        }
-        return false;
+    public boolean gb$hasCorrectConvert() {
+        return this.canConvertToNormal;
     }
 
-    protected void finishImmunity(ServerLevel serverLevel) {
+    public void gb$setCanConvertToNormal(boolean canConvertToNormal) {
+        this.canConvertToNormal = canConvertToNormal;
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
+    private void gb$addData(CompoundTag tag, CallbackInfo ci) {
+        tag.putBoolean("CanConvertToNormal", this.canConvertToNormal);
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
+    private void gb$readData(CompoundTag tag, CallbackInfo ci) {
+        this.gb$setCanConvertToNormal(tag.getBoolean("CanConvertToNormal"));
+    }
+
+    @Unique
+    protected void gb$finishImmunity(ServerLevel serverLevel) {
         Piglin pig = this.convertTo(EntityType.PIGLIN, true);
         if (pig != null) {
             pig.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
