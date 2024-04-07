@@ -97,6 +97,10 @@ public abstract class GBPiglin extends AbstractPiglin implements HasTaskManager 
     }
 
     @Override
+    public boolean isAdult() {
+        return !this.isBaby();
+    }
+    @Override
     public boolean isBaby() {
         return this.getEntityData().get(DATA_BABY_ID);
     }

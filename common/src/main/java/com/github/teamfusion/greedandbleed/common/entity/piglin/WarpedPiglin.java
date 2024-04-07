@@ -142,16 +142,6 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
         return MobType.UNDEAD;
     }
 
-
-    @Override
-    public boolean isBaby() {
-        return false;
-    }
-
-    @Override
-    public void setBaby(boolean baby) {
-    }
-
     @Override
     protected void customServerAiStep() {
         this.level().getProfiler().push("shamanBrain");
