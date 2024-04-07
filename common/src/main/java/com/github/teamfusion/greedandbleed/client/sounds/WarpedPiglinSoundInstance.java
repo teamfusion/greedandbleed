@@ -65,7 +65,7 @@ public class WarpedPiglinSoundInstance extends AbstractTickableSoundInstance {
 
     @Override
     public boolean canPlaySound() {
-        return !this.piglin.isSilent() && !this.piglin.onGround();
+        return !this.piglin.isSilent() && this.piglin.isNoGravity();
     }
 }
 

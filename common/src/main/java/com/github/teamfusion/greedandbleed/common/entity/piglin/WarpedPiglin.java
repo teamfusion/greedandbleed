@@ -44,7 +44,7 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
     public WarpedPiglin(EntityType<? extends WarpedPiglin> entityType, Level level) {
         super(entityType, level);
         this.setCanPickUpLoot(false);
-        this.moveControl = new FlyingMoveControl(this, 15, true);
+        this.moveControl = new FlyingMoveControl(this, 15, false);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
 
     @Override
     public void travel(Vec3 arg) {
-        if (this.isControlledByLocalInstance() && !this.onGround()) {
+        if (this.isControlledByLocalInstance() && this.isNoGravity()) {
             if (this.isInWater()) {
                 this.moveRelative(0.02f, arg);
                 this.move(MoverType.SELF, this.getDeltaMovement());
