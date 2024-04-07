@@ -91,9 +91,14 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
 
     private void calculateFlapping() {
         Vec3 vec3 = this.getDeltaMovement();
-        if (this.groundScale < 1F && vec3.y < 0.0) {
-            this.setDeltaMovement(vec3.multiply(1.0, 0.6 + (0.4 * this.groundScale), 1.0));
-            this.fallDistance = 0F;
+        if (!this.level().isClientSide()) {
+            if (!this.isNoGravity() && this.getNavigation().isInProgress() && this.groundScale < 1F && vec3.y < 0.0) {
+                this.setDeltaMovement(vec3.multiply(1.0, 0.6 + (0.4 * this.groundScale), 1.0));
+
+            }
+            if (this.groundScale < 1F && vec3.y < 0.0) {
+                this.fallDistance = 0F;
+            }
         }
         this.oGroundScale = this.groundScale;
         if (!this.isNoGravity() && this.groundScale < 1F) {

@@ -73,7 +73,7 @@ public class WarpedPiglinTaskManager<T extends WarpedPiglin> extends PiglinTaskM
     }
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
-        return ImmutableList.of(Pair.of(RandomStroll.fly(0.75F), 2), Pair.of(new DoNothing(30, 60), 1));
+        return ImmutableList.of(Pair.of(flyWithNoticeDanger(0.75F), 2), Pair.of(new DoNothing(30, 60), 1));
     }
 
     public static BehaviorControl<PathfinderMob> flyWithNoticeDanger(float f) {
@@ -94,8 +94,8 @@ public class WarpedPiglinTaskManager<T extends WarpedPiglin> extends PiglinTaskM
     @Nullable
     private static Vec3 getTargetFlyPos(PathfinderMob pathfinderMob, int i, int j) {
         Vec3 vec3 = pathfinderMob.getViewVector(0.0f);
-        if (NoticeDangerFlyingMoveControl.isFallableForMovementBetween(pathfinderMob, pathfinderMob.position(), pathfinderMob.position().add(0, -8F, 0), true)) {
-            return AirAndWaterRandomPos.getPos(pathfinderMob, i, j, -2, vec3.x, vec3.z, 1.5707963705062866);
+        if (!NoticeDangerFlyingMoveControl.isFallableForMovementBetween(pathfinderMob, pathfinderMob.position(), pathfinderMob.position().add(0, -5F, 0), true)) {
+            return AirAndWaterRandomPos.getPos(pathfinderMob, i, j, -8, vec3.x, vec3.z, 1.5707963705062866);
         }
         return HoverRandomPos.getPos(pathfinderMob, i, j, vec3.x, vec3.z, 1.5707963705062866F, 3, 1);
     }

@@ -23,7 +23,7 @@ public class NoticeDangerFlyingMoveControl extends FlyingMoveControl {
         if (this.operation != MoveControl.Operation.MOVE_TO) {
 
             if (!this.hoversInPlace) {
-                boolean flag = isFallableForMovementBetween(this.mob, this.mob.position(), this.mob.position().add(0, -8F, 0), true);
+                boolean flag = isFallableForMovementBetween(this.mob, this.mob.position(), this.mob.position().add(0, -5F, 0), true);
                 if (flag) {
                     this.mob.setNoGravity(false);
                 } else if (!this.mob.isNoGravity()) {
