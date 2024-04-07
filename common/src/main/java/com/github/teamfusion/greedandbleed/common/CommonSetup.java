@@ -4,6 +4,7 @@ import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.WarpedPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
@@ -52,6 +53,7 @@ public class CommonSetup {
         MobRegistry.attributes(EntityTypeRegistry.PYGMY, Pygmy::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.SHRYGMY, Shrygmy::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.HOGGART, Hoggart::setCustomAttributes);
+        MobRegistry.attributes(EntityTypeRegistry.WARPED_PIGLIN, WarpedPiglin::setCustomAttributes);
     }
 
     public static void onAmmoInit() {

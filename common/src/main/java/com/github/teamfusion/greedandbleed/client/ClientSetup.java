@@ -40,10 +40,10 @@ public class ClientSetup {
         RenderRegistry.entityModel(EntityTypeRegistry.PYGMY, PygmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SHRYGMY, ShrygmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.HOGGART, HoggartRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.WARPED_PIGLIN, WarpedPiglinRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.THROWN_DAMAGEABLE, ThrownItemRenderer::new);
         RenderRegistry.layerDefinition(HogletRenderer.MAIN, AbstractHogletModel::createBodyLayer);
         RenderRegistry.layerDefinition(HogletRenderer.MONSTER, MonsterHogletModel::createBodyLayer);
-
         // SKELETAL PIGLIN RENDERER
         RenderRegistry.entityModel(EntityTypeRegistry.SKELETAL_PIGLIN, SkeletalPiglinRenderer::new);
         RenderRegistry.layerDefinition(SkeletalPiglinRenderer.MAIN, SkeletalPiglinModel::createBodyLayer);
@@ -55,6 +55,7 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(PygmyRenderer.MAIN, PygmyModel::createBodyLayer);
         RenderRegistry.layerDefinition(ShrygmyRenderer.MAIN, ShrygmyModel::createBodyLayer);
         RenderRegistry.layerDefinition(HoggartRenderer.MAIN, HoggartModel::createBodyLayer);
+        RenderRegistry.layerDefinition(WarpedPiglinRenderer.MAIN, WarpedPiglinModel::createBodyLayer);
     }
 
     public static void onInitialized() {
