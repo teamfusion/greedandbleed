@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.api.WarpedPiglinTaskManager;
+import com.github.teamfusion.greedandbleed.common.entity.movecontrol.NoticeDangerFlyingMoveControl;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
@@ -10,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,7 +20,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -41,10 +42,13 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
     protected static final ImmutableList<SensorType<? extends Sensor<? super WarpedPiglin>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_BRUTE_SPECIFIC_SENSOR);
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.HOME);
 
+
+    private float groundScale;
+    private float oGroundScale;
     public WarpedPiglin(EntityType<? extends WarpedPiglin> entityType, Level level) {
         super(entityType, level);
         this.setCanPickUpLoot(false);
-        this.moveControl = new FlyingMoveControl(this, 15, false);
+        this.moveControl = new NoticeDangerFlyingMoveControl(this, 15, false);
     }
 
     @Override
@@ -79,6 +83,29 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
 
     }
 
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        this.calculateFlapping();
+    }
+
+    private void calculateFlapping() {
+        Vec3 vec3 = this.getDeltaMovement();
+        if (this.groundScale < 1F && vec3.y < 0.0) {
+            this.setDeltaMovement(vec3.multiply(1.0, 0.6 + (0.4 * this.groundScale), 1.0));
+            this.fallDistance = 0F;
+        }
+        this.oGroundScale = this.groundScale;
+        if (!this.isNoGravity() && this.groundScale < 1F) {
+            this.groundScale += 0.1F;
+        } else if (this.groundScale > 0F && this.isNoGravity()) {
+            this.groundScale -= 0.1F;
+        }
+    }
+
+    public float getGroundScale(float particalTick) {
+        return Mth.lerp(particalTick, this.groundScale, this.oGroundScale);
+    }
 
     @Override
     protected void defineSynchedData() {
@@ -132,11 +159,6 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
         this.level().getProfiler().pop();
         this.taskManager.updateActivity();
         super.customServerAiStep();
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
     }
 
     // EXPERIENCE POINTS

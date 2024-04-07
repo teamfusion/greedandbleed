@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.movecontrol.NoticeDangerFlyingMoveControl;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.WarpedPiglin;
 import com.google.common.collect.ImmutableList;
@@ -11,16 +12,25 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
+import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.ai.sensing.Sensor;
+import net.minecraft.world.entity.ai.util.AirAndWaterRandomPos;
+import net.minecraft.world.entity.ai.util.HoverRandomPos;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /***
  * An extensible class for initializing and handling a Brain for a LivingEntity.
@@ -64,6 +74,30 @@ public class WarpedPiglinTaskManager<T extends WarpedPiglin> extends PiglinTaskM
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
         return ImmutableList.of(Pair.of(RandomStroll.fly(0.75F), 2), Pair.of(new DoNothing(30, 60), 1));
+    }
+
+    public static BehaviorControl<PathfinderMob> flyWithNoticeDanger(float f) {
+        return strollFlyOrSwim(f, pathfinderMob -> getTargetFlyPos(pathfinderMob, 10, 7), pathfinderMob -> true);
+    }
+
+    private static OneShot<PathfinderMob> strollFlyOrSwim(float f, Function<PathfinderMob, Vec3> function, Predicate<PathfinderMob> predicate) {
+        return BehaviorBuilder.create(instance -> instance.group(instance.absent(MemoryModuleType.WALK_TARGET)).apply(instance, memoryAccessor -> (serverLevel, pathfinderMob, l) -> {
+            if (!predicate.test((PathfinderMob) pathfinderMob)) {
+                return false;
+            }
+            Optional<Vec3> optional = Optional.ofNullable((Vec3) function.apply((PathfinderMob) pathfinderMob));
+            memoryAccessor.setOrErase(optional.map(vec3 -> new WalkTarget((Vec3) vec3, f, 0)));
+            return true;
+        }));
+    }
+
+    @Nullable
+    private static Vec3 getTargetFlyPos(PathfinderMob pathfinderMob, int i, int j) {
+        Vec3 vec3 = pathfinderMob.getViewVector(0.0f);
+        if (NoticeDangerFlyingMoveControl.isFallableForMovementBetween(pathfinderMob, pathfinderMob.position(), pathfinderMob.position().add(0, -8F, 0), true)) {
+            return AirAndWaterRandomPos.getPos(pathfinderMob, i, j, -2, vec3.x, vec3.z, 1.5707963705062866);
+        }
+        return HoverRandomPos.getPos(pathfinderMob, i, j, vec3.x, vec3.z, 1.5707963705062866F, 3, 1);
     }
 
     @Override

@@ -60,9 +60,9 @@ public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel
                 .texOffs(26, 66).addBox(-3.0F, 2.0F, -5.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(44, 0).addBox(-5.0F, -4.0F, -4.0F, 10.0F, 8.0F, 8.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, -14.0F, 0.0F));
 
-        PartDefinition left_ear = head.addOrReplaceChild("left_ear", CubeListBuilder.create().texOffs(16, 66).addBox(-0.5F, -0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-5.5F, -1.5F, 0.0F));
+        PartDefinition right_ear = head.addOrReplaceChild("right_ear", CubeListBuilder.create().texOffs(16, 66).addBox(-0.5F, -0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-5.5F, -1.5F, 0.0F));
 
-        PartDefinition right_ear = head.addOrReplaceChild("right_ear", CubeListBuilder.create().texOffs(16, 66).mirror().addBox(-0.5F, -0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(5.5F, -1.5F, 0.0F));
+        PartDefinition left_ear = head.addOrReplaceChild("left_ear", CubeListBuilder.create().texOffs(16, 66).mirror().addBox(-0.5F, -0.5F, -2.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(5.5F, -1.5F, 0.0F));
 
         PartDefinition warped_roots = head.addOrReplaceChild("warped_roots", CubeListBuilder.create().texOffs(0, 38).addBox(-6.0F, -4.5F, 0.0F, 12.0F, 9.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -8.5F, 0.0F, 0.0F, 0.7854F, 0.0F));
 
@@ -84,19 +84,20 @@ public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel
         this.root().getAllParts().forEach(ModelPart::resetPose);
         this.head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
         this.head.xRot = headPitch * ((float) Math.PI / 180.0F);
+        float f = entity.getGroundScale(ageInTicks - entity.tickCount);
 
         if (entity.isPassenger()) {
             this.applyStatic(HumanoidAnimations.SIT);
-        } else if (!entity.onGround()) {
-            this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         }
-        if (!entity.onGround()) {
-            this.animateWalk(WarpedPiglinAnimation.flying, ageInTicks, 1.0F, 1.0F, 1.0F);
-        } else if (entity.walkAnimation.isMoving()) {
+        if (entity.walkAnimation.isMoving()) {
             this.animateWalk(HumanoidAnimations.WALK_SWING, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         } else {
             this.animateWalk(HumanoidAnimations.IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
         }
+        this.animateWalk(WarpedPiglinAnimation.flying, ageInTicks, (1 - f), 1.0F, 1.0F);
+
+        this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount * (f), 2.0F, 2.5F);
+
 
         if (entity.isBaby()) {
             this.applyStatic(HumanoidAnimations.BABY);
