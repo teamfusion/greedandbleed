@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.brain.JumpTheSky;
 import com.github.teamfusion.greedandbleed.common.entity.movecontrol.NoticeDangerFlyingMoveControl;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.WarpedPiglin;
@@ -69,7 +70,7 @@ public class WarpedPiglinTaskManager<T extends WarpedPiglin> extends PiglinTaskM
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.0f), MeleeAttack.create(20));
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.0f), new JumpTheSky<>(), MeleeAttack.create(20));
     }
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {

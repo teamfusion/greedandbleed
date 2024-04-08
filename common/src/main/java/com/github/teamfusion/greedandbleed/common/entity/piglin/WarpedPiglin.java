@@ -2,7 +2,6 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.api.WarpedPiglinTaskManager;
-import com.github.teamfusion.greedandbleed.common.entity.movecontrol.NoticeDangerFlyingMoveControl;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
@@ -11,7 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -20,9 +18,8 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -35,82 +32,94 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class WarpedPiglin extends GBPiglin implements Shearable {
     protected static final ImmutableList<SensorType<? extends Sensor<? super WarpedPiglin>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_BRUTE_SPECIFIC_SENSOR);
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.HOME);
-
-
-    private float groundScale;
-    private float oGroundScale;
     public WarpedPiglin(EntityType<? extends WarpedPiglin> entityType, Level level) {
         super(entityType, level);
         this.setCanPickUpLoot(false);
-        this.moveControl = new NoticeDangerFlyingMoveControl(this, 15, false);
     }
 
     @Override
-    protected PathNavigation createNavigation(Level arg) {
-        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, arg);
-        flyingpathnavigation.setCanOpenDoors(false);
-        flyingpathnavigation.setCanFloat(true);
-        flyingpathnavigation.setCanPassDoors(true);
-        return flyingpathnavigation;
+    protected BodyRotationControl createBodyControl() {
+        return new WarpedBodyRotationControl(this);
     }
 
     @Override
-    public void travel(Vec3 arg) {
-        if (this.isControlledByLocalInstance() && this.isNoGravity()) {
-            if (this.isInWater()) {
-                this.moveRelative(0.02f, arg);
-                this.move(MoverType.SELF, this.getDeltaMovement());
-                this.setDeltaMovement(this.getDeltaMovement().scale(0.8f));
-            } else if (this.isInLava()) {
-                this.moveRelative(0.02f, arg);
-                this.move(MoverType.SELF, this.getDeltaMovement());
-                this.setDeltaMovement(this.getDeltaMovement().scale(0.5));
-            } else {
-                this.moveRelative(this.getSpeed(), arg);
-                this.move(MoverType.SELF, this.getDeltaMovement());
-                this.setDeltaMovement(this.getDeltaMovement().scale(0.91f));
-            }
-            this.calculateEntityAnimation(false);
+    public void addAdditionalSaveData(CompoundTag p_250330_) {
+        super.addAdditionalSaveData(p_250330_);
+        p_250330_.putBoolean("IsFallFlying", this.getPose() == Pose.FALL_FLYING);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag p_250781_) {
+        super.readAdditionalSaveData(p_250781_);
+        if (p_250781_.getBoolean("IsFallFlying")) {
+            this.setPose(Pose.FALL_FLYING);
+        }
+    }
+
+    public void startFallFlying() {
+        this.setSharedFlag(7, true);
+    }
+
+    public void stopFallFlying() {
+        this.setSharedFlag(7, true);
+        this.setSharedFlag(7, false);
+    }
+
+
+    @Override
+    public void tick() {
+        super.tick();
+        this.updatePlayerPose();
+    }
+
+    protected void updatePlayerPose() {
+        Pose pose;
+        if (this.isFallFlying()) {
+            pose = Pose.FALL_FLYING;
         } else {
-            super.travel(arg);
+            pose = Pose.STANDING;
         }
 
+        Pose pose1 = pose;
+
+        this.setPose(pose1);
     }
+
+    public EntityDimensions getDimensions(Pose p_36166_) {
+        if (p_36166_ == Pose.FALL_FLYING) {
+            return EntityDimensions.scalable(0.8F, 0.8F);
+        }
+        return super.getDimensions(p_36166_);
+    }
+
 
     @Override
     public void aiStep() {
         super.aiStep();
-        this.calculateFlapping();
-    }
 
-    private void calculateFlapping() {
-        Vec3 vec3 = this.getDeltaMovement();
-        if (!this.level().isClientSide()) {
-            if (!this.isNoGravity() && this.getNavigation().isInProgress() && this.groundScale < 1F && vec3.y < 0.0) {
-                this.setDeltaMovement(vec3.multiply(1.0, 0.6 + (0.4 * this.groundScale), 1.0));
-
-            }
-            if (this.groundScale < 1F && vec3.y < 0.0) {
-                this.fallDistance = 0F;
+        if (this.isFallFlying()) {
+            if (this.isInWaterOrBubble() || this.isInPowderSnow) {
+                this.stopFallFlying();
             }
         }
-        this.oGroundScale = this.groundScale;
-        if (!this.isNoGravity() && this.groundScale < 1F) {
-            this.groundScale += 0.1F;
-        } else if (this.groundScale > 0F && this.isNoGravity()) {
-            this.groundScale -= 0.1F;
+
+
+        if (!this.isFallFlying() && !this.isInWater() && this.fallDistance > 3.0F) {
+            this.startFallFlying();
         }
     }
 
-    public float getGroundScale(float particalTick) {
-        return Mth.lerp(particalTick, this.groundScale, this.oGroundScale);
+
+    protected int calculateFallDamage(float p_149389_, float p_149390_) {
+
+        return super.calculateFallDamage(p_149389_, p_149390_) - 2;
     }
+
 
     @Override
     protected void defineSynchedData() {
@@ -180,24 +189,16 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
 
     @Override
     protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-        return this.isBaby() ? 0.93F : 1.74F;
+        if (pose == Pose.FALL_FLYING) {
+            return dimensions.height * 0.5F;
+        }
+        return dimensions.height * 0.85F;
     }
 
     @Override
     public double getPassengersRidingOffset() {
         return (double) this.getBbHeight() * 0.92D;
     }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-    }
-
     @Override
     public PiglinArmPose getArmPose() {
         return null;
@@ -269,5 +270,21 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
     @Override
     public boolean readyForShearing() {
         return true;
+    }
+
+    class WarpedBodyRotationControl extends BodyRotationControl {
+        public WarpedBodyRotationControl(Mob p_33216_) {
+            super(p_33216_);
+        }
+
+        public void clientTick() {
+            if (WarpedPiglin.this.isFallFlying()) {
+                super.clientTick();
+                WarpedPiglin.this.setYRot(WarpedPiglin.this.getYHeadRot());
+                WarpedPiglin.this.setYBodyRot(WarpedPiglin.this.getYHeadRot());
+            } else {
+                super.clientTick();
+            }
+        }
     }
 }

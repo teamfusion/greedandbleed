@@ -82,9 +82,12 @@ public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
+        if (entity.isFallFlying()) {
+            this.head.xRot = 0.0F;
+        } else {
+            this.head.xRot = headPitch * ((float) Math.PI / 180F);
+        }
         this.head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
-        this.head.xRot = headPitch * ((float) Math.PI / 180.0F);
-        float f = entity.getGroundScale(ageInTicks - entity.tickCount);
 
         if (entity.isPassenger()) {
             this.applyStatic(HumanoidAnimations.SIT);
@@ -94,10 +97,11 @@ public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel
         } else {
             this.animateWalk(HumanoidAnimations.IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
         }
-        this.animateWalk(WarpedPiglinAnimation.flying, ageInTicks, (1 - f), 1.0F, 1.0F);
-
-        this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount * (f), 2.0F, 2.5F);
-
+        if (entity.isFallFlying()) {
+            this.animateWalk(WarpedPiglinAnimation.flying, ageInTicks, 1.0F, 1.0F, 1.0F);
+        } else {
+            this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+        }
 
         if (entity.isBaby()) {
             this.applyStatic(WarpedPiglinAnimation.baby);

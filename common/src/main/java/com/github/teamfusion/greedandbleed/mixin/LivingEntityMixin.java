@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.mixin;
 
 import com.github.teamfusion.greedandbleed.common.CommonSetup;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.WarpedPiglin;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -43,6 +44,14 @@ public abstract class LivingEntityMixin {
             if (mobEffectInstance.getEffect() != MobEffects.WITHER || mobEffectInstance.getEffect() != MobEffects.DIG_SLOWDOWN || mobEffectInstance.getEffect() != MobEffects.LEVITATION) {
                     callbackInfoReturnable.setReturnValue(false);
             }
+        }
+    }
+
+    @Inject(method = "updateFallFlying", at = @At("HEAD"), cancellable = true)
+    private void updateFallFlying(CallbackInfo callbackInfo) {
+        LivingEntity livingEntity = (LivingEntity) ((Object) this);
+        if (livingEntity instanceof WarpedPiglin) {
+            callbackInfo.cancel();
         }
     }
 }
