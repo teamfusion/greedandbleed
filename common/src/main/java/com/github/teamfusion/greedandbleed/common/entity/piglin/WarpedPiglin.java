@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -32,6 +33,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class WarpedPiglin extends GBPiglin implements Shearable {
@@ -97,6 +99,59 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
         return super.getDimensions(p_36166_);
     }
 
+    @Override
+    public void travel(Vec3 vec3) {
+        double d = 0.08;
+        if (this.isControlledByLocalInstance() && this.isFallFlying()) {
+            float f;
+            this.checkSlowFallDistance();
+            Vec3 vec35 = this.getDeltaMovement();
+            Vec3 vec36 = this.getLookAngle();
+            f = this.getXRot() * 0.017453292F;
+            double i = Math.sqrt(vec36.x * vec36.x + vec36.z * vec36.z);
+            double j = vec35.horizontalDistance();
+            double k = vec36.length();
+            double l = Math.cos((double) f);
+            l = l * l * Math.min(1.0, k / 0.4);
+            vec35 = this.getDeltaMovement().add(0.0, d * (-1.0 + l * 0.75), 0.0);
+            double m;
+            if (vec35.y < 0.0 && i > 0.0) {
+                m = vec35.y * -0.1 * l;
+                vec35 = vec35.add(vec36.x * m / i, m, vec36.z * m / i);
+            }
+
+            if (f < 0.0F && i > 0.0) {
+                m = j * (double) (-Mth.sin(f)) * 0.04;
+                vec35 = vec35.add(-vec36.x * m / i, m * 3.2, -vec36.z * m / i);
+            }
+
+            if (i > 0.0) {
+                vec35 = vec35.add((vec36.x / i * j - vec35.x) * 0.1, 0.0, (vec36.z / i * j - vec35.z) * 0.1);
+            }
+
+            this.setDeltaMovement(vec35.multiply(0.95, 0.8, 0.95));
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            if (this.horizontalCollision && !this.level().isClientSide) {
+                m = this.getDeltaMovement().horizontalDistance();
+                double n = j - m;
+                float o = (float) (n * 10.0 - 3.0);
+                if (o > 0.0F) {
+                    this.playSound(this.getFallDamageSound((int) o), 1.0F, 1.0F);
+                    this.hurt(this.damageSources().flyIntoWall(), o);
+                }
+            }
+
+            if (this.onGround() && !this.level().isClientSide) {
+                this.setSharedFlag(7, false);
+            }
+        } else {
+            super.travel(vec3);
+        }
+    }
+
+    private SoundEvent getFallDamageSound(int i) {
+        return i > 4 ? this.getFallSounds().big() : this.getFallSounds().small();
+    }
 
     @Override
     public void aiStep() {
