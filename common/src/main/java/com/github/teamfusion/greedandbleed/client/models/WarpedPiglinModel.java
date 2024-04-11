@@ -92,10 +92,12 @@ public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel
         if (entity.isPassenger()) {
             this.applyStatic(HumanoidAnimations.SIT);
         }
-        if (entity.walkAnimation.isMoving()) {
-            this.animateWalk(HumanoidAnimations.WALK_SWING, limbSwing, limbSwingAmount, 2.0F, 2.5F);
-        } else {
-            this.animateWalk(HumanoidAnimations.IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
+        if (!entity.isFallFlying()) {
+            if (entity.walkAnimation.isMoving()) {
+                this.animateWalk(HumanoidAnimations.WALK_SWING, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+            } else {
+                this.animateWalk(HumanoidAnimations.IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
+            }
         }
         if (entity.isFallFlying()) {
             this.animateWalk(WarpedPiglinAnimation.flying, ageInTicks, 1.0F, 1.0F, 1.0F);
