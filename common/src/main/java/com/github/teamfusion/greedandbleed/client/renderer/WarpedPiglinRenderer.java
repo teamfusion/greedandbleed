@@ -35,11 +35,6 @@ public class WarpedPiglinRenderer<T extends WarpedPiglin> extends MobRenderer<T,
             Vec3 vec31 = p_117802_.getDeltaMovement();
             double d0 = vec31.horizontalDistanceSqr();
             double d1 = vec3.horizontalDistanceSqr();
-            if (d0 > 0.0D && d1 > 0.0D) {
-                double d2 = (vec31.x * vec3.x + vec31.z * vec3.z) / Math.sqrt(d0 * d1);
-                double d3 = vec31.x * vec3.z - vec31.z * vec3.x;
-                p_117803_.mulPose(Axis.YP.rotation((float) (Math.signum(d3) * Math.acos(d2))));
-            }
         } else {
             super.setupRotations(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_);
         }
