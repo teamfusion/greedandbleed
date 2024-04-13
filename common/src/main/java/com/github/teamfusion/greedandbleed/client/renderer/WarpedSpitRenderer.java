@@ -27,7 +27,7 @@ public class WarpedSpitRenderer<T extends WarpedSpit> extends EntityRenderer<T> 
     public void render(T llamaSpit, float f, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int i) {
         poseStack.pushPose();
         poseStack.translate(0.0F, -1.15F, 0.0F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(g, llamaSpit.yRotO, llamaSpit.getYRot())));
+        poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(g, llamaSpit.yRotO, llamaSpit.getYRot()) - 180F));
         poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(g, llamaSpit.xRotO, llamaSpit.getXRot())));
         this.model.setupAnim(llamaSpit, g, 0.0F, -0.1F, 0.0F, 0.0F);
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(this.model.renderType(LLAMA_SPIT_LOCATION));
