@@ -32,6 +32,11 @@ public class WarpedSpit extends ThrowableProjectile {
 
     }
 
+    @Override
+    protected float getGravity() {
+        return 0.01F;
+    }
+
     protected void onHitBlock(BlockHitResult blockHitResult) {
         super.onHitBlock(blockHitResult);
         if (!this.level().isClientSide) {

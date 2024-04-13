@@ -80,12 +80,12 @@ public class HumanoidAnimations {
                                     AnimationChannel.Interpolations.CATMULLROM))).build();
 
     public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(4.0F).looping()
-            .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+            .addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
                     new Keyframe(2.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -7.5F), AnimationChannel.Interpolations.CATMULLROM),
                     new Keyframe(4.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
             ))
-            .addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+            .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
                     new Keyframe(2.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 7.5F), AnimationChannel.Interpolations.CATMULLROM),
                     new Keyframe(4.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
@@ -126,10 +126,10 @@ public class HumanoidAnimations {
             .build();
 
     public static final AnimationDefinition RANGE_ATTACK = AnimationDefinition.Builder.withLength(0.0F)
-            .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+            .addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(-63.843F, 29.7621F, 13.7012F), AnimationChannel.Interpolations.LINEAR)
             ))
-            .addAnimation("left_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+            .addAnimation("right_arm", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(-62.2688F, -24.7391F, -12.4075F), AnimationChannel.Interpolations.LINEAR)
             ))
             .build();

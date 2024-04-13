@@ -172,7 +172,7 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
 
     protected int calculateFallDamage(float p_149389_, float p_149390_) {
 
-        return super.calculateFallDamage(p_149389_, p_149390_) - 2;
+        return super.calculateFallDamage(p_149389_, p_149390_);
     }
 
 

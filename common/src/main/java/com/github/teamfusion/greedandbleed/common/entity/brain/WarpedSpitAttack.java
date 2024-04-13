@@ -7,7 +7,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.Behavior;
-import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.behavior.EntityTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
@@ -23,12 +22,12 @@ public class WarpedSpitAttack<E extends Mob, T extends LivingEntity> extends Beh
     @Override
     protected boolean checkExtraStartConditions(ServerLevel serverLevel, E mob) {
         LivingEntity livingEntity = WarpedSpitAttack.getAttackTarget(mob);
-        return BehaviorUtils.canSee(mob, livingEntity);
+        return livingEntity != null;
     }
 
     @Override
     protected boolean canStillUse(ServerLevel serverLevel, E mob, long l) {
-        return mob.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET) && this.checkExtraStartConditions(serverLevel, mob);
+        return mob.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET);
     }
 
     @Override
@@ -62,7 +61,7 @@ public class WarpedSpitAttack<E extends Mob, T extends LivingEntity> extends Beh
         double e = livingEntity.getX() - mob.getX();
         double g = livingEntity.getEyeY() - mob.getEyeY();
         double h = livingEntity.getZ() - mob.getZ();
-        spit.shoot(e, g, h, 1.0f, 12.0f - serverLevel.getDifficulty().getId() * 3F);
+        spit.shoot(e, g, h, 0.75f, 12.0f - serverLevel.getDifficulty().getId() * 3F);
         mob.playSound(SoundEvents.LLAMA_SPIT, 1.0f, 0.4f / (mob.getRandom().nextFloat() * 0.4f + 0.8f));
         serverLevel.addFreshEntity(spit);
     }
