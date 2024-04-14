@@ -163,10 +163,16 @@ public class CommonSetup {
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGGART.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.PYGMY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SHRYGMY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
+        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.WARPED_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
 
         BiomeModifications.addProperties((biomeContext, mutable) -> {
             if (Biomes.CRIMSON_FOREST.location() == biomeContext.getKey().get()) {
                 mutable.getSpawnProperties().addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.HOGLET.get(), 8, 2, 4));
+            }
+
+            if (Biomes.WARPED_FOREST.location() == biomeContext.getKey().get()) {
+                mutable.getSpawnProperties().addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.WARPED_PIGLIN.get(), 1, 4, 4));
+                mutable.getSpawnProperties().setSpawnCost(EntityTypeRegistry.WARPED_PIGLIN.get(), 1.0, 0.01);
             }
 
             if (Biomes.SOUL_SAND_VALLEY.location() == biomeContext.getKey().get()) {

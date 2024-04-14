@@ -73,7 +73,7 @@ public abstract class LivingEntityMixin extends Entity implements IWarpLink {
         if (!this.level().isClientSide) {
             MobEffectInstance mobEffectInstance = this.getEffect(PotionRegistry.WARP_LINK.get());
             if (getWarpLinkOwner() != null) {
-                int distance = Mth.ceil(this.blockPosition().distManhattan(getWarpLinkOwner().blockPosition()) / 8F);
+                int distance = Mth.ceil(this.blockPosition().distManhattan(getWarpLinkOwner().blockPosition()) / 12F);
                 if (distance != mobEffectInstance.getAmplifier()) {
                     addEffect(new MobEffectInstance(mobEffectInstance.getEffect(), mobEffectInstance.getDuration(), distance, mobEffectInstance.isAmbient(), mobEffectInstance.isVisible()));
                 }

@@ -34,6 +34,10 @@ public class WarpedSpit extends ThrowableProjectile {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
                 livingEntity.addEffect(new MobEffectInstance(PotionRegistry.WARP_LINK.get(), 200), var3);
             }
+        } else {
+            if (!this.level().isClientSide) {
+                this.discard();
+            }
         }
 
     }
