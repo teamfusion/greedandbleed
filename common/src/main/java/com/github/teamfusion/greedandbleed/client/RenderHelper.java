@@ -5,6 +5,8 @@ import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchItem;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedServerNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.architectury.networking.NetworkManager;
@@ -16,6 +18,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -27,9 +32,32 @@ public class RenderHelper {
     private static Gui ingameGui;
     private static Minecraft minecraft;
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/hud/pouch.png");
-    private static final ResourceLocation TEXTURE_SELECT = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/hud/pouch_selected.png");
+    private static final ResourceLocation SLOT_TEXTURE = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/hud/pouch.png");
+    private static final ResourceLocation SLOT_TEXTURE_SELECT = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/hud/pouch_selected.png");
+    private static final ResourceLocation WARPLINK_TEXTURE = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/warplink_outline.png");
 
+
+    public static void renderWarpLink(GuiGraphics guiGraphics, Entity entity, int screenWidth, int screenHeight) {
+        if (entity instanceof LivingEntity livingEntity) {
+            MobEffectInstance warplink = livingEntity.getEffect(PotionRegistry.WARP_LINK.get());
+            if (warplink != null) {
+                RenderSystem.disableDepthTest();
+                RenderSystem.depthMask(false);
+                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+                float f = (float) warplink.getDuration();
+                f = f > 100 ? 1.0f : ((float) (f / 100));
+                float g = warplink.getAmplifier() * 0.1F;
+                g *= f;
+                guiGraphics.setColor(1F, 1F, 1F, g);
+
+                guiGraphics.blit(WARPLINK_TEXTURE, 0, 0, -90, 0.0f, 0.0f, screenWidth, screenHeight, screenWidth, screenHeight);
+                RenderSystem.depthMask(true);
+                RenderSystem.enableDepthTest();
+                guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+                RenderSystem.defaultBlendFunc();
+            }
+        }
+    }
 
     public static boolean onMouseScrolled(Minecraft minecraft, double scrollDelta) {
 
@@ -76,16 +104,16 @@ public class RenderHelper {
                     int jy = py - 10 - i * 20;
                     if (!list.isEmpty() && list.size() > i) {
                         renderSlot(graphics, px + 3, jy + 3, list.get(i));
-                        graphics.blit(TEXTURE, px, jy, 0, 0, 22, 22, 22, 22);
+                        graphics.blit(SLOT_TEXTURE, px, jy, 0, 0, 22, 22, 22, 22);
 
                     } else {
                         renderSlot(graphics, px + 3, jy + 3, null);
-                        graphics.blit(TEXTURE, px, jy, 0, 0, 22, 22, 22, 22);
+                        graphics.blit(SLOT_TEXTURE, px, jy, 0, 0, 22, 22, 22, 22);
                     }
                 }
                 if (selected < slots) {
                     int jy = py - 10 - selected * 20;
-                    graphics.blit(TEXTURE_SELECT, px - 1, jy - 1, 0, 0, 24, 24, 24, 24);
+                    graphics.blit(SLOT_TEXTURE_SELECT, px - 1, jy - 1, 0, 0, 24, 24, 24, 24);
                 }
 
 

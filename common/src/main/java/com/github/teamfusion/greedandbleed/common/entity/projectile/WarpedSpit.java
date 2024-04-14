@@ -1,9 +1,12 @@
 package com.github.teamfusion.greedandbleed.common.entity.projectile;
 
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.GBDamageSource;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,8 +29,11 @@ public class WarpedSpit extends ThrowableProjectile {
     protected void onHitEntity(EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         Entity var3 = this.getOwner();
-        if (var3 instanceof LivingEntity livingEntity) {
-            entityHitResult.getEntity().hurt(this.damageSources().mobProjectile(this, livingEntity), 2.0F);
+        if (entityHitResult.getEntity().hurt(this.damageSources().source(GBDamageSource.WARPED, var3), 2.0F)) {
+
+            if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
+                livingEntity.addEffect(new MobEffectInstance(PotionRegistry.WARP_LINK.get(), 200), var3);
+            }
         }
 
     }

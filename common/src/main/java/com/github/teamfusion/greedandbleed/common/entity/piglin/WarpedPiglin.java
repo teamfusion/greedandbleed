@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.api.WarpedPiglinTaskManager;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
@@ -15,6 +16,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -297,6 +299,11 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
             this.taskManager.initMemories();
         }
         return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance mobEffectInstance) {
+        return mobEffectInstance.getEffect() != PotionRegistry.WARP_LINK.get() && super.canBeAffected(mobEffectInstance);
     }
 
     @Override

@@ -48,6 +48,7 @@
   "item.greedandbleed.warped_piglin_spawn_egg": "Warped Piglin Spawn Egg",
   "enchantment.greedandbleed.woe_of_swines": "Woe of Swines",
   "effect.greedandbleed.immunity": "Immunity",
+  "effect.greedandbleed.warp_link": "Warp Link",
   "item.minecraft.potion.effect.immunity": "Potion of Immunity",
   "item.minecraft.splash_potion.effect.immunity": "Splash Potion of Immunity",
   "item.minecraft.lingering_potion.effect.immunity": "Lingering Potion of Immunity",
@@ -60,5 +61,8 @@
   "item.minecraft.splash_potion.effect.strong_immunity": "Splash Potion of Immunity",
   "item.minecraft.lingering_potion.effect.strong_immunity": "Lingering Potion of Immunity",
   "item.minecraft.tipped_arrow.effect.strong_immunity": "Arrow of Immunity",
-  "itemGroup.greed_and_bleed": "Greed And Bleed"
+  "itemGroup.greed_and_bleed": "Greed And Bleed",
+  "death.attack.warped": "%1$s was Warped by %2$s",
+  "death.attack.warped_infect": "%1$s was Warped",
+  "death.attack.warped_link": "%1$s was Warped because of %2$s's damage"
 }

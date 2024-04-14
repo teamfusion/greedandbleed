@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.common.registry;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.effect.ImmunityBodyEffect;
+import com.github.teamfusion.greedandbleed.common.effect.WarpLinkEffect;
 import com.github.teamfusion.greedandbleed.mixin.PotionBrewingMixin;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,6 +25,8 @@ public class PotionRegistry {
 
     public static final Supplier<Potion> LONG_IMMUNITY_POTION = POTION.create("long_immunity", () -> new Potion(new MobEffectInstance(Objects.requireNonNull(IMMUNITY.get()), 9600)));
     public static final Supplier<Potion> STRONG_IMMUNITY_POTION = POTION.create("strong_immunity", () -> new Potion(new MobEffectInstance(Objects.requireNonNull(IMMUNITY.get()), 1200, 1)));
+
+    public static final Supplier<MobEffect> WARP_LINK = MOB_EFFECT.create("warp_link", () -> new WarpLinkEffect(MobEffectCategory.HARMFUL, 0x869B82));
 
     public static void init() {
         PotionBrewingMixin.invokeAddMix(Potions.AWKWARD, BlockRegistry.HOGDEW_FUNGUS.get().asItem(), IMMUNITY_POTION.get());

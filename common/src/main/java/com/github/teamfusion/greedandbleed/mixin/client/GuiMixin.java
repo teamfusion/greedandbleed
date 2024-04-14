@@ -20,6 +20,11 @@ public class GuiMixin {
     @Shadow
     private int screenHeight;
 
+    @Inject(method = "render", at = @At(value = "HEAD"))
+    public void renderHead(GuiGraphics guiGraphics, float f, CallbackInfo ci) {
+        RenderHelper.renderWarpLink(guiGraphics, Minecraft.getInstance().player, screenWidth, screenHeight);
+    }
+
     @Inject(method = "render", at = @At(value = "TAIL"))
     public void render(GuiGraphics guiGraphics, float f, CallbackInfo ci) {
         if (Minecraft.getInstance().player.getVehicle() instanceof ToleratingMount toleratingMount) {
