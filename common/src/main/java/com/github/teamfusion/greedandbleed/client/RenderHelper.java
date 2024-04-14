@@ -6,7 +6,6 @@ import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchI
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedServerNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.architectury.networking.NetworkManager;
@@ -24,6 +23,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
@@ -43,14 +43,16 @@ public class RenderHelper {
             if (warplink != null) {
                 RenderSystem.disableDepthTest();
                 RenderSystem.depthMask(false);
-                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+                RenderSystem.enableBlend();
+                RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
                 float f = (float) warplink.getDuration();
-                f = f > 100 ? 1.0f : ((float) (f / 100));
-                float g = warplink.getAmplifier() * 0.1F;
+                f = f > 100 ? 1.0f : (f / 100);
+                float g = 1.0F;
                 g *= f;
-                guiGraphics.setColor(1F, 1F, 1F, g);
+                guiGraphics.setColor(1F, 1F, 1F, (float) (g * Math.cos(warplink.getDuration() * warplink.getAmplifier() * 0.1F)));
 
                 guiGraphics.blit(WARPLINK_TEXTURE, 0, 0, -90, 0.0f, 0.0f, screenWidth, screenHeight, screenWidth, screenHeight);
+                RenderSystem.disableBlend();
                 RenderSystem.depthMask(true);
                 RenderSystem.enableDepthTest();
                 guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
