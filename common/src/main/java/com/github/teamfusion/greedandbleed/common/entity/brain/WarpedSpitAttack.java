@@ -48,7 +48,7 @@ public class WarpedSpitAttack<E extends Mob, T extends LivingEntity> extends Beh
     }
 
     private void attack(ServerLevel serverLevel, E mob, LivingEntity livingEntity) {
-        if (this.attackDelay >= 40) {
+        if (this.attackDelay >= 60) {
             this.performRangedAttack(serverLevel, mob, livingEntity);
             this.attackDelay = 0;
         } else {
