@@ -149,7 +149,7 @@ public class WarpedPiglinTaskManager<T extends WarpedPiglin> extends PiglinTaskM
     }
 
     private static Optional<? extends LivingEntity> getTargetIfWithinRange(AbstractPiglin abstractPiglin, MemoryModuleType<? extends LivingEntity> memoryModuleType) {
-        return abstractPiglin.getBrain().getMemory(memoryModuleType).filter(livingEntity -> livingEntity.closerThan(abstractPiglin, 18.0));
+        return abstractPiglin.getBrain().getMemory(memoryModuleType).filter(livingEntity -> livingEntity.closerThan(abstractPiglin, abstractPiglin.isAggressive() ? 18.0 : 8));
     }
 
     @Override

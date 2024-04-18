@@ -37,6 +37,8 @@ public abstract class GBPiglin extends AbstractPiglin implements HasTaskManager 
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_BABY_ID, false);
+        this.entityData.define(DATA_IS_CHARGING_CROSSBOW, false);
+        this.entityData.define(DATA_IS_DANCING, false);
     }
 
     @Override

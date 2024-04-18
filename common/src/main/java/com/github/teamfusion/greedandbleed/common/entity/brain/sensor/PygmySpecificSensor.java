@@ -48,7 +48,7 @@ public class PygmySpecificSensor extends Sensor<LivingEntity> {
                 }
             }
 
-            if (optional3.isEmpty() && (livingEntity22 instanceof WitherSkeleton || livingEntity22 instanceof WitherBoss || livingEntity22.getType() == EntityType.PIGLIN && !livingEntity22.isBaby() || livingEntity22.getType() == EntityType.PIGLIN_BRUTE)) {
+            if ((livingEntity22 instanceof WitherSkeleton || livingEntity22 instanceof WitherBoss || livingEntity22.getType() == EntityType.PIGLIN && !livingEntity22.isBaby() || livingEntity22.getType() == EntityType.PIGLIN_BRUTE)) {
                 optional2 = Optional.of((Mob) livingEntity22);
                 continue;
             }

@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.common.registry;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.entity.brain.sensor.PygmySpecificSensor;
+import com.github.teamfusion.greedandbleed.common.entity.brain.sensor.WarpedPiglinSpecificSensor;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.ai.sensing.Sensor;
@@ -14,6 +15,7 @@ public class SensorRegistry {
     public static final CoreRegistry<SensorType<?>> SENSOR_TYPES = CoreRegistry.of(BuiltInRegistries.SENSOR_TYPE, GreedAndBleed.MOD_ID);
 
     public static final Supplier<SensorType<PygmySpecificSensor>> PYGMY_SPECIFIC_SENSOR = register("pygmy_specific_sensor", PygmySpecificSensor::new);
+    public static final Supplier<SensorType<WarpedPiglinSpecificSensor>> WARPED_PIGLIN_SPECIFIC_SENSOR = register("warped_piglin_specific_sensor", WarpedPiglinSpecificSensor::new);
 
     @NotNull
     private static <U extends Sensor<?>> Supplier<SensorType<U>> register(String key, Supplier<U> sensorSupplier) {

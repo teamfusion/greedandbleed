@@ -16,7 +16,7 @@ public class JumpTheSky<E extends WarpedPiglin> extends Behavior<E> {
     private static final UniformInt TIME_BETWEEN_JUMP = UniformInt.of(100, 160);
 
     public JumpTheSky() {
-        super(ImmutableMap.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT), 1200);
+        super(ImmutableMap.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT));
     }
 
     @Override
@@ -32,14 +32,21 @@ public class JumpTheSky<E extends WarpedPiglin> extends Behavior<E> {
 
     @Override
     protected boolean canStillUse(ServerLevel serverLevel, E mob, long l) {
-        return this.tick < 6;
+        return this.tick < 16;
     }
 
     @Override
     protected void tick(ServerLevel serverLevel, E mob, long l) {
-        if (this.tick++ == 3) {
+        if (this.tick == 2) {
             mob.startFallFlying();
         }
+
+        if (this.tick > 3) {
+            Vec3 vec3 = mob.getDeltaMovement();
+            mob.setDeltaMovement(vec3.x, vec3.y + 0.1F, vec3.z);
+        }
+
+        this.tick++;
     }
 
 
@@ -48,14 +55,11 @@ public class JumpTheSky<E extends WarpedPiglin> extends Behavior<E> {
         super.start(serverLevel, livingEntity, l);
         this.tick = 0;
         Vec3 vec3 = livingEntity.getDeltaMovement();
-        livingEntity.setDeltaMovement(vec3.x, vec3.y + 1F, vec3.z);
+        livingEntity.setDeltaMovement(vec3.x, vec3.y + 0.5F, vec3.z);
     }
 
     @Override
     protected void stop(ServerLevel serverLevel, E mob, long l) {
-        if (mob.isUsingItem()) {
-            mob.stopUsingItem();
-        }
     }
 }
 

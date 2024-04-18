@@ -7,6 +7,9 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -41,9 +44,18 @@ import org.jetbrains.annotations.Nullable;
 public class WarpedPiglin extends GBPiglin implements Shearable {
     protected static final ImmutableList<SensorType<? extends Sensor<? super WarpedPiglin>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_BRUTE_SPECIFIC_SENSOR);
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.HOME);
+
+    protected static final EntityDataAccessor<Boolean> DATA_IS_MID_FLYING = SynchedEntityData.defineId(WarpedPiglin.class, EntityDataSerializers.BOOLEAN);
+
     public WarpedPiglin(EntityType<? extends WarpedPiglin> entityType, Level level) {
         super(entityType, level);
         this.setCanPickUpLoot(false);
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_IS_MID_FLYING, false);
     }
 
     @Override
@@ -176,13 +188,6 @@ public class WarpedPiglin extends GBPiglin implements Shearable {
 
         return super.calculateFallDamage(p_149389_, p_149390_);
     }
-
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-    }
-
 
     @Override
     protected Brain.Provider<WarpedPiglin> brainProvider() {
