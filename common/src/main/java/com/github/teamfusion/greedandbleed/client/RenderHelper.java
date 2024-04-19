@@ -34,7 +34,11 @@ public class RenderHelper {
 
     private static final ResourceLocation SLOT_TEXTURE = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/hud/pouch.png");
     private static final ResourceLocation SLOT_TEXTURE_SELECT = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/hud/pouch_selected.png");
-    private static final ResourceLocation WARPLINK_TEXTURE = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/warplink_outline.png");
+    private static final ResourceLocation WARPLINK_TEXTURE = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/warplink/warplink_outline_stage0.png");
+    private static final ResourceLocation WARPLINK_TEXTURE1 = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/warplink/warplink_outline_stage1.png");
+    private static final ResourceLocation WARPLINK_TEXTURE2 = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/warplink/warplink_outline_stage2.png");
+    private static final ResourceLocation WARPLINK_TEXTURE3 = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/warplink/warplink_outline_stage3.png");
+    private static final ResourceLocation WARPLINK_TEXTURE4 = new ResourceLocation(GreedAndBleed.MOD_ID, "textures/gui/warplink/warplink_outline_stage4.png");
 
 
     public static void renderWarpLink(GuiGraphics guiGraphics, Entity entity, int screenWidth, int screenHeight) {
@@ -49,9 +53,26 @@ public class RenderHelper {
                 f = f > 100 ? 1.0f : (f / 100);
                 float g = 1.0F;
                 g *= f;
-                guiGraphics.setColor(1F, 1F, 1F, (float) (g * Math.cos(warplink.getDuration() * warplink.getAmplifier() * 0.1F)));
-
-                guiGraphics.blit(WARPLINK_TEXTURE, 0, 0, -90, 0.0f, 0.0f, screenWidth, screenHeight, screenWidth, screenHeight);
+                guiGraphics.setColor(1F, 1F, 1F, (float) (g * Math.cos(warplink.getDuration() * warplink.getAmplifier() * 0.1F) + warplink.getAmplifier() * 0.1F));
+                ResourceLocation texture;
+                switch (warplink.getAmplifier()) {
+                    case 0:
+                        texture = WARPLINK_TEXTURE;
+                        break;
+                    case 1:
+                        texture = WARPLINK_TEXTURE1;
+                        break;
+                    case 2:
+                        texture = WARPLINK_TEXTURE2;
+                        break;
+                    case 3:
+                        texture = WARPLINK_TEXTURE3;
+                        break;
+                    default:
+                        texture = WARPLINK_TEXTURE4;
+                        break;
+                }
+                guiGraphics.blit(texture, 0, 0, -90, 0.0f, 0.0f, screenWidth, screenHeight, screenWidth, screenHeight);
                 RenderSystem.disableBlend();
                 RenderSystem.depthMask(true);
                 RenderSystem.enableDepthTest();
