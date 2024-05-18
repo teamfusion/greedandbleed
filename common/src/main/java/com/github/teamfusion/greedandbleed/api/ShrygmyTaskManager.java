@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.brain.Guarding;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
@@ -98,7 +99,7 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15f), MeleeAttack.create(20));
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.05f), MeleeAttack.create(20), new Guarding<>());
     }
 
     @Override
