@@ -29,6 +29,7 @@ public class CreativeTabRegistry {
                             ItemRegistry.SLINGSHOT_POUCH,
                             ItemRegistry.CLUB,
                             ItemRegistry.STONE_CLUB,
+                            ItemRegistry.GOLDEN_SHIELD,
                             ItemRegistry.PEBBLE,
                             ItemRegistry.CRIMSON_FUNGUS,
                             ItemRegistry.PIGLIN_BELT,

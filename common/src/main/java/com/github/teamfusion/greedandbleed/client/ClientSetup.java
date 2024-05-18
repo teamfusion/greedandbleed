@@ -26,8 +26,8 @@ public class ClientSetup {
     private static final Supplier<LayerDefinition> OUTER_ARMOR_DEFINITION = () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1.0F), 0.0F), 64, 32);
     private static final Supplier<LayerDefinition> INNER_ARMOR_DEFINITION = () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 32);
 
-    public static final ModelLayerLocation HOGLIN = new ModelLayerLocation(new ResourceLocation(GreedAndBleed.MOD_ID, "gb_hoglin"), "gb_hoglin");
-    public static final ModelLayerLocation HOGLIN_ARMOR = new ModelLayerLocation(new ResourceLocation(GreedAndBleed.MOD_ID, "hoglin_armor"), "hoglin_armor");
+    public static final ModelLayerLocation HOGLIN = new ModelLayerLocation(new ResourceLocation(GreedAndBleed.MOD_ID, "gb_hoglin"), "main");
+    public static final ModelLayerLocation HOGLIN_ARMOR = new ModelLayerLocation(new ResourceLocation(GreedAndBleed.MOD_ID, "hoglin_armor"), "main");
 
 
     public static void onBootstrap() {
@@ -60,6 +60,7 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(HoggartRenderer.MAIN, HoggartModel::createBodyLayer);
         RenderRegistry.layerDefinition(WarpedPiglinRenderer.MAIN, WarpedPiglinModel::createBodyLayer);
         RenderRegistry.layerDefinition(WarpedSpitRenderer.LAYER_LOCATION, WarpedSpitModel::createBodyLayer);
+        RenderRegistry.layerDefinition(GoldenShieldModel.LAYER_LOCATION, GoldenShieldModel::createBodyLayer);
     }
 
     public static void onInitialized() {
@@ -82,5 +83,6 @@ public class ClientSetup {
         ItemProperties.register(ItemRegistry.SLINGSHOT_POUCH.get(), new ResourceLocation("full"), (stack, level, entity, seed) -> {
             return SlingshotPouchItem.getFullnessDisplay(stack) > 0.0F ? 1.0F : 0.0F;
         });
+        ItemProperties.register(ItemRegistry.GOLDEN_SHIELD.get(), new ResourceLocation("blocking"), (itemStack, clientLevel, livingEntity, i) -> livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0f : 0.0f);
     }
 }
