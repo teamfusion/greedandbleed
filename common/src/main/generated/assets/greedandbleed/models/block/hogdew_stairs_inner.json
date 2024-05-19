@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "greedandbleed:block/hogdew_planks",
+    "side": "greedandbleed:block/hogdew_planks",
+    "top": "greedandbleed:block/hogdew_planks"
+  }
+}

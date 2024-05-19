@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/door_top_left",
-  "textures": {
-    "bottom": "greedandbleed:block/hogdew_door_bottom",
-    "top": "greedandbleed:block/hogdew_door_top"
-  }
-}

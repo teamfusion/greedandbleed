@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    " L ",
+    "L L",
+    "LLL"
+  ],
+  "result": {
+    "item": "greedandbleed:slingshot_pouch"
+  },
+  "show_notification": true
+}

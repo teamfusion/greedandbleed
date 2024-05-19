@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "greedandbleed:block/hogdew_lumps"
+      },
+      {
+        "model": "greedandbleed:block/hogdew_lumps_mirrored"
+      },
+      {
+        "model": "greedandbleed:block/hogdew_lumps",
+        "y": 180
+      },
+      {
+        "model": "greedandbleed:block/hogdew_lumps_mirrored",
+        "y": 180
+      }
+    ]
+  }
+}

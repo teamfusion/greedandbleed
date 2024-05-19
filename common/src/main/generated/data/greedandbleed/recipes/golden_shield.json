@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "minecraft:gold_nugget"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "GPG",
+    "PPP",
+    "GPG"
+  ],
+  "result": {
+    "item": "greedandbleed:golden_shield"
+  },
+  "show_notification": true
+}

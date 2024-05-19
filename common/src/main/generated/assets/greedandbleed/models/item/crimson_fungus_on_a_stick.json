@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "greedandbleed:item/crimson_fungus_on_a_stick"
+  }
+}

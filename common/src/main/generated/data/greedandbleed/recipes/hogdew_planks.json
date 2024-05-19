@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    {
+      "tag": "greedandbleed:hogdew_log"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "greedandbleed:hogdew_planks"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "SLS",
+    "SSS",
+    " S "
+  ],
+  "result": {
+    "item": "greedandbleed:slingshot"
+  },
+  "show_notification": true
+}

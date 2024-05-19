@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "greedandbleed:block/stripped_hogdew_stem",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "greedandbleed:block/stripped_hogdew_stem"
+    },
+    "axis=z": {
+      "model": "greedandbleed:block/stripped_hogdew_stem",
+      "x": 90
+    }
+  }
+}

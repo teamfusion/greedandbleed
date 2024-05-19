@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "greedandbleed:block/hogdew_slab"
+    },
+    "type=double": {
+      "model": "greedandbleed:block/hogdew_planks"
+    },
+    "type=top": {
+      "model": "greedandbleed:block/hogdew_slab_top"
+    }
+  }
+}
