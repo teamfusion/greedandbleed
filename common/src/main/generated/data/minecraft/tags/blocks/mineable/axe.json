@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "#greedandbleed:hogdew_log",
+    "greedandbleed:hogdew_door",
+    "greedandbleed:hogdew_fence",
+    "greedandbleed:hogdew_fence_gate",
+    "greedandbleed:hogdew_trapdoor",
+    "greedandbleed:hogdew_door",
+    "greedandbleed:hogdew_slab",
+    "greedandbleed:hogdew_stairs"
+  ]
+}

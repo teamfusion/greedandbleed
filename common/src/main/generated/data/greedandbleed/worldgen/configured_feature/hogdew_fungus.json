@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:huge_fungus",
+  "config": {
+    "decor_state": {
+      "Name": "minecraft:shroomlight"
+    },
+    "hat_state": {
+      "Name": "greedandbleed:hogdew_wart_block"
+    },
+    "planted": false,
+    "replaceable_blocks": {
+      "type": "minecraft:matching_blocks",
+      "blocks": "greedandbleed:hogdew_fungus"
+    },
+    "stem_state": {
+      "Name": "greedandbleed:hogdew_stem",
+      "Properties": {
+        "axis": "y"
+      }
+    },
+    "valid_base_block": {
+      "Name": "greedandbleed:hogdew_nylium"
+    }
+  }
+}

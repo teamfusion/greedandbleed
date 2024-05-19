@@ -1,9 +1,9 @@
 {
-  "feature": "greedandbleed:hogdew_bubble",
+  "feature": "greedandbleed:hogdew_fungus",
   "placement": [
     {
       "type": "minecraft:count_on_every_layer",
-      "count": 1
+      "count": 8
     },
     {
       "type": "minecraft:biome"

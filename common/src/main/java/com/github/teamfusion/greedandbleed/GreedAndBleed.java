@@ -18,6 +18,8 @@ public class GreedAndBleed {
         .build();
 
     public static void bootstrap() {
+
+        BiomeRegistry.init();
         INSTANCE.bootstrap();
 
         // ========== MISCELLANEOUS REGISTRY ==========

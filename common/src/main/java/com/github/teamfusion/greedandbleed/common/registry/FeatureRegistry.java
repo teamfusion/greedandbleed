@@ -13,4 +13,8 @@ public class FeatureRegistry {
     public static final CoreRegistry<Feature<?>> FEATURES = CoreRegistry.of(BuiltInRegistries.FEATURE, GreedAndBleed.MOD_ID);
     public static final Supplier<Feature<BlockPileConfiguration>> BLOB_HOLLOW = FEATURES.create("blob_hollow", () -> new BlobHollowFeature(BlockPileConfiguration.CODEC));
 
+
+    public static void init() {
+
+    }
 }

@@ -34,7 +34,7 @@ public class BlockRegistry {
     public static final Supplier<Block> HOGDEW_NYLIUM = createWithItem("hogdew_nylium", () -> new NyliumBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.4f).sound(SoundType.NYLIUM).randomTicks()));
     public static final Supplier<Block> HOGDEW_FUNGUS = createWithItem("hogdew_fungus", () -> new NetherSproutsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().instabreak().sound(SoundType.FUNGUS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY)));
 
-    public static final Supplier<Block> HOGDEW_LUMPS = createWithItem("hogdew_lumps", () -> new HogdewLumpBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().strength(0.2f).sound(SoundType.FUNGUS).lightLevel(HogdewLumpBlock.emission(10)).pushReaction(PushReaction.DESTROY)));
+    public static final Supplier<MultifaceBlock> HOGDEW_LUMPS = createWithItem("hogdew_lumps", () -> new HogdewLumpBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().strength(0.2f).sound(SoundType.FUNGUS).lightLevel(HogdewLumpBlock.emission(10)).pushReaction(PushReaction.DESTROY)));
 
     public static final Supplier<Block> PYGMY_STATION = createWithItem("pygmy_station", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).strength(0.5f).sound(SoundType.NETHER_WOOD)));
 

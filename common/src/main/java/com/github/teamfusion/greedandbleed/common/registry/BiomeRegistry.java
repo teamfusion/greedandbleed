@@ -12,4 +12,8 @@ public class BiomeRegistry {
     private static ResourceKey<Biome> register(String string) {
         return ResourceKey.create(Registries.BIOME, new ResourceLocation(GreedAndBleed.MOD_ID, string));
     }
+
+    public static void init() {
+
+    }
 }

@@ -6,25 +6,25 @@
       "count": {
         "type": "minecraft:uniform",
         "value": {
-          "min_inclusive": 110,
-          "max_inclusive": 160
-        }
-      }
-    },
-    {
-      "type": "minecraft:height_range",
-      "height": {
-        "type": "minecraft:uniform",
-        "min_inclusive": {
-          "above_bottom": 16
-        },
-        "max_inclusive": {
-          "absolute": 200
+          "max_inclusive": 160,
+          "min_inclusive": 100
         }
       }
     },
     {
       "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "max_inclusive": {
+          "absolute": 256
+        },
+        "min_inclusive": {
+          "above_bottom": 0
+        }
+      }
     },
     {
       "type": "minecraft:biome"
