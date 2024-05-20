@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "greedandbleed:block/hogdew_lumps"
-  }
-}

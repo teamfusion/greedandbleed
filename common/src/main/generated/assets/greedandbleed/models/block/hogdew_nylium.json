@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "minecraft:block/netherrack",
+    "side": "greedandbleed:block/hogdew_nylium_side",
+    "top": "greedandbleed:block/hogdew_nylium"
+  }
+}

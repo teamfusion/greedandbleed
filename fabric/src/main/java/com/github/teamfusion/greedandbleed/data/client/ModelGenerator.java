@@ -26,9 +26,10 @@ public class ModelGenerator extends FabricModelProvider {
 
         gen.createTrivialCube(BlockRegistry.HOGDEW_WART_BLOCK.get());
         gen.createDoor(BlockRegistry.HOGDEW_DOOR.get());
-        gen.createRotatedMirroredVariantBlock(BlockRegistry.HOGDEW_LUMPS.get());
+        gen.createMultiface(BlockRegistry.HOGDEW_LUMPS.get());
         gen.createTrapdoor(BlockRegistry.HOGDEW_TRAPDOOR.get());
         gen.family(BlockRegistry.HOGDEW_PLANKS.get()).stairs(BlockRegistry.HOGDEW_PLANKS_STAIRS.get()).slab(BlockRegistry.HOGDEW_PLANKS_SLAB.get()).fenceGate(BlockRegistry.HOGDEW_FENCE_GATE.get()).fence(BlockRegistry.HOGDEW_FENCE.get());
+        gen.createNyliumBlock(BlockRegistry.HOGDEW_NYLIUM.get());
     }
     @Override
     public void generateItemModels(ItemModelGenerators gen) {
@@ -42,7 +43,6 @@ public class ModelGenerator extends FabricModelProvider {
         gen.generateFlatItem(ItemRegistry.HOGLIN_SADDLE.get(), ModelTemplates.FLAT_ITEM);
         gen.generateFlatItem(ItemRegistry.PEBBLE.get(), ModelTemplates.FLAT_ITEM);
         gen.generateFlatItem(ItemRegistry.PIGLIN_BELT.get(), ModelTemplates.FLAT_ITEM);
-        gen.generateFlatItem(BlockRegistry.HOGDEW_LUMPS.get().asItem(), ModelTemplates.FLAT_ITEM);
         gen.generateFlatItem(BlockRegistry.HOGDEW_FUNGUS.get().asItem(), ModelTemplates.FLAT_ITEM);
     }
 }
