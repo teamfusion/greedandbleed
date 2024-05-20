@@ -30,8 +30,7 @@ public class ModConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> HOGDEW_FUNGUS = registerKey("hogdew_fungus");
     public static final ResourceKey<ConfiguredFeature<?, ?>> HOGDEW_LUMPS = registerKey("hogdew_lumps");
     public static final ResourceKey<ConfiguredFeature<?, ?>> HOGDEW_PATCH = registerKey("hogdew_patch");
-
-
+    
     public static ResourceKey<ConfiguredFeature<?, ?>> registerKey(String name) {
         return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(GreedAndBleed.MOD_ID, name));
     }

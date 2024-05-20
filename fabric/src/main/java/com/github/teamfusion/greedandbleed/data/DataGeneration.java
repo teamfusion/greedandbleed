@@ -18,15 +18,16 @@ public class DataGeneration implements DataGeneratorEntrypoint {
         BlockTagGenerator blockTagGenerator = pack.addProvider(BlockTagGenerator::new);
 
         pack.addProvider((output, registriesFuture) -> new ItemTagGenerator(output, registriesFuture, blockTagGenerator));
-
+        
+        pack.addProvider(ConfiguredFeatureGenerator::new);
+        pack.addProvider(PlacedFeatureGenerator::new);
+        pack.addProvider(BiomeGenerator::new);
     }
 
     @Override
-    public void buildRegistry(RegistrySetBuilder registryBuilder) {
-        DataGeneratorEntrypoint.super.buildRegistry(registryBuilder);
-        registryBuilder.add(Registries.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap);
-        registryBuilder.add(Registries.PLACED_FEATURE, ModPlacedFeatures::bootstrap);
-        registryBuilder.add(Registries.BIOME, ModBiomes::bootstrap);
-        registryBuilder.buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), VanillaRegistries.createLookup());
+    public void buildRegistry(RegistrySetBuilder builder) {
+        builder.add(Registries.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap);
+        builder.add(Registries.PLACED_FEATURE, ModPlacedFeatures::bootstrap);
+        builder.add(Registries.BIOME, ModBiomes::bootstrap);
     }
 }
