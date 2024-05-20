@@ -1,7 +1,6 @@
 {
-  "parent": "minecraft:block/custom_fence_post",
+  "parent": "minecraft:block/fence_post",
   "textures": {
-    "particle": "greedandbleed:block/hogdew_fence_particle",
-    "texture": "greedandbleed:block/hogdew_fence"
+    "texture": "greedandbleed:block/hogdew_planks"
   }
 }
