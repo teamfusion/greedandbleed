@@ -19,6 +19,7 @@ public class ConfiguredFeatureGenerator extends FabricDynamicRegistryProvider {
         this.add(registries, entries, ModConfiguredFeatures.HOGDEW_BUBBLE);
         this.add(registries, entries, ModConfiguredFeatures.HOGDEW_FUNGUS);
         this.add(registries, entries, ModConfiguredFeatures.HOGDEW_LUMPS);
+        this.add(registries, entries, ModConfiguredFeatures.HOGDEW_HOLLOW_VEGITATION);
         this.add(registries, entries, ModConfiguredFeatures.HOGDEW_PATCH);
     }
     

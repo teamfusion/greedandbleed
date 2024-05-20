@@ -20,6 +20,7 @@ public class PlacedFeatureGenerator extends FabricDynamicRegistryProvider {
         this.add(registries, entries, ModPlacedFeatures.HOGDEW_FUNGUS);
         this.add(registries, entries, ModPlacedFeatures.HOGDEW_LUMPS);
         this.add(registries, entries, ModPlacedFeatures.HOGDEW_PATCH);
+        this.add(registries, entries, ModPlacedFeatures.HOGDEW_HOLLOW_VEGITATION);
     }
     
     private void add(HolderLookup.Provider registries, Entries entries, ResourceKey<PlacedFeature> key) {
