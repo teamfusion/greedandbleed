@@ -3,6 +3,7 @@ package com.github.teamfusion.greedandbleed.mixin;
 import com.github.teamfusion.greedandbleed.common.CommonSetup;
 import com.github.teamfusion.greedandbleed.common.enchantment.WoeOfSwinEnchantment;
 import com.github.teamfusion.greedandbleed.common.registry.GBEntityTypeTags;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -14,13 +15,18 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
+    @Shadow
+    public abstract void resetAttackStrengthTicker();
+
     protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
     }
@@ -29,6 +35,16 @@ public abstract class PlayerMixin extends LivingEntity {
     private void $hurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         CommonSetup.onHoglinAttack((Player) (Object) this, source);
     }
+
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    public void tick(CallbackInfo ci) {
+        if (hasEffect(PotionRegistry.STUN.get())) {
+            resetAttackStrengthTicker();
+        }
+    }
+
+
+
 
     @ModifyExpressionValue(
             method = "attack",

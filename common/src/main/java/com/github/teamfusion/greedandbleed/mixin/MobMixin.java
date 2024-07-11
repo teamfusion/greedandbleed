@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.mixin;
 
 import com.github.teamfusion.greedandbleed.common.enchantment.WoeOfSwinEnchantment;
 import com.github.teamfusion.greedandbleed.common.registry.GBEntityTypeTags;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -14,6 +15,8 @@ import org.apache.commons.lang3.mutable.MutableFloat;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Mob.class)
 public abstract class MobMixin extends LivingEntity {
@@ -49,5 +52,14 @@ public abstract class MobMixin extends LivingEntity {
             mutableFloat.add(defaultBonus);
         }, stack);
         return mutableFloat.floatValue();
+    }
+
+
+    @Inject(method = "serverAiStep", at = @At("HEAD"), cancellable = true)
+    public void serverAiStep(CallbackInfo ci) {
+        if (hasEffect(PotionRegistry.STUN.get())) {
+
+            ci.cancel();
+        }
     }
 }

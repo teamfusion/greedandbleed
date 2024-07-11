@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -43,6 +44,28 @@ public abstract class LivingEntityMixin extends Entity implements IWarpLink {
 
     @Shadow
     public abstract boolean addEffect(MobEffectInstance mobEffectInstance);
+
+    @Shadow
+    private int noJumpDelay;
+    @Shadow
+    protected int lerpSteps;
+
+    @Shadow
+    protected abstract void travelRidden(Player arg, Vec3 arg2);
+
+    @Shadow
+    protected double lerpX;
+    @Shadow
+    protected double lerpY;
+    @Shadow
+    protected double lerpZ;
+    @Shadow
+    protected double lerpYRot;
+    @Shadow
+    protected double lerpXRot;
+
+    @Shadow
+    public abstract void travel(Vec3 arg);
 
     private final LivingEntity $this = (LivingEntity) (Object) this;
 

@@ -4,6 +4,7 @@ import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.api.ShrygmyTaskManager;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.SensorRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
@@ -15,6 +16,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -82,6 +84,14 @@ public class Shrygmy extends GBPygmy {
     protected void blockUsingShield(LivingEntity livingEntity) {
         super.blockUsingShield(livingEntity);
         if (livingEntity.canDisableShield()) {
+            this.swing(InteractionHand.OFF_HAND);
+            livingEntity.addEffect(new MobEffectInstance(PotionRegistry.STUN.get(), 100, 0, false, false, true));
+            this.level().broadcastEntityEvent(this, (byte) 30);
+            this.shieldCooldown = 200;
+        } else {
+            this.swing(InteractionHand.OFF_HAND);
+            livingEntity.addEffect(new MobEffectInstance(PotionRegistry.STUN.get(), 200, 0, false, false, true));
+            this.addEffect(new MobEffectInstance(PotionRegistry.STUN.get(), 200, 0, false, false, true));
             this.stopUsingItem();
             this.level().broadcastEntityEvent(this, (byte) 30);
             this.shieldCooldown = 200;
