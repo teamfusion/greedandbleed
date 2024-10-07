@@ -23,6 +23,8 @@ loom {
     }
 }
 
+sourceSets.main.resources.srcDirs += project(":common").file(project.output_datagen)
+
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.
