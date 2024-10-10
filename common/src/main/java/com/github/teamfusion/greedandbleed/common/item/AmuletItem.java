@@ -4,20 +4,22 @@ import com.github.teamfusion.greedandbleed.common.entity.IConvertToNormal;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+
+import static net.minecraft.world.item.BowItem.getPowerForTime;
 
 public class AmuletItem extends Item {
     public AmuletItem(Item.Properties properties) {
@@ -25,27 +27,45 @@ public class AmuletItem extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext useOnContext) {
-        Player player = useOnContext.getPlayer();
-        Level level = useOnContext.getLevel();
-        BlockPos blockPos = useOnContext.getClickedPos();
-        BlockPos blockPos2 = blockPos.relative(useOnContext.getClickedFace());
-        if (player != null) {
-            ItemStack itemStack = getSoulSand(player);
-            if (!itemStack.isEmpty()) {
-                EntityType<?> entityType = getMobAndConsume(level, player, itemStack);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+        ItemStack itemStack = player.getItemInHand(interactionHand);
+        boolean bl = !player.getProjectile(itemStack).isEmpty();
+        if (!player.getAbilities().instabuild && !bl) {
+            return InteractionResultHolder.fail(itemStack);
+        } else {
+            player.startUsingItem(interactionHand);
+            return InteractionResultHolder.consume(itemStack);
+        }
+    }
+
+    public int getUseDuration(ItemStack itemStack) {
+        return 72000;
+    }
+
+    public UseAnim getUseAnimation(ItemStack itemStack) {
+        return UseAnim.BOW;
+    }
+
+    @Override
+    public void releaseUsing(ItemStack itemStack, Level level, LivingEntity livingEntity, int i) {
+        super.releaseUsing(itemStack, level, livingEntity, i);
+        float f = getPowerForTime(i);
+        if (livingEntity instanceof Player player) {
+            ItemStack itemStack2 = getSoulSand(player);
+            if (!itemStack2.isEmpty()) {
+                EntityType<?> entityType = getMobAndConsume(level, player, itemStack, f);
                 if (entityType != null) {
                     if (level.isClientSide) {
-                        for (int i = 0; i < 8; i++) {
-                            level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, blockPos2.getX() + Mth.nextFloat(level.random, -0.5F, 0.5F), blockPos2.getY() + Mth.nextFloat(level.random, 0F, 3.0F), blockPos2.getZ() + Mth.nextFloat(level.random, -0.5F, 0.5F), 0, 0, 0);
+                        for (int i2 = 0; i2 < 8; i2++) {
+                            level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, livingEntity.getX() + Mth.nextFloat(level.random, -0.5F, 0.5F), livingEntity.getY() + Mth.nextFloat(level.random, 0F, 3.0F), livingEntity.getZ() + Mth.nextFloat(level.random, -0.5F, 0.5F), 0, 0, 0);
                         }
                     } else {
                         Entity entity = entityType.create(level);
                         if (entity instanceof Mob mob && level instanceof ServerLevel serverLevel) {
-                            mob.setPos(blockPos2.getX(), blockPos2.getY(), blockPos2.getZ());
-                            mob.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(blockPos2), MobSpawnType.MOB_SUMMONED, null, null);
+                            mob.setPos(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+                            mob.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
                             if (mob instanceof TraceAndSetOwner traceAndSetOwner) {
-                                traceAndSetOwner.setOwner(player);
+                                traceAndSetOwner.setOwner(livingEntity);
                             }
                             mob.setPose(Pose.EMERGING);
 
@@ -57,15 +77,12 @@ public class AmuletItem extends Item {
                         }
                     }
                     player.getCooldowns().addCooldown(this, 80);
-                    return InteractionResult.sidedSuccess(level.isClientSide);
                 }
 
             }
 
         }
-        return super.useOn(useOnContext);
     }
-
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack itemStack, Player player, LivingEntity livingEntity, InteractionHand interactionHand) {
@@ -92,31 +109,36 @@ public class AmuletItem extends Item {
     }
 
     //Check the mob anc consume
-    public EntityType<?> getMobAndConsume(Level level, Player player, ItemStack stack) {
-        if (stack.getCount() >= 64) {
+    public EntityType<?> getMobAndConsume(Level level, Player player, ItemStack stack, float i) {
+        if (stack.getCount() >= 64 && i >= 1.0F) {
             if (!player.getAbilities().instabuild) {
                 stack.shrink(64);
+                player.getCooldowns().addCooldown(this, 80);
                 if (stack.isEmpty()) {
                     player.getInventory().removeItem(stack);
                 }
             }
-            return player.getRandom().nextBoolean() ? EntityType.ZOGLIN : EntityType.SKELETON;
-        } else if (stack.getCount() >= 32) {
+            return level.dimension() == Level.NETHER ? EntityType.ZOGLIN : EntityType.SKELETON;
+        } else if (stack.getCount() >= 32 && i >= 0.5F) {
             if (!player.getAbilities().instabuild) {
                 stack.shrink(32);
+                player.getCooldowns().addCooldown(this, 80);
                 if (stack.isEmpty()) {
                     player.getInventory().removeItem(stack);
                 }
             }
-            return player.getRandom().nextBoolean() ? EntityType.ZOMBIFIED_PIGLIN : EntityType.ZOMBIE;
+            return level.dimension() == Level.NETHER ? EntityType.ZOMBIFIED_PIGLIN : EntityType.SKELETON;
+
         } else if (stack.getCount() >= 16) {
             if (!player.getAbilities().instabuild) {
                 stack.shrink(16);
+                player.getCooldowns().addCooldown(this, 80);
                 if (stack.isEmpty()) {
                     player.getInventory().removeItem(stack);
                 }
             }
-            return EntityTypeRegistry.SKELETAL_PIGLIN.get();
+            return level.dimension() == Level.NETHER ? EntityTypeRegistry.SKELETAL_PIGLIN.get() : EntityType.ZOMBIE;
+
         }
         return null;
     }
