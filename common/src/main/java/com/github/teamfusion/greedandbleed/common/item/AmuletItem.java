@@ -28,7 +28,7 @@ public class AmuletItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
-        boolean bl = !player.getProjectile(itemStack).isEmpty();
+        boolean bl = player.experienceLevel > 0;
         if (!player.getAbilities().instabuild && !bl) {
             return InteractionResultHolder.fail(itemStack);
         } else {
