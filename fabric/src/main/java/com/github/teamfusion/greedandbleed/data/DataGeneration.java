@@ -3,11 +3,8 @@ package com.github.teamfusion.greedandbleed.data;
 import com.github.teamfusion.greedandbleed.data.client.ModelGenerator;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.registries.VanillaRegistries;
 
 public class DataGeneration implements DataGeneratorEntrypoint {
     @Override
@@ -22,6 +19,9 @@ public class DataGeneration implements DataGeneratorEntrypoint {
         pack.addProvider(ConfiguredFeatureGenerator::new);
         pack.addProvider(PlacedFeatureGenerator::new);
         pack.addProvider(BiomeGenerator::new);
+        pack.addProvider(ChestLootTableGenerator::new);
+        pack.addProvider(EntityLootTableGenerator::new);
+
     }
 
     @Override
