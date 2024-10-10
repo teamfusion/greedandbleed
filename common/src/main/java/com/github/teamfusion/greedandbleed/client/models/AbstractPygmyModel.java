@@ -16,8 +16,8 @@ public class AbstractPygmyModel<T extends Monster> extends HierarchicalModel<T> 
 
     private final ModelPart body;
 
-    private final ModelPart right_arm;
-    private final ModelPart left_arm;
+    public final ModelPart right_arm;
+    public final ModelPart left_arm;
     private final ModelPart head;
 
     public AbstractPygmyModel(ModelPart root) {
