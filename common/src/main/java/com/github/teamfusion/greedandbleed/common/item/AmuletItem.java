@@ -49,11 +49,14 @@ public class AmuletItem extends Item {
     @Override
     public void releaseUsing(ItemStack itemStack, Level level, LivingEntity livingEntity, int i) {
         super.releaseUsing(itemStack, level, livingEntity, i);
-        float f = getPowerForTime(i);
+
+        int j = this.getUseDuration(itemStack) - i;
+
+        float f = getPowerForTime(j);
         if (livingEntity instanceof Player player) {
             ItemStack itemStack2 = getSoulSand(player);
             if (!itemStack2.isEmpty()) {
-                EntityType<?> entityType = getMobAndConsume(level, player, itemStack, f);
+                EntityType<?> entityType = getMobAndConsume(level, player, itemStack2, f);
                 if (entityType != null) {
                     if (level.isClientSide) {
                         for (int i2 = 0; i2 < 8; i2++) {
