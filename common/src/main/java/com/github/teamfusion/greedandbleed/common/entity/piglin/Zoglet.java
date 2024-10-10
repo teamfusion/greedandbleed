@@ -69,6 +69,14 @@ public class Zoglet extends Monster implements NeutralMob {
     }
 
     @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (DATA_BABY_ID.equals(data)) {
+            this.refreshDimensions();
+        }
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_REMAINING_ANGER_TIME, 0);

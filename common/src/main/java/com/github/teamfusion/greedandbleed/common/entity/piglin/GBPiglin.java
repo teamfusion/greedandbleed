@@ -34,6 +34,14 @@ public abstract class GBPiglin extends AbstractPiglin implements HasTaskManager 
     }
 
     @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (DATA_BABY_ID.equals(data)) {
+            this.refreshDimensions();
+        }
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_BABY_ID, false);

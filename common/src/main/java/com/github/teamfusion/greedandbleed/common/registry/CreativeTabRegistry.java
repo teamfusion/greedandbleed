@@ -41,6 +41,7 @@ public class CreativeTabRegistry {
                             ItemRegistry.PIGMY_SPAWN_EGG,
                             ItemRegistry.SHRYGMY_SPAWN_EGG,
                             ItemRegistry.HOGGART_SPAWN_EGG,
+                            ItemRegistry.ZOMBIFIED_PIGMY_SPAWN_EGG,
                             ItemRegistry.WARPED_PIGLIN_SPAWN_EGG
                     ).map(sup -> {
                         return sup.get().getDefaultInstance();

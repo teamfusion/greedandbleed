@@ -73,6 +73,14 @@ public class ZombifiedPygmy extends Monster implements NeutralMob {
     }
 
     @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (DATA_BABY_ID.equals(data)) {
+            this.refreshDimensions();
+        }
+    }
+
+    @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("IsBaby", this.isBaby());
