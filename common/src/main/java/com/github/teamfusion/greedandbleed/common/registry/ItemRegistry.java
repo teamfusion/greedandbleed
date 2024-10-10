@@ -41,6 +41,7 @@ public class ItemRegistry {
     public static final Supplier<Item> PIGMY_SPAWN_EGG = create("pygmy_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.PYGMY, 0xAD5532, 0xF2BA86, new Item.Properties()));
     public static final Supplier<Item> SHRYGMY_SPAWN_EGG = create("shrygmy_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SHRYGMY, 0xAD5532, 0xC53038, new Item.Properties()));
     public static final Supplier<Item> HOGGART_SPAWN_EGG = create("hoggart_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.HOGGART, 0xAC4138, 0xF2BA86, new Item.Properties()));
+    public static final Supplier<Item> ZOMBIFIED_PIGMY_SPAWN_EGG = create("zombified_pygmy_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.ZOMBIFIED_PYGMY, 0xE6918B, 0xF2BA86, new Item.Properties()));
     public static final Supplier<Item> WARPED_PIGLIN_SPAWN_EGG = create("warped_piglin_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.WARPED_PIGLIN, 10051392, 0x167E86, new Item.Properties()));
 
     public static <T extends Item> Supplier<T> create(String key, Supplier<T> entry) {

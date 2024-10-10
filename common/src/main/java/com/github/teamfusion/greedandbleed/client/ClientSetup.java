@@ -40,6 +40,7 @@ public class ClientSetup {
         RenderRegistry.entityModel(EntityTypeRegistry.PYGMY, PygmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SHRYGMY, ShrygmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.HOGGART, HoggartRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.ZOMBIFIED_PYGMY, ZombifiedPygmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.WARPED_PIGLIN, WarpedPiglinRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.THROWN_DAMAGEABLE, ThrownItemRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.WARPED_SPIT, WarpedSpitRenderer::new);

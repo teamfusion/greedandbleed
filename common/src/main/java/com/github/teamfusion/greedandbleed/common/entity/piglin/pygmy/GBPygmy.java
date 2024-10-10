@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy;
 
 import com.github.teamfusion.greedandbleed.api.HasTaskManager;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
+import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -23,7 +24,6 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -156,7 +156,7 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
     }
 
     protected void finishConversion(ServerLevel serverLevel) {
-        ZombifiedPiglin zombifiedPiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, true);
+        ZombifiedPygmy zombifiedPiglin = this.convertTo(EntityTypeRegistry.ZOMBIFIED_PYGMY.get(), true);
         if (zombifiedPiglin != null) {
             zombifiedPiglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
         }
