@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
@@ -54,9 +53,9 @@ public class AmuletItem extends Item {
 
         float f = getPowerForTime(j);
         if (livingEntity instanceof Player player) {
-            ItemStack itemStack2 = getSoulSand(player);
-            if (!itemStack2.isEmpty()) {
-                EntityType<?> entityType = getMobAndConsume(level, player, itemStack2, f);
+            int experienceLevel = player.experienceLevel;
+            if (experienceLevel > 0) {
+                EntityType<?> entityType = getMobAndConsume(level, player, experienceLevel, f);
                 if (entityType != null) {
                     if (level.isClientSide) {
                         for (int i2 = 0; i2 < 8; i2++) {
@@ -101,44 +100,25 @@ public class AmuletItem extends Item {
         return super.interactLivingEntity(itemStack, player, livingEntity, interactionHand);
     }
 
-    public ItemStack getSoulSand(Player player) {
-        for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
-            ItemStack itemStack3 = player.getInventory().getItem(i);
-            if (!itemStack3.is(Items.SOUL_SAND)) continue;
-            if (itemStack3.is(Items.SOUL_SAND) && itemStack3.getCount() < 16) continue;
-            return itemStack3;
-        }
-        return ItemStack.EMPTY;
-    }
-
     //Check the mob anc consume
-    public EntityType<?> getMobAndConsume(Level level, Player player, ItemStack stack, float i) {
-        if (stack.getCount() >= 64 && i >= 1.0F) {
+    public EntityType<?> getMobAndConsume(Level level, Player player, int xp, float i) {
+        if ((xp >= 3 || player.getAbilities().instabuild) && i >= 1.0F) {
             if (!player.getAbilities().instabuild) {
-                stack.shrink(64);
+                player.giveExperienceLevels(-3);
                 player.getCooldowns().addCooldown(this, 80);
-                if (stack.isEmpty()) {
-                    player.getInventory().removeItem(stack);
-                }
             }
             return level.dimension() == Level.NETHER ? EntityType.ZOGLIN : EntityType.SKELETON;
-        } else if (stack.getCount() >= 32 && i >= 0.5F) {
+        } else if ((xp >= 2 || player.getAbilities().instabuild) && i >= 0.5F) {
             if (!player.getAbilities().instabuild) {
-                stack.shrink(32);
+                player.giveExperienceLevels(-2);
                 player.getCooldowns().addCooldown(this, 80);
-                if (stack.isEmpty()) {
-                    player.getInventory().removeItem(stack);
-                }
             }
             return level.dimension() == Level.NETHER ? EntityType.ZOMBIFIED_PIGLIN : EntityType.SKELETON;
 
-        } else if (stack.getCount() >= 16) {
+        } else if (xp >= 1 || player.getAbilities().instabuild) {
             if (!player.getAbilities().instabuild) {
-                stack.shrink(16);
+                player.giveExperienceLevels(-1);
                 player.getCooldowns().addCooldown(this, 80);
-                if (stack.isEmpty()) {
-                    player.getInventory().removeItem(stack);
-                }
             }
             return level.dimension() == Level.NETHER ? EntityTypeRegistry.SKELETAL_PIGLIN.get() : EntityType.ZOMBIE;
 
