@@ -109,6 +109,14 @@ public class Skoglet extends Monster {
         this.entityData.define(DATA_BABY_ID, false);
     }
 
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (DATA_BABY_ID.equals(data)) {
+            this.refreshDimensions();
+        }
+    }
+
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
