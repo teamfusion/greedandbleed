@@ -107,7 +107,7 @@ public class AmuletItem extends Item {
                 player.giveExperienceLevels(-3);
                 player.getCooldowns().addCooldown(this, 80);
             }
-            return level.dimension() == Level.NETHER ? EntityType.ZOGLIN : EntityType.SKELETON;
+            return level.dimension() == Level.NETHER ? EntityType.ZOGLIN : level.getRandom().nextBoolean() ? EntityType.STRAY : EntityType.HUSK;
         } else if ((xp >= 2 || player.getAbilities().instabuild) && i >= 0.5F) {
             if (!player.getAbilities().instabuild) {
                 player.giveExperienceLevels(-2);
