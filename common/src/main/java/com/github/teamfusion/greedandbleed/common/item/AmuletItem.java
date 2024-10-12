@@ -16,7 +16,10 @@ import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import static net.minecraft.world.item.BowItem.getPowerForTime;
 
@@ -31,10 +34,11 @@ public class AmuletItem extends Item {
         boolean bl = player.experienceLevel > 0;
         if (!player.getAbilities().instabuild && !bl) {
             return InteractionResultHolder.fail(itemStack);
-        } else {
+        } else if (level.clip(new ClipContext(player.getEyePosition(), player.getEyePosition().add(player.getLookAngle().scale(8.0F)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player)).getType() == HitResult.Type.BLOCK) {
             player.startUsingItem(interactionHand);
             return InteractionResultHolder.consume(itemStack);
         }
+        return InteractionResultHolder.fail(itemStack);
     }
 
     public int getUseDuration(ItemStack itemStack) {
@@ -53,18 +57,20 @@ public class AmuletItem extends Item {
 
         float f = getPowerForTime(j);
         if (livingEntity instanceof Player player) {
+            HitResult hitResult = level.clip(new ClipContext(player.getEyePosition(), player.getEyePosition().add(player.getLookAngle().scale(8.0F)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
             int experienceLevel = player.experienceLevel;
-            if (experienceLevel > 0) {
+            if (experienceLevel > 0 && hitResult.getType() == HitResult.Type.BLOCK) {
+                Vec3 vec3 = hitResult.getLocation();
                 EntityType<?> entityType = getMobAndConsume(level, player, experienceLevel, f);
                 if (entityType != null) {
                     if (level.isClientSide) {
                         for (int i2 = 0; i2 < 8; i2++) {
-                            level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, livingEntity.getX() + Mth.nextFloat(level.random, -0.5F, 0.5F), livingEntity.getY() + Mth.nextFloat(level.random, 0F, 3.0F), livingEntity.getZ() + Mth.nextFloat(level.random, -0.5F, 0.5F), 0, 0, 0);
+                            level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, vec3.x + Mth.nextFloat(level.random, -0.5F, 0.5F), vec3.y + Mth.nextFloat(level.random, 0F, 3.0F), vec3.z + Mth.nextFloat(level.random, -0.5F, 0.5F), 0, 0, 0);
                         }
                     } else {
                         Entity entity = entityType.create(level);
                         if (entity instanceof Mob mob && level instanceof ServerLevel serverLevel) {
-                            mob.setPos(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+                            mob.setPos(vec3.x, vec3.y, vec3.z);
                             mob.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
                             if (mob instanceof TraceAndSetOwner traceAndSetOwner) {
                                 traceAndSetOwner.setOwner(livingEntity);
@@ -89,12 +95,19 @@ public class AmuletItem extends Item {
     @Override
     public InteractionResult interactLivingEntity(ItemStack itemStack, Player player, LivingEntity livingEntity, InteractionHand interactionHand) {
         if (livingEntity instanceof IConvertToNormal convertToNormal) {
-            if (livingEntity.hasEffect(PotionRegistry.IMMUNITY.get()) && livingEntity.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
-                if (!convertToNormal.gb$hasCorrectConvert()) {
-                    convertToNormal.gb$setCanConvertToNormal(true);
+            int experienceLevel = player.experienceLevel;
+            if (experienceLevel >= 3 || player.getAbilities().mayfly) {
+                if (livingEntity.hasEffect(PotionRegistry.IMMUNITY.get()) && livingEntity.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+                    if (!convertToNormal.gb$hasCorrectConvert()) {
+                        convertToNormal.gb$setCanConvertToNormal(true);
+
+                        if (!player.getAbilities().mayfly) {
+                            player.giveExperienceLevels(-3);
+                        }
+                        player.getCooldowns().addCooldown(this, 80);
+                        return InteractionResult.sidedSuccess(player.level().isClientSide);
+                    }
                 }
-                player.getCooldowns().addCooldown(this, 80);
-                return InteractionResult.sidedSuccess(player.level().isClientSide);
             }
         }
         return super.interactLivingEntity(itemStack, player, livingEntity, interactionHand);
