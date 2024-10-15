@@ -3,7 +3,6 @@ package com.github.teamfusion.greedandbleed.api;
 import com.github.teamfusion.greedandbleed.common.entity.brain.Guarding;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
-import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PoiRegistry;
 import com.google.common.collect.ImmutableList;
@@ -82,19 +81,12 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
     }
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
-        return ImmutableList.of(Pair.of(AcquirePoi.create(poiTypeHolder -> {
-            return poiTypeHolder.is(PoiRegistry.PYGMY_STATION_KEY);
-        }, MemoryModuleType.JOB_SITE, false, Optional.empty()), 8), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 6, 18), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
+        return ImmutableList.of(Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 6, 18), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
     protected List<BehaviorControl<? super T>> getCoreTasks() {
         return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION_KEY), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
-    }
-
-    @Override
-    protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(ShrygmyTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
     }
 
     @Override
@@ -105,11 +97,6 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.is(ItemRegistry.PIGLIN_BELT.get())) {
-            stack.shrink(1);
-            this.addWorkTime(24000);
-            return InteractionResult.SUCCESS;
-        }
 
         return null;
     }

@@ -4,12 +4,15 @@ import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.*;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.client.renderer.*;
+import com.github.teamfusion.greedandbleed.client.screen.PygmyStationScreen;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchItem;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.MenuTypeRegistry;
 import com.github.teamfusion.greedandbleed.platform.client.RenderRegistry;
+import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -62,6 +65,7 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(WarpedPiglinRenderer.MAIN, WarpedPiglinModel::createBodyLayer);
         RenderRegistry.layerDefinition(WarpedSpitRenderer.LAYER_LOCATION, WarpedSpitModel::createBodyLayer);
         RenderRegistry.layerDefinition(GoldenShieldModel.LAYER_LOCATION, GoldenShieldModel::createBodyLayer);
+        MenuRegistry.registerScreenFactory(MenuTypeRegistry.PYGMY_STATION.get(), PygmyStationScreen::new);
     }
 
     public static void onInitialized() {

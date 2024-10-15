@@ -1,10 +1,11 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.brain.AcquirePygmyJobPoi;
 import com.github.teamfusion.greedandbleed.common.entity.brain.SlingshotAttack;
+import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
-import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PoiRegistry;
 import com.google.common.collect.ImmutableList;
@@ -90,9 +91,8 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
     }
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
-        return ImmutableList.of(Pair.of(AcquirePoi.create(poiTypeHolder -> {
-            return poiTypeHolder.is(PoiRegistry.PYGMY_STATION_KEY);
-        }, MemoryModuleType.JOB_SITE, false, Optional.empty()), 8), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 6, 18), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
+
+        return ImmutableList.of(Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 6, 18), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
@@ -102,7 +102,9 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(PygmyTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
+        return ImmutableList.of(StartAttacking.create(PygmyTaskManager::findNearestValidAttackTarget), AcquirePygmyJobPoi.create(poiTypeHolder -> {
+            return poiTypeHolder.is(PoiRegistry.PYGMY_STATION_KEY);
+        }, MemoryModuleType.JOB_SITE, false, Optional.empty()), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
     }
 
     @Override
@@ -112,11 +114,6 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.is(ItemRegistry.PIGLIN_BELT.get())) {
-            stack.shrink(1);
-            this.addWorkTime(24000);
-            return InteractionResult.SUCCESS;
-        }
 
         return null;
     }
@@ -129,6 +126,15 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
         }
         this.mob.getBrain().setActiveActivityIfPossible(Activity.WORK);
     }
+
+    public int getWorkTime() {
+        if (this.mob.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
+            return this.mob.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get();
+        } else {
+            return 0;
+        }
+    }
+
 
     @Override
     public void updateActivity() {

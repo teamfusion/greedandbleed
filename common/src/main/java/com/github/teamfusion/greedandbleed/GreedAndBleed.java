@@ -26,7 +26,9 @@ public class GreedAndBleed {
         BlockRegistry.BLOCKS.register();
         ItemRegistry.ITEMS.register();
         PoiRegistry.POI_TYPES.register();
+        BlockEntityRegistry.BLOCK_ENTITIES.register();
         CreativeTabRegistry.CREATIVE_TABS.register();
+        MenuTypeRegistry.MENU_TYPE.register();
 
         // ========== ENTITY REGISTRY ==========
         EntityTypeRegistry.ENTITIES.register();

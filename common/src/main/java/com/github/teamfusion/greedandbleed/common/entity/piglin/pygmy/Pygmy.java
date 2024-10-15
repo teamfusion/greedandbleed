@@ -156,4 +156,9 @@ public class Pygmy extends GBPygmy implements RangedAttackMob {
         this.playSound(SoundEvents.SNOW_GOLEM_SHOOT, 1.0f, 0.4f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
         this.level().addFreshEntity(snowball);
     }
+
+    @Override
+    public float getEquipmentDropChance(EquipmentSlot equipmentSlot) {
+        return super.getEquipmentDropChance(equipmentSlot);
+    }
 }
