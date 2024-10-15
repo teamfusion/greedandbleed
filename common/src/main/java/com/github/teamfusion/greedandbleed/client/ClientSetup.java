@@ -65,10 +65,11 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(WarpedPiglinRenderer.MAIN, WarpedPiglinModel::createBodyLayer);
         RenderRegistry.layerDefinition(WarpedSpitRenderer.LAYER_LOCATION, WarpedSpitModel::createBodyLayer);
         RenderRegistry.layerDefinition(GoldenShieldModel.LAYER_LOCATION, GoldenShieldModel::createBodyLayer);
-        MenuRegistry.registerScreenFactory(MenuTypeRegistry.PYGMY_STATION.get(), PygmyStationScreen::new);
     }
 
     public static void onInitialized() {
+        MenuRegistry.registerScreenFactory(MenuTypeRegistry.PYGMY_STATION.get(), PygmyStationScreen::new);
+
         RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_FUNGUS.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_LUMPS.get()));
         RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()));
         RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_TRAPDOOR.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_TRAPDOOR.get()));
