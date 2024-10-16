@@ -1,11 +1,11 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
-import com.github.teamfusion.greedandbleed.api.PygmyTaskManager;
 import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyArmorStandBlockEntity;
 import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyStationBlockEntity;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.item.ClubItem;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -33,7 +34,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel serverLevel, GBPygmy pygmy) {
-        if (serverLevel.getGameTime() - this.lastCheck < 300L) {
+        if (serverLevel.getGameTime() - this.lastCheck < 150L) {
             return false;
         } else {
             this.lastCheck = serverLevel.getGameTime();
@@ -56,12 +57,11 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
         BlockEntity blockEntity = serverLevel.getBlockEntity(globalPos.pos());
         if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock) {
 
-            if (pygmy.getTaskManager() instanceof PygmyTaskManager pygmyTaskManager) {
-                if (pygmyTaskManager.getWorkTime() <= 600) {
+            if (getWorkTime(pygmy) <= 600) {
                     ItemStack stack2 = findBelt(pygmyStationBlock);
                     if (!stack2.isEmpty()) {
                         stack2.shrink(1);
-                        pygmyTaskManager.addWorkTime(24000);
+                        addWorkTime(pygmy, 24000);
                     } else {
                         for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
                             if (pygmy.getEquipmentDropChance(equipmentSlot) >= 2.0F) {
@@ -86,7 +86,24 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
                         }
                     }
                 }
-            }
+        }
+    }
+
+
+    public void addWorkTime(GBPygmy gbPygmy, int time) {
+        if (gbPygmy.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
+            gbPygmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time + gbPygmy.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get());
+        } else {
+            gbPygmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time);
+        }
+        gbPygmy.getBrain().setActiveActivityIfPossible(Activity.WORK);
+    }
+
+    public int getWorkTime(GBPygmy gbPygmy) {
+        if (gbPygmy.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
+            return gbPygmy.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get();
+        } else {
+            return 0;
         }
     }
 
