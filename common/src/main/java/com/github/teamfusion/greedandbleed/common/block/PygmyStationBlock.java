@@ -3,6 +3,7 @@ package com.github.teamfusion.greedandbleed.common.block;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -44,5 +45,18 @@ public class PygmyStationBlock extends BaseEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new PygmyStationBlockEntity(blockPos, blockState);
+    }
+
+    @Override
+    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+        if (!blockState.is(blockState2.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(blockPos);
+            if (blockEntity instanceof PygmyStationBlockEntity) {
+                Containers.dropContents(level, blockPos, (PygmyStationBlockEntity) blockEntity);
+                level.updateNeighbourForOutputSignal(blockPos, this);
+            }
+
+            super.onRemove(blockState, level, blockPos, blockState2, bl);
+        }
     }
 }

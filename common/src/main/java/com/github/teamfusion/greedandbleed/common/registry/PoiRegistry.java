@@ -19,8 +19,8 @@ public class PoiRegistry {
     public static final Supplier<PoiType> PYGMY_STATION = POI_TYPES.create("pygmy_station",
         () -> new PoiType(
             ImmutableSet.<BlockState>builder().addAll(BlockRegistry.PYGMY_STATION.get().getStateDefinition().getPossibleStates()).build(),
-            10,
-            16
+                1,
+                1
         )
     );
 

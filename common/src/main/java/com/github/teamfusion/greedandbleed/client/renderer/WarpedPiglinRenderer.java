@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.client.renderer;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
+import com.github.teamfusion.greedandbleed.client.layers.CustomArmorLayer;
 import com.github.teamfusion.greedandbleed.client.models.WarpedPiglinModel;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.WarpedPiglin;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,6 +19,7 @@ public class WarpedPiglinRenderer<T extends WarpedPiglin> extends MobRenderer<T,
     public WarpedPiglinRenderer(EntityRendererProvider.Context context) {
         super(context, new WarpedPiglinModel<>(context.bakeLayer(MAIN)), 0.3F);
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
+        this.addLayer(new CustomArmorLayer<>(this, context));
     }
 
     @Override

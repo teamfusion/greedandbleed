@@ -33,8 +33,6 @@ public class WorkAtPygmyPoi extends Behavior<Pygmy> {
     protected boolean checkExtraStartConditions(ServerLevel serverLevel, Pygmy pygmy) {
         if (serverLevel.getGameTime() - this.lastCheck < 300L) {
             return false;
-        } else if (serverLevel.random.nextInt(2) != 0) {
-            return false;
         } else {
             this.lastCheck = serverLevel.getGameTime();
             GlobalPos globalPos = (GlobalPos) pygmy.getBrain().getMemory(MemoryModuleType.JOB_SITE).get();
@@ -55,7 +53,7 @@ public class WorkAtPygmyPoi extends Behavior<Pygmy> {
         if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock) {
 
             if (pygmy.getTaskManager() instanceof PygmyTaskManager pygmyTaskManager) {
-                if (pygmyTaskManager.getWorkTime() < 600) {
+                if (pygmyTaskManager.getWorkTime() <= 600) {
                     ItemStack stack2 = findBelt(pygmyStationBlock);
                     if (!stack2.isEmpty()) {
                         stack2.shrink(1);
@@ -75,7 +73,7 @@ public class WorkAtPygmyPoi extends Behavior<Pygmy> {
                 } else {
                     ItemStack stack = findArmor(pygmyStationBlock);
                     if (!stack.isEmpty()) {
-                        ItemStack stack2 = pygmy.equipItemIfPossible(stack);
+                        ItemStack stack2 = pygmy.equipItemIfPossible(stack.copy());
                         if (!stack2.isEmpty()) {
                             stack.shrink(1);
                         }
@@ -89,7 +87,7 @@ public class WorkAtPygmyPoi extends Behavior<Pygmy> {
         for (int i = 0; i < pygmyStationBlock.getItems().size(); ++i) {
             ItemStack itemstack = pygmyStationBlock.getItems().get(i);
             if (!itemstack.isEmpty() && (itemstack.getItem() instanceof ArmorItem) || itemstack.getItem() instanceof SwordItem || itemstack.getItem() instanceof ClubItem) {
-                return itemstack.copy();
+                return itemstack.split(1);
             }
         }
         return ItemStack.EMPTY;

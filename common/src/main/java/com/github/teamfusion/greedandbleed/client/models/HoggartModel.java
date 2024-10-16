@@ -1,8 +1,10 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
+import com.github.teamfusion.greedandbleed.api.IGBArmor;
 import com.github.teamfusion.greedandbleed.client.animation.HoggartAnimations;
 import com.github.teamfusion.greedandbleed.client.animation.HumanoidAnimations;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HierarchicalModel;
@@ -11,7 +13,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implements ArmedModel {
+public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implements ArmedModel, IGBArmor {
     public final ModelPart Entity;
     public final ModelPart hoggart;
 
@@ -125,5 +127,70 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
 
     protected ModelPart getArm(HumanoidArm humanoidArm) {
         return humanoidArm == HumanoidArm.LEFT ? this.left_arm : this.right_arm;
+    }
+
+    @Override
+    public void translateToHead(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.hoggart.translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.25F, 1.25F, 1.25F);
+    }
+
+    @Override
+    public void translateToChest(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.hoggart.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.translate(0, -(12F / 16F), 0);
+        poseStack.scale(1.25F, 1.25F, 1.25F);
+    }
+
+    @Override
+    public void translateToLeg(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.hoggart.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.25F, 1.25F, 1.25F);
+    }
+
+    @Override
+    public void translateToChestPat(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.hoggart.translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.25F, 1.25F, 1.25F);
+    }
+
+    @Override
+    public Iterable<ModelPart> rightHandArmors() {
+        return ImmutableList.of(this.right_arm);
+    }
+
+    @Override
+    public Iterable<ModelPart> leftHandArmors() {
+        return ImmutableList.of(this.left_arm);
+    }
+
+    @Override
+    public Iterable<ModelPart> rightLegPartArmors() {
+        return ImmutableList.of(this.right_leg);
+    }
+
+    @Override
+    public Iterable<ModelPart> leftLegPartArmors() {
+        return ImmutableList.of(this.left_leg);
+    }
+
+    @Override
+    public Iterable<ModelPart> bodyPartArmors() {
+        return ImmutableList.of(this.body);
+    }
+
+    @Override
+    public Iterable<ModelPart> headPartArmors() {
+        return ImmutableList.of(this.head);
     }
 }

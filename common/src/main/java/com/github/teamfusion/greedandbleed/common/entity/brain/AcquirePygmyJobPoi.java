@@ -70,7 +70,7 @@ public class AcquirePygmyJobPoi {
                                 return true;
                             }
                         };
-                        Set<Pair<Holder<PoiType>, BlockPos>> set = poiManager.findAllClosestFirstWithType(predicate, predicate2, pathfinderMob.blockPosition(), 48, PoiManager.Occupancy.HAS_SPACE).limit(5L).collect(Collectors.toSet());
+                        Set<Pair<Holder<PoiType>, BlockPos>> set = poiManager.findAllClosestFirstWithType(predicate, predicate2, pathfinderMob.blockPosition(), 16, PoiManager.Occupancy.HAS_SPACE).limit(5L).collect(Collectors.toSet());
                         Path path = findPathToPois(pathfinderMob, set);
                         if (path != null && path.canReach()) {
                             BlockPos blockPos = path.getTarget();

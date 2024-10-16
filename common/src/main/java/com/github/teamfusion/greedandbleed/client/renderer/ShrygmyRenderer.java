@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.client.renderer;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
+import com.github.teamfusion.greedandbleed.client.layers.CustomArmorLayer;
 import com.github.teamfusion.greedandbleed.client.models.ShrygmyModel;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -15,6 +16,7 @@ public class ShrygmyRenderer<T extends Shrygmy> extends MobRenderer<T, ShrygmyMo
     public ShrygmyRenderer(EntityRendererProvider.Context context) {
         super(context, new ShrygmyModel<>(context.bakeLayer(MAIN)), 0.3F);
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
+        this.addLayer(new CustomArmorLayer<>(this, context));
     }
 
     @Override

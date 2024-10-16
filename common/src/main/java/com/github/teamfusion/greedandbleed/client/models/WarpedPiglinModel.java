@@ -2,9 +2,11 @@ package com.github.teamfusion.greedandbleed.client.models;// Made with Blockbenc
 // Exported for Minecraft version 1.17 or later with Mojang mappings
 // Paste this class into your mod and generate all required imports
 
+import com.github.teamfusion.greedandbleed.api.IGBArmor;
 import com.github.teamfusion.greedandbleed.client.animation.HumanoidAnimations;
 import com.github.teamfusion.greedandbleed.client.animation.WarpedPiglinAnimation;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.WarpedPiglin;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HierarchicalModel;
@@ -13,13 +15,15 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel<T> implements ArmedModel {
+public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel<T> implements ArmedModel, IGBArmor {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     private final ModelPart Entity;
     private final ModelPart body;
 
     private final ModelPart right_arm;
     private final ModelPart left_arm;
+    public final ModelPart right_leg;
+    public final ModelPart left_leg;
     private final ModelPart head;
 
     public WarpedPiglinModel(ModelPart root) {
@@ -29,6 +33,8 @@ public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel
 
         this.right_arm = this.body.getChild("right_arm");
         this.left_arm = this.body.getChild("left_arm");
+        this.right_leg = this.Entity.getChild("right_leg");
+        this.left_leg = this.Entity.getChild("left_leg");
         this.head = this.body.getChild("head");
     }
 
@@ -127,5 +133,65 @@ public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel
 
     protected ModelPart getArm(HumanoidArm humanoidArm) {
         return humanoidArm == HumanoidArm.LEFT ? this.left_arm : this.right_arm;
+    }
+
+    @Override
+    public void translateToHead(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.1F, 1.1F, 1.1F);
+    }
+
+    @Override
+    public void translateToChest(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.1F, 1.1F, 1.1F);
+    }
+
+    @Override
+    public void translateToLeg(ModelPart part, PoseStack poseStack) {
+        this.body.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.1F, 1.1F, 1.1F);
+    }
+
+    @Override
+    public void translateToChestPat(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.1F, 1.1F, 1.1F);
+    }
+
+    @Override
+    public Iterable<ModelPart> rightHandArmors() {
+        return ImmutableList.of(this.right_arm);
+    }
+
+    @Override
+    public Iterable<ModelPart> leftHandArmors() {
+        return ImmutableList.of(this.left_arm);
+    }
+
+    @Override
+    public Iterable<ModelPart> rightLegPartArmors() {
+        return ImmutableList.of(this.right_leg);
+    }
+
+    @Override
+    public Iterable<ModelPart> leftLegPartArmors() {
+        return ImmutableList.of(this.left_leg);
+    }
+
+    @Override
+    public Iterable<ModelPart> bodyPartArmors() {
+        return ImmutableList.of(this.body);
+    }
+
+    @Override
+    public Iterable<ModelPart> headPartArmors() {
+        return ImmutableList.of(this.head);
     }
 }

@@ -92,7 +92,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
 
-        return ImmutableList.of(Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 6, 18), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
+        return ImmutableList.of(Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 1, 16), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override

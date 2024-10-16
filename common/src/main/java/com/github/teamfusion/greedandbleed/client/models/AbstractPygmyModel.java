@@ -1,7 +1,9 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
+import com.github.teamfusion.greedandbleed.api.IGBArmor;
 import com.github.teamfusion.greedandbleed.client.animation.HumanoidAnimations;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HierarchicalModel;
@@ -11,13 +13,15 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.monster.Monster;
 
-public class AbstractPygmyModel<T extends Monster> extends HierarchicalModel<T> implements ArmedModel {
+public class AbstractPygmyModel<T extends Monster> extends HierarchicalModel<T> implements ArmedModel, IGBArmor {
     private final ModelPart Entity;
 
     private final ModelPart body;
 
     public final ModelPart right_arm;
     public final ModelPart left_arm;
+    public final ModelPart right_leg;
+    public final ModelPart left_leg;
     private final ModelPart head;
 
     public AbstractPygmyModel(ModelPart root) {
@@ -27,6 +31,8 @@ public class AbstractPygmyModel<T extends Monster> extends HierarchicalModel<T> 
 
         this.right_arm = this.body.getChild("right_arm");
         this.left_arm = this.body.getChild("left_arm");
+        this.right_leg = this.body.getChild("right_leg");
+        this.left_leg = this.body.getChild("left_leg");
         this.head = this.body.getChild("head");
     }
 
@@ -115,5 +121,68 @@ public class AbstractPygmyModel<T extends Monster> extends HierarchicalModel<T> 
     @Override
     public ModelPart root() {
         return Entity;
+    }
+
+
+    @Override
+    public void translateToHead(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.1F, 1.1F, 1.1F);
+    }
+
+    @Override
+    public void translateToChest(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.1F, 1.1F, 1.1F);
+    }
+
+    @Override
+    public void translateToLeg(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1, 0.6F, 1);
+    }
+
+    @Override
+    public void translateToChestPat(ModelPart part, PoseStack poseStack) {
+        this.Entity.translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        part.translateAndRotate(poseStack);
+        poseStack.scale(1.1F, 1.1F, 1.1F);
+    }
+
+    @Override
+    public Iterable<ModelPart> rightHandArmors() {
+        return ImmutableList.of(this.right_arm);
+    }
+
+    @Override
+    public Iterable<ModelPart> leftHandArmors() {
+        return ImmutableList.of(this.left_arm);
+    }
+
+    @Override
+    public Iterable<ModelPart> rightLegPartArmors() {
+        return ImmutableList.of(this.right_leg);
+    }
+
+    @Override
+    public Iterable<ModelPart> leftLegPartArmors() {
+        return ImmutableList.of(this.left_leg);
+    }
+
+    @Override
+    public Iterable<ModelPart> bodyPartArmors() {
+        return ImmutableList.of(this.body);
+    }
+
+    @Override
+    public Iterable<ModelPart> headPartArmors() {
+        return ImmutableList.of(this.head);
     }
 }

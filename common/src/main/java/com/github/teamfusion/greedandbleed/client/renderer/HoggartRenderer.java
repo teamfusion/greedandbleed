@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.client.renderer;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
+import com.github.teamfusion.greedandbleed.client.layers.CustomArmorLayer;
 import com.github.teamfusion.greedandbleed.client.models.HoggartBackPackModel;
 import com.github.teamfusion.greedandbleed.client.models.HoggartModel;
 import com.github.teamfusion.greedandbleed.client.renderer.layer.SecondModelLayer;
@@ -20,6 +21,7 @@ public class HoggartRenderer<T extends Hoggart> extends MobRenderer<T, HoggartMo
         super(context, new HoggartModel<>(context.bakeLayer(MAIN)), 0.3F);
         this.addLayer(new SecondModelLayer<>(this, TEXTURE_BACKPACK, new HoggartBackPackModel<>(context.bakeLayer(MAIN))));
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
+        this.addLayer(new CustomArmorLayer<>(this, context));
     }
 
     @Override
