@@ -135,7 +135,7 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
         this.hoggart.translateAndRotate(poseStack);
         this.body.translateAndRotate(poseStack);
         part.translateAndRotate(poseStack);
-        poseStack.scale(1.25F, 1.25F, 1.25F);
+        poseStack.scale(1.15F, 1.15F, 1.15F);
     }
 
     @Override

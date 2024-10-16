@@ -135,7 +135,7 @@ public class AbstractPygmyModel<T extends Monster> extends HierarchicalModel<T> 
     @Override
     public void translateToChest(ModelPart part, PoseStack poseStack) {
         this.Entity.translateAndRotate(poseStack);
-        this.body.translateAndRotate(poseStack);
+        //this.body.translateAndRotate(poseStack);
         part.translateAndRotate(poseStack);
         poseStack.scale(1.1F, 1.1F, 1.1F);
     }
