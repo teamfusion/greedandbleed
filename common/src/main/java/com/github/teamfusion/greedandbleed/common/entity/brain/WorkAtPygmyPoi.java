@@ -37,7 +37,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
         } else {
             this.lastCheck = serverLevel.getGameTime();
             GlobalPos globalPos = (GlobalPos) pygmy.getBrain().getMemory(MemoryModuleType.JOB_SITE).get();
-            return globalPos.dimension() == serverLevel.dimension() && globalPos.pos().closerToCenterThan(pygmy.position(), 1.73);
+            return globalPos.dimension() == serverLevel.dimension() && globalPos.pos().closerToCenterThan(pygmy.position(), 3);
         }
     }
 
