@@ -15,7 +15,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -23,6 +25,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.util.GoalUtils;
+import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -155,6 +158,27 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
         }
     }
 
+    @Override
+    public void die(DamageSource p_35419_) {
+        Entity entity = p_35419_.getEntity();
+
+        if (this.brain.getMemory(MemoryModuleType.JOB_SITE).isPresent()) {
+            if (this.level() instanceof ServerLevel serverLevel) {
+                //don't forget release poi
+                ServerLevel serverLevelAnother = (serverLevel.getServer().getLevel(this.brain.getMemory(MemoryModuleType.JOB_SITE).get().dimension()));
+                if (serverLevelAnother != null) {
+                    PoiManager poimanager = serverLevelAnother.getPoiManager();
+                    if (poimanager.exists(this.brain.getMemory(MemoryModuleType.JOB_SITE).get().pos(), (p_217230_) -> {
+                        return true;
+                    })) {
+                        poimanager.release(this.brain.getMemory(MemoryModuleType.JOB_SITE).get().pos());
+                    }
+                }
+            }
+        }
+        super.die(p_35419_);
+    }
+
     protected void playConvertedSound() {
         this.playSound(SoundEvents.PIGLIN_CONVERTED_TO_ZOMBIFIED, 1.0F, this.getVoicePitch());
     }
@@ -227,5 +251,10 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
     @Override
     protected SoundEvent getDeathSound() {
         return SoundEvents.PIGLIN_DEATH;
+    }
+
+    @Override
+    public float getEquipmentDropChance(EquipmentSlot equipmentSlot) {
+        return super.getEquipmentDropChance(equipmentSlot);
     }
 }

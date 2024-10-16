@@ -1,9 +1,9 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
-import com.github.teamfusion.greedandbleed.api.PygmyTaskManager;
 import com.github.teamfusion.greedandbleed.common.block.PygmyStationBlockEntity;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.pathfinder.Path;
@@ -40,10 +41,10 @@ public class AcquirePygmyJobPoi {
     public AcquirePygmyJobPoi() {
     }
 
-    public static BehaviorControl<Pygmy> create(Predicate<Holder<PoiType>> predicate, MemoryModuleType<GlobalPos> memoryModuleType, boolean bl, Optional<Byte> optional) {
+    public static BehaviorControl<GBPygmy> create(Predicate<Holder<PoiType>> predicate, MemoryModuleType<GlobalPos> memoryModuleType, boolean bl, Optional<Byte> optional) {
         MutableLong mutableLong = new MutableLong(0L);
         Long2ObjectMap<AcquirePygmyJobPoi.JitteredLinearRetry> long2ObjectMap = new Long2ObjectOpenHashMap();
-        OneShot<Pygmy> oneShot = BehaviorBuilder.create((instance) -> {
+        OneShot<GBPygmy> oneShot = BehaviorBuilder.create((instance) -> {
             return instance.group(instance.absent(memoryModuleType)).apply(instance, (memoryAccessor) -> {
                 return (serverLevel, pathfinderMob, l) -> {
                     if (bl && pathfinderMob.isBaby()) {
@@ -88,7 +89,7 @@ public class AcquirePygmyJobPoi {
                                         });
                                         long2ObjectMap.clear();
                                         stack.shrink(1);
-                                        ((PygmyTaskManager) pathfinderMob.getTaskManager()).addWorkTime(24000);
+                                        addWorkTime(pathfinderMob, 24000);
                                         pathfinderMob.playSound(SoundEvents.ITEM_PICKUP, 0.7F, 1.25F);
                                         pathfinderMob.swing(InteractionHand.MAIN_HAND);
                                         DebugPackets.sendPoiTicketCountPacket(serverLevel, blockPos);
@@ -112,6 +113,15 @@ public class AcquirePygmyJobPoi {
             });
         });
         return oneShot;
+    }
+
+    public static void addWorkTime(GBPygmy gbPygmy, int time) {
+        if (gbPygmy.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
+            gbPygmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time + gbPygmy.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get());
+        } else {
+            gbPygmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time);
+        }
+        gbPygmy.getBrain().setActiveActivityIfPossible(Activity.WORK);
     }
 
     @Nullable

@@ -2,7 +2,7 @@ package com.github.teamfusion.greedandbleed.common.entity.brain;
 
 import com.github.teamfusion.greedandbleed.api.PygmyTaskManager;
 import com.github.teamfusion.greedandbleed.common.block.PygmyStationBlockEntity;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.item.ClubItem;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.google.common.collect.ImmutableMap;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Optional;
 
-public class WorkAtPygmyPoi extends Behavior<Pygmy> {
+public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
     private static final int CHECK_COOLDOWN = 300;
     private static final double DISTANCE = 1.73;
     private long lastCheck;
@@ -30,7 +30,8 @@ public class WorkAtPygmyPoi extends Behavior<Pygmy> {
         super(ImmutableMap.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT, MemoryModuleType.LOOK_TARGET, MemoryStatus.REGISTERED));
     }
 
-    protected boolean checkExtraStartConditions(ServerLevel serverLevel, Pygmy pygmy) {
+    @Override
+    protected boolean checkExtraStartConditions(ServerLevel serverLevel, GBPygmy pygmy) {
         if (serverLevel.getGameTime() - this.lastCheck < 300L) {
             return false;
         } else {
@@ -40,15 +41,16 @@ public class WorkAtPygmyPoi extends Behavior<Pygmy> {
         }
     }
 
-    protected void start(ServerLevel serverLevel, Pygmy pygmy, long l) {
-        Brain<Pygmy> brain = pygmy.getBrain();
+    @Override
+    protected void start(ServerLevel serverLevel, GBPygmy pygmy, long l) {
+        Brain<?> brain = pygmy.getBrain();
         brain.getMemory(MemoryModuleType.JOB_SITE).ifPresent((globalPos) -> {
             brain.setMemory(MemoryModuleType.LOOK_TARGET, new BlockPosTracker(globalPos.pos()));
             this.useWorkstation(serverLevel, globalPos, pygmy);
         });
     }
 
-    protected void useWorkstation(ServerLevel serverLevel, GlobalPos globalPos, Pygmy pygmy) {
+    protected void useWorkstation(ServerLevel serverLevel, GlobalPos globalPos, GBPygmy pygmy) {
         BlockEntity blockEntity = serverLevel.getBlockEntity(globalPos.pos());
         if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock) {
 
@@ -103,7 +105,8 @@ public class WorkAtPygmyPoi extends Behavior<Pygmy> {
         return ItemStack.EMPTY;
     }
 
-    protected boolean canStillUse(ServerLevel serverLevel, Pygmy pygmy, long l) {
+    @Override
+    protected boolean canStillUse(ServerLevel serverLevel, GBPygmy pygmy, long l) {
         Optional<GlobalPos> optional = pygmy.getBrain().getMemory(MemoryModuleType.JOB_SITE);
         if (!optional.isPresent()) {
             return false;

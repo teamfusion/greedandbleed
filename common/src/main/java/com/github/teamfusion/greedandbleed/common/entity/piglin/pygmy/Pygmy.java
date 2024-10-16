@@ -14,7 +14,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -22,7 +21,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
-import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.item.ItemStack;
@@ -51,25 +49,7 @@ public class Pygmy extends GBPygmy implements RangedAttackMob {
                 .add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.ATTACK_DAMAGE, 2.0F);
     }
 
-    public void die(DamageSource p_35419_) {
-        Entity entity = p_35419_.getEntity();
 
-        if (this.brain.getMemory(MemoryModuleType.JOB_SITE).isPresent()) {
-            if (this.level() instanceof ServerLevel serverLevel) {
-                //don't forget release poi
-                ServerLevel serverLevelAnother = (serverLevel.getServer().getLevel(this.brain.getMemory(MemoryModuleType.JOB_SITE).get().dimension()));
-                if (serverLevelAnother != null) {
-                    PoiManager poimanager = serverLevelAnother.getPoiManager();
-                    if (poimanager.exists(this.brain.getMemory(MemoryModuleType.JOB_SITE).get().pos(), (p_217230_) -> {
-                        return true;
-                    })) {
-                        poimanager.release(this.brain.getMemory(MemoryModuleType.JOB_SITE).get().pos());
-                    }
-                }
-            }
-        }
-        super.die(p_35419_);
-    }
 
     @Override
     protected void customServerAiStep() {
@@ -155,10 +135,5 @@ public class Pygmy extends GBPygmy implements RangedAttackMob {
         snowball.setItem(livingEntity.getOffhandItem().copy());
         this.playSound(SoundEvents.SNOW_GOLEM_SHOOT, 1.0f, 0.4f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
         this.level().addFreshEntity(snowball);
-    }
-
-    @Override
-    public float getEquipmentDropChance(EquipmentSlot equipmentSlot) {
-        return super.getEquipmentDropChance(equipmentSlot);
     }
 }

@@ -1,8 +1,11 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.brain.AcquirePygmyJobPoi;
+import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.PoiRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
@@ -55,16 +58,36 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
         this.initCoreActivity(0);
         this.initIdleActivity(10);
         this.initFightActivity(10);
+        this.initWorkActivity(10);
+    }
+
+    @Override
+    protected void initWorkActivity(int priorityStart) {
+        dynamicBrain.addActivityAndRemoveMemoryWhenStopped(Activity.WORK, priorityStart, ImmutableList.of(StartAttacking.create(HoggartTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createWorkMovementBehaviors()), MemoryRegistry.WORK_TIME.get());
+
+    }
+
+    protected RunOne<T> createWorkMovementBehaviors() {
+        return new RunOne<>(
+                getWorkMovementBehaviors()
+        );
+    }
+
+    protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
+
+        return ImmutableList.of(Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 1, 16), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
     protected List<BehaviorControl<? super T>> getCoreTasks() {
-        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create());
+        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION_KEY), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
     }
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(HoggartTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors());
+        return ImmutableList.of(StartAttacking.create(HoggartTaskManager::findNearestValidAttackTarget), AcquirePygmyJobPoi.create(poiTypeHolder -> {
+            return poiTypeHolder.is(PoiRegistry.PYGMY_STATION_KEY);
+        }, MemoryModuleType.JOB_SITE, false, Optional.empty()), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
     }
 
     @Override

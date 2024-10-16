@@ -1,6 +1,8 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.brain.AcquirePygmyJobPoi;
 import com.github.teamfusion.greedandbleed.common.entity.brain.Guarding;
+import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
@@ -81,7 +83,8 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
     }
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
-        return ImmutableList.of(Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 6, 18), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
+
+        return ImmutableList.of(Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 1, 16), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
@@ -92,6 +95,13 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
         return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.05f), MeleeAttack.create(20), new Guarding<>());
+    }
+
+    @Override
+    protected List<BehaviorControl<? super T>> getIdleTasks() {
+        return ImmutableList.of(StartAttacking.create(ShrygmyTaskManager::findNearestValidAttackTarget), AcquirePygmyJobPoi.create(poiTypeHolder -> {
+            return poiTypeHolder.is(PoiRegistry.PYGMY_STATION_KEY);
+        }, MemoryModuleType.JOB_SITE, false, Optional.empty()), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
     }
 
     @Override
