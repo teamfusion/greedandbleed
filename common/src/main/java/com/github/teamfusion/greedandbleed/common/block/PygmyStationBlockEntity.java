@@ -6,14 +6,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity {
+public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity implements MenuProvider {
     public static final int CONTAINER_SIZE = 5;
     private NonNullList<ItemStack> items = NonNullList.withSize(5, ItemStack.EMPTY);
 
@@ -38,8 +41,13 @@ public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity {
     }
 
     @Override
+    public boolean stillValid(Player player) {
+        return Container.stillValidBlockEntity(this, player);
+    }
+
+    @Override
     protected AbstractContainerMenu createMenu(int i, Inventory inventory) {
-        return new PygmyStationMenu(i, inventory);
+        return new PygmyStationMenu(i, inventory, this);
     }
 
     @Override

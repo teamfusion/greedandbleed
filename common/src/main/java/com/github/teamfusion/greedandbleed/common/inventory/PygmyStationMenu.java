@@ -16,7 +16,7 @@ public class PygmyStationMenu extends AbstractContainerMenu {
     private static final int INV_SLOT_END = 36;
     private static final int USE_ROW_SLOT_START = 36;
     private static final int USE_ROW_SLOT_END = 45;
-    private final Container dispenser;
+    private final Container station;
 
     public PygmyStationMenu(int i, Inventory inventory) {
         this(i, inventory, new SimpleContainer(5));
@@ -25,12 +25,12 @@ public class PygmyStationMenu extends AbstractContainerMenu {
     public PygmyStationMenu(int i, Inventory inventory, Container container) {
         super(MenuTypeRegistry.PYGMY_STATION.get(), i);
         checkContainerSize(container, 5);
-        this.dispenser = container;
+        this.station = container;
         container.startOpen(inventory.player);
 
         int j;
         int k;
-        for (j = 0; j < 3; ++j) {
+        for (j = 0; j < 5; ++j) {
             if (j == 0) {
 
                 this.addSlot(new Slot(container, j, 80, 37) {
@@ -58,7 +58,7 @@ public class PygmyStationMenu extends AbstractContainerMenu {
     }
 
     public boolean stillValid(Player player) {
-        return this.dispenser.stillValid(player);
+        return this.station.stillValid(player);
     }
 
     public ItemStack quickMoveStack(Player player, int i) {
@@ -93,6 +93,6 @@ public class PygmyStationMenu extends AbstractContainerMenu {
 
     public void removed(Player player) {
         super.removed(player);
-        this.dispenser.stopOpen(player);
+        this.station.stopOpen(player);
     }
 }

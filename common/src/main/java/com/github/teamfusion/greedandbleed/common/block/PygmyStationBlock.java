@@ -1,9 +1,10 @@
 package com.github.teamfusion.greedandbleed.common.block;
 
+import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -30,8 +31,8 @@ public class PygmyStationBlock extends BaseEntityBlock {
 
     protected void openContainer(Level level, BlockPos blockPos, Player player) {
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
-        if (blockEntity instanceof PygmyStationBlockEntity) {
-            player.openMenu((MenuProvider) blockEntity);
+        if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock && player instanceof ServerPlayer serverPlayer) {
+            MenuRegistry.openMenu(serverPlayer, pygmyStationBlock);
         }
 
     }
@@ -42,6 +43,6 @@ public class PygmyStationBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return null;
+        return new PygmyStationBlockEntity(blockPos, blockState);
     }
 }
