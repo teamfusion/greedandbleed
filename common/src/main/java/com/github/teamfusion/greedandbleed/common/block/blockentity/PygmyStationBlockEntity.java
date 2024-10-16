@@ -1,4 +1,4 @@
-package com.github.teamfusion.greedandbleed.common.block;
+package com.github.teamfusion.greedandbleed.common.block.blockentity;
 
 import com.github.teamfusion.greedandbleed.common.inventory.PygmyStationMenu;
 import com.github.teamfusion.greedandbleed.common.registry.BlockEntityRegistry;
@@ -17,8 +17,8 @@ import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity implements MenuProvider {
-    public static final int CONTAINER_SIZE = 5;
-    private NonNullList<ItemStack> items = NonNullList.withSize(5, ItemStack.EMPTY);
+    public static final int CONTAINER_SIZE = 1;
+    private NonNullList<ItemStack> items = NonNullList.withSize(1, ItemStack.EMPTY);
 
     public PygmyStationBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(BlockEntityRegistry.PYGMY_STATION.get(), blockPos, blockState);
@@ -71,6 +71,6 @@ public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity im
 
     @Override
     public int getContainerSize() {
-        return 5;
+        return 1;
     }
 }

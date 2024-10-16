@@ -61,7 +61,8 @@ public class CreativeTabRegistry {
                             BlockRegistry.HOGDEW_CLUSTER,
                             BlockRegistry.HOGDEW_FUNGUS,
                             BlockRegistry.HOGDEW_LUMPS,
-                            BlockRegistry.PYGMY_STATION
+                            BlockRegistry.PYGMY_STATION,
+                            BlockRegistry.PYGMY_ARMOR_STAND
                     ).map(sup -> {
                         return sup.get().asItem().getDefaultInstance();
                     }).toList());

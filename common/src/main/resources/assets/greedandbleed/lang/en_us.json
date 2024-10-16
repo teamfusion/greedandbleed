@@ -14,6 +14,7 @@
   "block.greedandbleed.hogdew_fungus": "Hogdew Fungus",
   "block.greedandbleed.hogdew_lumps": "Hogdew Lumps",
   "block.greedandbleed.pygmy_station": "Pygmy Station",
+  "block.greedandbleed.pygmy_armor_stand": "Pygmy Armor Stand",
   "entity.greedandbleed.pygmy": "Pygmy",
   "entity.greedandbleed.shrygmy": "Shrygmy",
   "entity.greedandbleed.hoggart": "Hoggart",
@@ -68,5 +69,6 @@
   "death.attack.warped": "%1$s was Warped by %2$s",
   "death.attack.warped_infect": "%1$s was Warped",
   "death.attack.warped_link": "%1$s was Warped because of %2$s's damage",
-  "container.greedandbleed.pygmy_station": "Pygmy Station"
+  "container.greedandbleed.pygmy_station": "Pygmy Station",
+  "container.greedandbleed.pygmy_armor_stand": "Pygmy Armor Stand"
 }

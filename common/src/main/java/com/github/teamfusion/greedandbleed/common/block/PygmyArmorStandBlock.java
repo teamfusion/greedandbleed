@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.block;
 
-import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyStationBlockEntity;
+import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyArmorStandBlockEntity;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,8 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-public class PygmyStationBlock extends BaseEntityBlock {
-    public PygmyStationBlock(Properties properties) {
+public class PygmyArmorStandBlock extends BaseEntityBlock {
+    public PygmyArmorStandBlock(Properties properties) {
         super(properties);
     }
 
@@ -33,7 +33,7 @@ public class PygmyStationBlock extends BaseEntityBlock {
 
     protected void openContainer(Level level, BlockPos blockPos, Player player) {
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
-        if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock && player instanceof ServerPlayer serverPlayer) {
+        if (blockEntity instanceof PygmyArmorStandBlockEntity pygmyStationBlock && player instanceof ServerPlayer serverPlayer) {
             MenuRegistry.openMenu(serverPlayer, pygmyStationBlock);
         }
 
@@ -45,15 +45,15 @@ public class PygmyStationBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new PygmyStationBlockEntity(blockPos, blockState);
+        return new PygmyArmorStandBlockEntity(blockPos, blockState);
     }
 
     @Override
     public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
         if (!blockState.is(blockState2.getBlock())) {
             BlockEntity blockEntity = level.getBlockEntity(blockPos);
-            if (blockEntity instanceof PygmyStationBlockEntity) {
-                Containers.dropContents(level, blockPos, (PygmyStationBlockEntity) blockEntity);
+            if (blockEntity instanceof PygmyArmorStandBlockEntity) {
+                Containers.dropContents(level, blockPos, (PygmyArmorStandBlockEntity) blockEntity);
                 level.updateNeighbourForOutputSignal(blockPos, this);
             }
 

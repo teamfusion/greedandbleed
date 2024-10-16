@@ -1,6 +1,5 @@
 package com.github.teamfusion.greedandbleed.common.inventory;
 
-import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MenuTypeRegistry;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -10,32 +9,24 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class PygmyStationMenu extends AbstractContainerMenu {
+public class PygmyArmorStandMenu extends AbstractContainerMenu {
     private final Container station;
 
-    public PygmyStationMenu(int i, Inventory inventory) {
-        this(i, inventory, new SimpleContainer(1));
+    public PygmyArmorStandMenu(int i, Inventory inventory) {
+        this(i, inventory, new SimpleContainer(4));
     }
 
-    public PygmyStationMenu(int i, Inventory inventory, Container container) {
-        super(MenuTypeRegistry.PYGMY_STATION.get(), i);
-        checkContainerSize(container, 1);
+    public PygmyArmorStandMenu(int i, Inventory inventory, Container container) {
+        super(MenuTypeRegistry.PYGMY_ARMOR_STAND.get(), i);
+        checkContainerSize(container, 4);
         this.station = container;
         container.startOpen(inventory.player);
 
         int j;
         int k;
-
-        this.addSlot(new Slot(container, 0, 80, 37) {
-                    @Override
-                    public boolean mayPlace(ItemStack itemStack) {
-                        return itemStack.is(ItemRegistry.PIGLIN_BELT.get());
-                    }
-                });
-            /* else {
-                this.addSlot(new Slot(container, j, 80 + j * 18, 37));
-            }*/
-
+        for (j = 0; j < 4; ++j) {
+            this.addSlot(new Slot(container, j, 98 + j * 18, 37));
+        }
 
 
         for (j = 0; j < 3; ++j) {
@@ -60,10 +51,12 @@ public class PygmyStationMenu extends AbstractContainerMenu {
         if (slot != null && slot.hasItem()) {
             ItemStack itemStack2 = slot.getItem();
             itemStack = itemStack2.copy();
-            if (i < 1) {
-                if (!this.moveItemStackTo(itemStack2, 1, 41 - 4, true)) {
+            if (i < 4) {
+                if (!this.moveItemStackTo(itemStack2, 4, 41 - 1, true)) {
                     return ItemStack.EMPTY;
                 }
+            } else if (!this.moveItemStackTo(itemStack2, 0, 4, false)) {
+                return ItemStack.EMPTY;
             }
 
             if (itemStack2.isEmpty()) {

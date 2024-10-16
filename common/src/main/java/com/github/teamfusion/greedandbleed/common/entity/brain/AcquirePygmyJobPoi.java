@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
-import com.github.teamfusion.greedandbleed.common.block.PygmyStationBlockEntity;
+import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyStationBlockEntity;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;

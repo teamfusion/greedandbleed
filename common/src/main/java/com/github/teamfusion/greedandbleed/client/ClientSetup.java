@@ -4,6 +4,7 @@ import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.*;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
 import com.github.teamfusion.greedandbleed.client.renderer.*;
+import com.github.teamfusion.greedandbleed.client.screen.PygmyArmorStandScreen;
 import com.github.teamfusion.greedandbleed.client.screen.PygmyStationScreen;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchItem;
@@ -69,6 +70,7 @@ public class ClientSetup {
 
     public static void onInitialized() {
         MenuRegistry.registerScreenFactory(MenuTypeRegistry.PYGMY_STATION.get(), PygmyStationScreen::new);
+        MenuRegistry.registerScreenFactory(MenuTypeRegistry.PYGMY_ARMOR_STAND.get(), PygmyArmorStandScreen::new);
 
         RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_FUNGUS.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_LUMPS.get()));
         RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()));

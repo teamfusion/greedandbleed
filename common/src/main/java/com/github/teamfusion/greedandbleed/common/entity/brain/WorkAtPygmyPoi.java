@@ -1,7 +1,8 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
 import com.github.teamfusion.greedandbleed.api.PygmyTaskManager;
-import com.github.teamfusion.greedandbleed.common.block.PygmyStationBlockEntity;
+import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyArmorStandBlockEntity;
+import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyStationBlockEntity;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.item.ClubItem;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
@@ -51,6 +52,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
     }
 
     protected void useWorkstation(ServerLevel serverLevel, GlobalPos globalPos, GBPygmy pygmy) {
+        BlockEntity armorStand = serverLevel.getBlockEntity(globalPos.pos().below());
         BlockEntity blockEntity = serverLevel.getBlockEntity(globalPos.pos());
         if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock) {
 
@@ -73,11 +75,14 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
                         }
                     }
                 } else {
-                    ItemStack stack = findArmor(pygmyStationBlock);
-                    if (!stack.isEmpty()) {
-                        ItemStack stack2 = pygmy.equipItemIfPossible(stack.copy());
-                        if (!stack2.isEmpty()) {
-                            stack.shrink(1);
+                    if (armorStand instanceof PygmyArmorStandBlockEntity armorStandBlockEntity) {
+
+                        ItemStack stack = findArmor(armorStandBlockEntity);
+                        if (!stack.isEmpty()) {
+                            ItemStack stack2 = pygmy.equipItemIfPossible(stack.copy());
+                            if (!stack2.isEmpty()) {
+                                stack.shrink(1);
+                            }
                         }
                     }
                 }
@@ -85,7 +90,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
         }
     }
 
-    private ItemStack findArmor(PygmyStationBlockEntity pygmyStationBlock) {
+    private ItemStack findArmor(PygmyArmorStandBlockEntity pygmyStationBlock) {
         for (int i = 0; i < pygmyStationBlock.getItems().size(); ++i) {
             ItemStack itemstack = pygmyStationBlock.getItems().get(i);
             if (!itemstack.isEmpty() && (itemstack.getItem() instanceof ArmorItem) || itemstack.getItem() instanceof SwordItem || itemstack.getItem() instanceof ClubItem) {
