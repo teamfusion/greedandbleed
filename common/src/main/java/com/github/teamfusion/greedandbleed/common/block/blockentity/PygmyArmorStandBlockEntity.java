@@ -37,7 +37,7 @@ public class PygmyArmorStandBlockEntity extends RandomizableContainerBlockEntity
 
     @Override
     protected Component getDefaultName() {
-        return Component.translatable("container.greedandbleed.pygmy_station");
+        return Component.translatable("container.greedandbleed.pygmy_armor_stand");
     }
 
     @Override
