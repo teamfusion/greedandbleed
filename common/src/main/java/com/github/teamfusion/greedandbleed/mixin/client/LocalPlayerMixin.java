@@ -19,6 +19,7 @@ public abstract class LocalPlayerMixin extends Player {
     @Shadow
     public Input input;
 
+
     public LocalPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
         super(level, blockPos, f, gameProfile);
     }

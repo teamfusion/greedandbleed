@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 
 public class PygmyStationMenu extends AbstractContainerMenu {
     private final Container station;
-
     public PygmyStationMenu(int i, Inventory inventory) {
         this(i, inventory, new SimpleContainer(1));
     }
@@ -21,6 +20,7 @@ public class PygmyStationMenu extends AbstractContainerMenu {
         super(MenuTypeRegistry.PYGMY_STATION.get(), i);
         checkContainerSize(container, 1);
         this.station = container;
+
         container.startOpen(inventory.player);
 
         int j;

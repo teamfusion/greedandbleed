@@ -1,6 +1,5 @@
 package com.github.teamfusion.greedandbleed.api;
 
-import com.github.teamfusion.greedandbleed.common.entity.brain.AcquirePygmyJobPoi;
 import com.github.teamfusion.greedandbleed.common.entity.brain.Guarding;
 import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
@@ -18,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
+import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
@@ -84,7 +84,9 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
 
-        return ImmutableList.of(Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 1, 16), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(RandomStroll.stroll(0.6F), 5), Pair.of(new DoNothing(30, 60), 1));
+        return ImmutableList.of(Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 1, 12), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
+            return !predicate.isWaiting();
+        }, RandomStroll.stroll(0.6F)), 5), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
@@ -99,9 +101,7 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(ShrygmyTaskManager::findNearestValidAttackTarget), AcquirePygmyJobPoi.create(poiTypeHolder -> {
-            return poiTypeHolder.is(PoiRegistry.PYGMY_STATION_KEY);
-        }, MemoryModuleType.JOB_SITE, false, Optional.empty()), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
+        return ImmutableList.of(StartAttacking.create(ShrygmyTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
     }
 
     @Override

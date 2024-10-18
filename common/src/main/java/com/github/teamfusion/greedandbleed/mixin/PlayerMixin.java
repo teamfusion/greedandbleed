@@ -1,10 +1,12 @@
 package com.github.teamfusion.greedandbleed.mixin;
 
+import com.github.teamfusion.greedandbleed.api.IGBPlayer;
 import com.github.teamfusion.greedandbleed.common.CommonSetup;
 import com.github.teamfusion.greedandbleed.common.enchantment.WoeOfSwinEnchantment;
 import com.github.teamfusion.greedandbleed.common.registry.GBEntityTypeTags;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -23,7 +25,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
-public abstract class PlayerMixin extends LivingEntity {
+public abstract class PlayerMixin extends LivingEntity implements IGBPlayer {
+
+    @Unique
+    public BlockPos greedandbleed$blockPos;
+
     @Shadow
     public abstract void resetAttackStrengthTicker();
 
@@ -74,5 +80,16 @@ public abstract class PlayerMixin extends LivingEntity {
             mutableFloat.add(defaultBonus);
         }, stack);
         return mutableFloat.floatValue();
+    }
+
+
+    @Override
+    public void setBlockEntityPos(BlockPos blockPos) {
+        this.greedandbleed$blockPos = blockPos;
+    }
+
+    @Override
+    public BlockPos getBlockEntityPos() {
+        return this.greedandbleed$blockPos;
     }
 }

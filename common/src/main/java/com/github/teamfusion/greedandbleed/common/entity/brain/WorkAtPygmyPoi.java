@@ -34,12 +34,12 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel serverLevel, GBPygmy pygmy) {
-        if (serverLevel.getGameTime() - this.lastCheck < 150L) {
+        if (serverLevel.getGameTime() - this.lastCheck < 30L) {
             return false;
         } else {
             this.lastCheck = serverLevel.getGameTime();
             GlobalPos globalPos = (GlobalPos) pygmy.getBrain().getMemory(MemoryModuleType.JOB_SITE).get();
-            return globalPos.dimension() == serverLevel.dimension() && globalPos.pos().closerToCenterThan(pygmy.position(), 3);
+            return globalPos.dimension() == serverLevel.dimension() && globalPos.pos().closerToCenterThan(pygmy.position(), 10);
         }
     }
 

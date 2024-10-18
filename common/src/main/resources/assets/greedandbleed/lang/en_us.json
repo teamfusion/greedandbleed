@@ -70,5 +70,6 @@
   "death.attack.warped_infect": "%1$s was Warped",
   "death.attack.warped_link": "%1$s was Warped because of %2$s's damage",
   "container.greedandbleed.pygmy_station": "Pygmy Station",
-  "container.greedandbleed.pygmy_armor_stand": "Pygmy Armor Stand"
+  "container.greedandbleed.pygmy_armor_stand": "Pygmy Armor Stand",
+  "gui.pygmy_station.recruit": "Recruit"
 }

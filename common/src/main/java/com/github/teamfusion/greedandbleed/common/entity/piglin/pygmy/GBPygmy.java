@@ -37,6 +37,7 @@ import java.util.UUID;
 
 public abstract class GBPygmy extends Monster implements HasTaskManager {
     protected static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(GBPygmy.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Boolean> DATA_WAITING_ID = SynchedEntityData.defineId(GBPygmy.class, EntityDataSerializers.BOOLEAN);
 
     protected static final EntityDataAccessor<Boolean> DATA_IMMUNE_TO_ZOMBIFICATION = SynchedEntityData.defineId(GBPygmy.class, EntityDataSerializers.BOOLEAN);
     protected int timeInOverworld;
@@ -61,6 +62,14 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
 
     public boolean isAdult() {
         return !this.isBaby();
+    }
+
+    public boolean isWaiting() {
+        return this.getEntityData().get(DATA_WAITING_ID);
+    }
+
+    public void setWaiting(boolean waiting) {
+        this.getEntityData().set(DATA_WAITING_ID, waiting);
     }
 
     @Override
@@ -125,6 +134,7 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
         super.defineSynchedData();
         this.entityData.define(DATA_BABY_ID, false);
         this.entityData.define(DATA_IMMUNE_TO_ZOMBIFICATION, false);
+        this.entityData.define(DATA_WAITING_ID, false);
     }
 
     @Override
@@ -134,6 +144,7 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
             compoundTag.putBoolean("IsImmuneToZombification", true);
         }
         compoundTag.putInt("TimeInOverworld", this.timeInOverworld);
+        compoundTag.putBoolean("Waiting", this.isWaiting());
     }
 
     @Override
@@ -146,6 +157,7 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
         super.readAdditionalSaveData(compoundTag);
         this.setImmuneToZombification(compoundTag.getBoolean("IsImmuneToZombification"));
         this.timeInOverworld = compoundTag.getInt("TimeInOverworld");
+        this.setWaiting(compoundTag.getBoolean("Waiting"));
     }
 
     @Override

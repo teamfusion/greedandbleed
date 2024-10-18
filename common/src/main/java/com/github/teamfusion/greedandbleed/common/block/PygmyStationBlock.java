@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.block;
 
+import com.github.teamfusion.greedandbleed.api.IGBPlayer;
 import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyStationBlockEntity;
-import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
@@ -23,6 +23,12 @@ public class PygmyStationBlock extends BaseEntityBlock {
 
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if (level.isClientSide) {
+            BlockEntity blockEntity = level.getBlockEntity(blockPos);
+            if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock) {
+                if (player instanceof IGBPlayer gbPlayer) {
+                    gbPlayer.setBlockEntityPos(blockPos);
+                }
+            }
             return InteractionResult.SUCCESS;
         } else {
             this.openContainer(level, blockPos, player);
@@ -34,7 +40,7 @@ public class PygmyStationBlock extends BaseEntityBlock {
     protected void openContainer(Level level, BlockPos blockPos, Player player) {
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
         if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock && player instanceof ServerPlayer serverPlayer) {
-            MenuRegistry.openMenu(serverPlayer, pygmyStationBlock);
+            player.openMenu(pygmyStationBlock);
         }
 
     }
