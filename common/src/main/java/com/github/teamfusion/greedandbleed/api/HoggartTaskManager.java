@@ -82,7 +82,7 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getCoreTasks() {
-        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), new SwitchSimpleJob<>(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION_KEY), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
+        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), new SwitchSimpleJob<>(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
     }
 
     @Override

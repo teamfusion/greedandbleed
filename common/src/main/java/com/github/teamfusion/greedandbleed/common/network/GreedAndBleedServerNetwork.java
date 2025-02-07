@@ -59,12 +59,9 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
                 
                 if (stack.getItem() == ItemRegistry.PIGLIN_BELT.get()) {
                     server.getPoiManager()
-                        .take(
-                                holder -> holder.is(PoiRegistry.PYGMY_STATION_KEY),
-                            (holder, pos) -> pos.equals(origin), origin, 1
-                        ).ifPresent(pos -> {
+                        .take(holder -> holder.is(PoiRegistry.PYGMY_STATION), (holder, pos) -> pos.equals(origin), origin, 1)
+                        .ifPresent(pos -> {
                             brain.setMemory(MemoryModuleType.JOB_SITE, GlobalPos.of(server.dimension(), origin));
-                            
                             addWorkTime(pygmy, 24000 * stack.getCount());
                             stack.shrink(stack.getCount());
                             pygmy.playSound(SoundEvents.ITEM_PICKUP, 0.7F, 1.25F);
