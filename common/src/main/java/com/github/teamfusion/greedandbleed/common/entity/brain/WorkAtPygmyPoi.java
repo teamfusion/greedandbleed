@@ -54,6 +54,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
 
     protected void useWorkstation(ServerLevel serverLevel, GlobalPos globalPos, GBPygmy pygmy) {
         BlockEntity armorStand = serverLevel.getBlockEntity(globalPos.pos().below());
+        BlockEntity armorStandAbove = serverLevel.getBlockEntity(globalPos.pos().above());
         BlockEntity blockEntity = serverLevel.getBlockEntity(globalPos.pos());
         if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock) {
 
@@ -76,6 +77,15 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
                     }
                 } else {
                     if (armorStand instanceof PygmyArmorStandBlockEntity armorStandBlockEntity) {
+
+                        ItemStack stack = findArmor(armorStandBlockEntity);
+                        if (!stack.isEmpty()) {
+                            ItemStack stack2 = pygmy.equipItemIfPossible(stack.copy());
+                            if (!stack2.isEmpty()) {
+                                stack.shrink(1);
+                            }
+                        }
+                    } else if (armorStandAbove instanceof PygmyArmorStandBlockEntity armorStandBlockEntity) {
 
                         ItemStack stack = findArmor(armorStandBlockEntity);
                         if (!stack.isEmpty()) {
