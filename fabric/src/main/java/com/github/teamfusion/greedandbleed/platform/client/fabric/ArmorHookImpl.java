@@ -1,8 +1,6 @@
 package com.github.teamfusion.greedandbleed.platform.client.fabric;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
-import net.fabricmc.fabric.impl.client.rendering.ArmorRendererRegistryImpl;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -21,10 +19,6 @@ public class ArmorHookImpl {
     }
 
     public static boolean getArmorRender(PoseStack matrices, MultiBufferSource vertexConsumers, ItemStack stack, LivingEntity entity, EquipmentSlot slot, int light, HumanoidModel<LivingEntity> contextModel) {
-        ArmorRenderer armorRenderer = ArmorRendererRegistryImpl.get(stack.getItem());
-        if (armorRenderer != null) {
-            armorRenderer.render(matrices, vertexConsumers, stack, entity, slot, light, contextModel);
-        }
-        return true;
+        return false;
     }
 }
