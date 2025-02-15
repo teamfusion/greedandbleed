@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.brain.FollowRecruitPlayer;
 import com.github.teamfusion.greedandbleed.common.entity.brain.SlingshotAttack;
 import com.github.teamfusion.greedandbleed.common.entity.brain.SwitchPygmySimpleJob;
 import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
@@ -11,6 +12,7 @@ import com.github.teamfusion.greedandbleed.common.registry.PoiRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -92,7 +94,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
 
-        return ImmutableList.of(Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 1, 12), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
+        return ImmutableList.of(Pair.of(FollowRecruitPlayer.create(0.7F), 2), Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
             return !predicate.isWaiting();
         }, RandomStroll.stroll(0.6F)), 5), Pair.of(new DoNothing(30, 60), 1));
     }
@@ -115,30 +117,18 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (this.mob.isWaiting()) {
-            this.mob.setWaiting(false);
-            //player.displayClientMessage(Component.translatable(""));
-            //return
+        boolean flag = this.mob.isWaiting();
+        if (this.getBrain().hasMemoryValue(MemoryModuleType.LIKED_PLAYER) && this.getBrain().getMemory(MemoryModuleType.LIKED_PLAYER).get() == player.getUUID()) {
+            this.mob.setWaiting(!flag);
+            if (flag) {
+                player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.following"), true);
+            } else {
+                player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.waiting"), true);
+            }
+            return InteractionResult.SUCCESS;
         }
 
         return null;
-    }
-
-    public void addWorkTime(int time) {
-        if (this.mob.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
-            this.mob.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time + this.mob.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get());
-        } else {
-            this.mob.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time);
-        }
-        this.mob.getBrain().setActiveActivityIfPossible(Activity.WORK);
-    }
-
-    public int getWorkTime() {
-        if (this.mob.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
-            return this.mob.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get();
-        } else {
-            return 0;
-        }
     }
 
 

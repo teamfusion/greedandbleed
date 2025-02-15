@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.api;
 
+import com.github.teamfusion.greedandbleed.common.entity.brain.FollowRecruitPlayer;
 import com.github.teamfusion.greedandbleed.common.entity.brain.SwitchPygmySimpleJob;
 import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
@@ -9,6 +10,7 @@ import com.github.teamfusion.greedandbleed.common.registry.PoiRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -24,6 +26,7 @@ import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 
 import java.util.List;
@@ -75,7 +78,7 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
 
-        return ImmutableList.of(Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9f, 1, 12), 2), Pair.of(StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.6f, 6), 3), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
+        return ImmutableList.of(Pair.of(FollowRecruitPlayer.create(0.7F), 2), Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
             return !predicate.isWaiting();
         }, RandomStroll.stroll(0.6F)), 5), Pair.of(new DoNothing(30, 60), 1));
     }
@@ -109,6 +112,19 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+
+        boolean flag = this.mob.isWaiting();
+        if (this.getBrain().hasMemoryValue(MemoryModuleType.LIKED_PLAYER) && this.getBrain().getMemory(MemoryModuleType.LIKED_PLAYER).get() == player.getUUID()) {
+            this.mob.setWaiting(!flag);
+            if (flag) {
+                player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.following"), true);
+            } else {
+                player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.waiting"), true);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
         return null;
     }
 

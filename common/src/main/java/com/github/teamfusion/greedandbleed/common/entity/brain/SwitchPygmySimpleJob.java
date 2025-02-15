@@ -1,18 +1,18 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.schedule.Activity;
 
-public class SwitchPygmySimpleJob<E extends Mob, T extends LivingEntity> extends Behavior<E> {
+public class SwitchPygmySimpleJob<E extends GBPygmy, T extends LivingEntity> extends Behavior<E> {
     public SwitchPygmySimpleJob() {
         super(ImmutableMap.of(MemoryRegistry.WORK_TIME.get(), MemoryStatus.REGISTERED, MemoryModuleType.JOB_SITE, MemoryStatus.REGISTERED, MemoryModuleType.LIKED_PLAYER, MemoryStatus.REGISTERED), 1200);
     }
@@ -30,6 +30,10 @@ public class SwitchPygmySimpleJob<E extends Mob, T extends LivingEntity> extends
         boolean flag = brain.hasMemoryValue(MemoryRegistry.WORK_TIME.get());
         if (flag) {
             brain.setActiveActivityIfPossible(Activity.WORK);
+            if (!brain.hasMemoryValue(MemoryModuleType.JOB_SITE)) {
+                brain.eraseMemory(MemoryModuleType.LIKED_PLAYER);
+                brain.eraseMemory(MemoryRegistry.WORK_TIME.get());
+            }
         } else {
             if (brain.hasMemoryValue(MemoryModuleType.JOB_SITE)) {
                 serverLevel.getPoiManager()
@@ -40,6 +44,9 @@ public class SwitchPygmySimpleJob<E extends Mob, T extends LivingEntity> extends
             }
             if (brain.hasMemoryValue(MemoryModuleType.LIKED_PLAYER)) {
                 brain.eraseMemory(MemoryModuleType.LIKED_PLAYER);
+            }
+            if (livingEntity.isWaiting()) {
+                livingEntity.setWaiting(false);
             }
             brain.setActiveActivityIfPossible(Activity.IDLE);
         }
