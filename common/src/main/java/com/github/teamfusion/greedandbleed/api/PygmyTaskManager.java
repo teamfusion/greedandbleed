@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.api;
 
 import com.github.teamfusion.greedandbleed.common.entity.brain.SlingshotAttack;
-import com.github.teamfusion.greedandbleed.common.entity.brain.SwitchSimpleJob;
+import com.github.teamfusion.greedandbleed.common.entity.brain.SwitchPygmySimpleJob;
 import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
@@ -99,7 +99,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getCoreTasks() {
-        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), new SwitchSimpleJob<>(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
+        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), new SwitchPygmySimpleJob<>(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
     }
 
     @Override
@@ -114,6 +114,12 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
+        if (this.mob.isWaiting()) {
+            this.mob.setWaiting(false);
+            //player.displayClientMessage(Component.translatable(""));
+            //return
+        }
 
         return null;
     }
@@ -258,4 +264,5 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
     private static boolean hasSlingshot(LivingEntity arg) {
         return arg.isHolding(is -> is.getItem() instanceof SlingshotItem);
     }
+
 }

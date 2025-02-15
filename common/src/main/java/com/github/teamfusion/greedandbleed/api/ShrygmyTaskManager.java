@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.api;
 
 import com.github.teamfusion.greedandbleed.common.entity.brain.Guarding;
-import com.github.teamfusion.greedandbleed.common.entity.brain.SwitchSimpleJob;
+import com.github.teamfusion.greedandbleed.common.entity.brain.SwitchPygmySimpleJob;
 import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
@@ -92,7 +92,7 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getCoreTasks() {
-        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), new SwitchSimpleJob<>(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
+        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), new SwitchPygmySimpleJob<>(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
     }
 
     @Override

@@ -53,8 +53,8 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
         if (pygmy != null && level instanceof ServerLevel server) {
             Brain<?> brain = pygmy.getBrain();
             BlockEntity blockEntity = server.getChunkAt(origin).getBlockEntity(origin, LevelChunk.EntityCreationType.IMMEDIATE);
-            
-            if (blockEntity instanceof PygmyStationBlockEntity station) {
+
+            if (blockEntity instanceof PygmyStationBlockEntity station && !pygmy.getBrain().hasMemoryValue(MemoryModuleType.JOB_SITE)) {
                 ItemStack stack = station.getItem(0);
                 
                 if (stack.getItem() == ItemRegistry.PIGLIN_BELT.get()) {
@@ -62,10 +62,12 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
                         .take(holder -> holder.is(PoiRegistry.PYGMY_STATION), (holder, pos) -> pos.equals(origin), origin, 1)
                         .ifPresent(pos -> {
                             brain.setMemory(MemoryModuleType.JOB_SITE, GlobalPos.of(server.dimension(), origin));
+                            brain.setMemory(MemoryModuleType.LIKED_PLAYER, player.getUUID());
                             addWorkTime(pygmy, 24000 * stack.getCount());
                             stack.shrink(stack.getCount());
                             pygmy.playSound(SoundEvents.ITEM_PICKUP, 0.7F, 1.25F);
                             pygmy.swing(InteractionHand.MAIN_HAND);
+                            pygmy.setWaiting(true);
                             DebugPackets.sendPoiTicketCountPacket(server, origin);
                         });
                 }
