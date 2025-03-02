@@ -94,7 +94,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
 
-        return ImmutableList.of(Pair.of(FollowRecruitPlayer.create(0.7F), 2), Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
+        return ImmutableList.of(Pair.of(FollowRecruitPlayer.create(0.9F), 2), Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
             return !predicate.isWaiting();
         }, RandomStroll.stroll(0.6F)), 5), Pair.of(new DoNothing(30, 60), 1));
     }
@@ -119,13 +119,14 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
         boolean flag = this.mob.isWaiting();
         if (this.getBrain().hasMemoryValue(MemoryModuleType.LIKED_PLAYER) && this.getBrain().getMemory(MemoryModuleType.LIKED_PLAYER).get() == player.getUUID()) {
-            this.mob.setWaiting(!flag);
             if (flag) {
                 player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.following"), true);
             } else {
                 player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.waiting"), true);
             }
-            return InteractionResult.SUCCESS;
+            this.mob.setWaiting(!flag);
+
+            return InteractionResult.sidedSuccess(player.level().isClientSide);
         }
 
         return null;

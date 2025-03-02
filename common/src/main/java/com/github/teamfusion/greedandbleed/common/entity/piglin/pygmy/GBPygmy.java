@@ -101,8 +101,10 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
     protected InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         if (this.taskManager != null) {
             InteractionResult result = this.taskManager.mobInteract(player, interactionHand);
-            if (result != null && result.consumesAction()) {
+            if (result != null) {
                 return result;
+            } else {
+                return InteractionResult.CONSUME;
             }
         }
         return super.mobInteract(player, interactionHand);

@@ -25,7 +25,7 @@ public class FollowRecruitPlayer {
     }
 
     public static OneShot<GBPygmy> create(Function<GBPygmy, Float> function) {
-        return BehaviorBuilder.create((instance) -> instance.group(instance.present(MemoryModuleType.LIKED_PLAYER), instance.registered(MemoryModuleType.LOOK_TARGET), instance.absent(MemoryModuleType.WALK_TARGET)).apply(instance, (memoryAccessor, memoryAccessor2, memoryAccessor3) -> (serverLevel, pygmy, l) -> {
+        return BehaviorBuilder.create((instance) -> instance.group(instance.present(MemoryModuleType.LIKED_PLAYER), instance.registered(MemoryModuleType.LOOK_TARGET), instance.registered(MemoryModuleType.WALK_TARGET)).apply(instance, (memoryAccessor, memoryAccessor2, memoryAccessor3) -> (serverLevel, pygmy, l) -> {
 
             Optional<ServerPlayer> likedPlayer = getLikedPlayer(pygmy);
 
