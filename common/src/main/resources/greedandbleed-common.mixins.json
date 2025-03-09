@@ -16,9 +16,11 @@
     "client.ZoglinRendererMixin"
   ],
   "mixins": [
+    "AbstractPiglinInvoker",
     "AbstractPiglinMixin",
     "BlockSetTypeInvoker",
     "HoglinAiMixin",
+    "HoglinInvoker",
     "HoglinMixin",
     "HoglinSpecificSensorMixin",
     "LivingEntityMixin",

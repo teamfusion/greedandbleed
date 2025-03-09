@@ -99,6 +99,11 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
+        InteractionResult result2 = super.mobInteract(player, interactionHand);
+
+        if (result2.consumesAction()) {
+            return result2;
+        } else
         if (this.taskManager != null) {
             InteractionResult result = this.taskManager.mobInteract(player, interactionHand);
             if (result != null) {
@@ -107,7 +112,7 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
                 return InteractionResult.CONSUME;
             }
         }
-        return super.mobInteract(player, interactionHand);
+        return InteractionResult.CONSUME;
     }
 
     @Override
@@ -119,7 +124,7 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
         this.getEntityData().set(DATA_IMMUNE_TO_ZOMBIFICATION, bl);
     }
 
-    protected boolean isImmuneToZombification() {
+    public boolean isImmuneToZombification() {
         return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
     }
 

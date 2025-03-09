@@ -2,8 +2,12 @@ package com.github.teamfusion.greedandbleed.common.item;
 
 import com.github.teamfusion.greedandbleed.common.entity.IConvertToNormal;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
+import com.github.teamfusion.greedandbleed.mixin.AbstractPiglinInvoker;
+import com.github.teamfusion.greedandbleed.mixin.HoglinInvoker;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -11,6 +15,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Item;
@@ -110,7 +116,45 @@ public class AmuletItem extends Item {
                 }
             }
         }
+        int experienceLevel = player.experienceLevel;
+        if (experienceLevel >= 3 || player.getAbilities().mayfly) {
+
+            if (livingEntity instanceof AbstractPiglin gbPygmy) {
+                if (!((AbstractPiglinInvoker) gbPygmy).isImmuneToZombification() && itemStack.is(ItemRegistry.AMULET.get()) && gbPygmy.hasEffect(PotionRegistry.IMMUNITY.get()) && gbPygmy.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+                    gbPygmy.setImmuneToZombification(true);
+                    player.getCooldowns().addCooldown(this, 80);
+                    if (!player.getAbilities().mayfly) {
+                        player.giveExperienceLevels(-3);
+                    }
+                    return InteractionResult.sidedSuccess(player.level().isClientSide);
+                }
+            }
+
+
+            if (livingEntity instanceof GBPygmy gbPygmy) {
+                if (!gbPygmy.isImmuneToZombification() && itemStack.is(ItemRegistry.AMULET.get()) && gbPygmy.hasEffect(PotionRegistry.IMMUNITY.get()) && gbPygmy.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+                    gbPygmy.setImmuneToZombification(true);
+                    player.getCooldowns().addCooldown(this, 80);
+                    if (!player.getAbilities().mayfly) {
+                        player.giveExperienceLevels(-3);
+                    }
+                    return InteractionResult.sidedSuccess(player.level().isClientSide);
+                }
+            }
+
+            if (livingEntity instanceof Hoglin gbPygmy) {
+                if (!((HoglinInvoker) gbPygmy).isImmuneToZombification() && itemStack.is(ItemRegistry.AMULET.get()) && gbPygmy.hasEffect(PotionRegistry.IMMUNITY.get()) && gbPygmy.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+                    gbPygmy.setImmuneToZombification(true);
+                    player.getCooldowns().addCooldown(this, 80);
+                    if (!player.getAbilities().mayfly) {
+                        player.giveExperienceLevels(-3);
+                    }
+                    return InteractionResult.sidedSuccess(player.level().isClientSide);
+                }
+            }
+        }
         return super.interactLivingEntity(itemStack, player, livingEntity, interactionHand);
+
     }
 
     //Check the mob anc consume
