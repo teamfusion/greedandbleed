@@ -6,10 +6,9 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
-import com.github.teamfusion.greedandbleed.mixin.AbstractPiglinInvoker;
-import com.github.teamfusion.greedandbleed.mixin.HoglinInvoker;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -110,6 +109,7 @@ public class AmuletItem extends Item {
                         if (!player.getAbilities().mayfly) {
                             player.giveExperienceLevels(-3);
                         }
+                        livingEntity.playSound(SoundEvents.ZOMBIE_VILLAGER_CURE);
                         player.getCooldowns().addCooldown(this, 80);
                         return InteractionResult.sidedSuccess(player.level().isClientSide);
                     }
@@ -120,12 +120,13 @@ public class AmuletItem extends Item {
         if (experienceLevel >= 3 || player.getAbilities().mayfly) {
 
             if (livingEntity instanceof AbstractPiglin gbPygmy) {
-                if (!((AbstractPiglinInvoker) gbPygmy).isImmuneToZombification() && itemStack.is(ItemRegistry.AMULET.get()) && gbPygmy.hasEffect(PotionRegistry.IMMUNITY.get()) && gbPygmy.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+                if (!(gbPygmy).isImmuneToZombification() && itemStack.is(ItemRegistry.AMULET.get()) && gbPygmy.hasEffect(PotionRegistry.IMMUNITY.get()) && gbPygmy.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
                     gbPygmy.setImmuneToZombification(true);
                     player.getCooldowns().addCooldown(this, 80);
                     if (!player.getAbilities().mayfly) {
                         player.giveExperienceLevels(-3);
                     }
+                    livingEntity.playSound(SoundEvents.ZOMBIE_VILLAGER_CONVERTED);
                     return InteractionResult.sidedSuccess(player.level().isClientSide);
                 }
             }
@@ -138,17 +139,19 @@ public class AmuletItem extends Item {
                     if (!player.getAbilities().mayfly) {
                         player.giveExperienceLevels(-3);
                     }
+                    livingEntity.playSound(SoundEvents.ZOMBIE_VILLAGER_CONVERTED);
                     return InteractionResult.sidedSuccess(player.level().isClientSide);
                 }
             }
 
             if (livingEntity instanceof Hoglin gbPygmy) {
-                if (!((HoglinInvoker) gbPygmy).isImmuneToZombification() && itemStack.is(ItemRegistry.AMULET.get()) && gbPygmy.hasEffect(PotionRegistry.IMMUNITY.get()) && gbPygmy.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+                if (!(gbPygmy).isImmuneToZombification() && itemStack.is(ItemRegistry.AMULET.get()) && gbPygmy.hasEffect(PotionRegistry.IMMUNITY.get()) && gbPygmy.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
                     gbPygmy.setImmuneToZombification(true);
                     player.getCooldowns().addCooldown(this, 80);
                     if (!player.getAbilities().mayfly) {
                         player.giveExperienceLevels(-3);
                     }
+                    livingEntity.playSound(SoundEvents.ZOMBIE_VILLAGER_CONVERTED);
                     return InteractionResult.sidedSuccess(player.level().isClientSide);
                 }
             }
