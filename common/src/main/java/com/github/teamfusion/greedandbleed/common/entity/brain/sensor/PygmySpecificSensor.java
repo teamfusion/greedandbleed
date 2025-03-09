@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.Brain;
@@ -16,6 +15,7 @@ import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.WitherSkeleton;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,21 +40,22 @@ public class PygmySpecificSensor extends Sensor<LivingEntity> {
         ArrayList<GBPygmy> list2 = Lists.newArrayList();
         NearestVisibleLivingEntities nearestVisibleLivingEntities = brain.getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).orElse(NearestVisibleLivingEntities.empty());
         for (LivingEntity livingEntity22 : nearestVisibleLivingEntities.findAll(livingEntity -> true)) {
-            if (livingEntity22 instanceof Hoglet hoglet) {
 
-                optional = Optional.of(hoglet);
-                if (hoglet.isTame()) {
-                    optional3 = Optional.of(hoglet);
-                }
-            }
 
-            if ((livingEntity22 instanceof WitherSkeleton || livingEntity22 instanceof WitherBoss || livingEntity22.getType() == EntityType.PIGLIN && !livingEntity22.isBaby() || livingEntity22.getType() == EntityType.PIGLIN_BRUTE)) {
+            if ((livingEntity22 instanceof WitherSkeleton || livingEntity22 instanceof WitherBoss || livingEntity22 instanceof AbstractPiglin && !livingEntity22.isBaby())) {
                 optional2 = Optional.of((Mob) livingEntity22);
                 continue;
             }
         }
         List<LivingEntity> list3 = brain.getMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES).orElse(ImmutableList.of());
         for (LivingEntity livingEntity3 : list3) {
+            if (livingEntity3 instanceof Hoglet hoglet) {
+
+                optional = Optional.of(hoglet);
+                if (hoglet.isTame()) {
+                    optional3 = Optional.of(hoglet);
+                }
+            }
             GBPygmy abstractPiglin;
             if (!(livingEntity3 instanceof GBPygmy) || !(abstractPiglin = (GBPygmy) livingEntity3).isAdult()) continue;
             list2.add(abstractPiglin);

@@ -2,7 +2,6 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy;
 
 import com.github.teamfusion.greedandbleed.api.HoggartTaskManager;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
-import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.SensorRegistry;
@@ -99,13 +98,13 @@ public class Hoggart extends GBPygmy {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
         if (mobSpawnType != MobSpawnType.STRUCTURE) {
-            if (random.nextBoolean()) {
+            /*if (random.nextBoolean()) {
                 Pygmy pygmy = EntityTypeRegistry.PYGMY.get().create(serverLevelAccessor.getLevel());
                 pygmy.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0f);
                 pygmy.finalizeSpawn(serverLevelAccessor, difficultyInstance, MobSpawnType.JOCKEY, null, null);
                 pygmy.startRiding(this);
                 serverLevelAccessor.addFreshEntity(pygmy);
-            }
+            }*/
 /*
             if(random.nextInt(3) == 0) {
                 Hoglin hoglin = EntityType.HOGLIN.create(serverLevelAccessor.getLevel());

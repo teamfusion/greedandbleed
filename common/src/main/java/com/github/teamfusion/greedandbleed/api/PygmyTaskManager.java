@@ -222,7 +222,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
             return optional;
         }
 
-        Optional<? extends LivingEntity> optional3 = getTargetIfWithinRange(abstractPiglin, MemoryRegistry.NEAREST_TAMED_HOGLET.get());
+        Optional<? extends LivingEntity> optional3 = getTamedTargetIfWithinRange(abstractPiglin, MemoryRegistry.NEAREST_TAMED_HOGLET.get());
 
 
         Optional<? extends LivingEntity> optional2 = getTargetIfWithinRange(abstractPiglin, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER);
@@ -234,6 +234,10 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     private static Optional<? extends LivingEntity> getTargetIfWithinRange(GBPygmy abstractPiglin, MemoryModuleType<? extends LivingEntity> memoryModuleType) {
         return abstractPiglin.getBrain().getMemory(memoryModuleType).filter(livingEntity -> livingEntity.closerThan(abstractPiglin, 18.0));
+    }
+
+    private static Optional<? extends LivingEntity> getTamedTargetIfWithinRange(GBPygmy abstractPiglin, MemoryModuleType<? extends LivingEntity> memoryModuleType) {
+        return abstractPiglin.getBrain().getMemory(memoryModuleType).filter(livingEntity -> livingEntity.closerThan(abstractPiglin, 24.0));
     }
 
     @Override

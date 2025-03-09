@@ -63,11 +63,13 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
                         .ifPresent(pos -> {
                             brain.setMemory(MemoryModuleType.JOB_SITE, GlobalPos.of(server.dimension(), origin));
                             brain.setMemory(MemoryModuleType.LIKED_PLAYER, player.getUUID());
+                            brain.eraseMemory(MemoryModuleType.WALK_TARGET);
                             addWorkTime(pygmy, 24000 * stack.getCount());
                             stack.shrink(stack.getCount());
                             pygmy.playSound(SoundEvents.ITEM_PICKUP, 0.7F, 1.25F);
                             pygmy.swing(InteractionHand.MAIN_HAND);
                             pygmy.setWaiting(true);
+                            pygmy.setPersistenceRequired();
                             DebugPackets.sendPoiTicketCountPacket(server, origin);
                         });
                 }
