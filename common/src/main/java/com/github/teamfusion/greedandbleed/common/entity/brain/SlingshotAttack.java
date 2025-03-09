@@ -12,7 +12,6 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 
 public class SlingshotAttack<E extends Mob, T extends LivingEntity> extends Behavior<E> {
@@ -64,7 +63,7 @@ public class SlingshotAttack<E extends Mob, T extends LivingEntity> extends Beha
             mob.stopUsingItem();
             ((RangedAttackMob) mob).performRangedAttack(livingEntity, 1.0f);
             ItemStack itemStack2 = mob.getItemInHand(ProjectileUtil.getWeaponHoldingHand(mob, ItemRegistry.SLINGSHOT.get()));
-            CrossbowItem.setCharged(itemStack2, false);
+            //CrossbowItem.setCharged(itemStack2, false);
             this.slingshotState = SlingshotAttack.SlingshotState.UNCHARGED;
         }
     }
