@@ -35,8 +35,8 @@ public class ItemRegistry {
 
     public static final Supplier<Item> SKELETAL_PIGLIN_SPAWN_EGG = create("skeletal_piglin_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SKELETAL_PIGLIN, 12698049, 4802889, new Item.Properties()));
     public static final Supplier<Item> HOGLET_SPAWN_EGG = create("hoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.HOGLET, 10051392, 16380836, new Item.Properties()));
-    public static final Supplier<Item> ZOGLET_SPAWN_EGG = create("zoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.ZOGLET, 13004373, 0xE6E6E6, new Item.Properties()));
-    public static final Supplier<Item> SKELET_SPAWN_EGG = create("skoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SKOGLET, 0xC1C1C1, 0x494949, new Item.Properties()));
+    public static final Supplier<Item> ZOMBIFIED_HOGLET_SPAWN_EGG = create("zombified_hoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.ZOMBIFIED_HOGLET, 13004373, 0xE6E6E6, new Item.Properties()));
+    public static final Supplier<Item> SKELETON_HOGLET_SPAWN_EGG = create("skeleton_hoglet_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SKELETON_HOGLET, 0xC1C1C1, 0x494949, new Item.Properties()));
     public static final Supplier<Item> SHAMAN_PIGLIN_SPAWN_EGG = create("shaman_piglin_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SHAMAN_PIGLIN, 0xF2BA86, 0xC1C1C1, new Item.Properties()));
     public static final Supplier<Item> PIGMY_SPAWN_EGG = create("pygmy_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.PYGMY, 0xAD5532, 0xF2BA86, new Item.Properties()));
     public static final Supplier<Item> SHRYGMY_SPAWN_EGG = create("shrygmy_spawn_egg", () -> MobRegistry.spawnEgg(EntityTypeRegistry.SHRYGMY, 0xAD5532, 0xC53038, new Item.Properties()));

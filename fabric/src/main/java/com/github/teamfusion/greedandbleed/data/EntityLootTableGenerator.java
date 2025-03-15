@@ -24,7 +24,7 @@ public class EntityLootTableGenerator extends SimpleFabricLootTableProvider {
 
     @Override
     public void generate(BiConsumer<ResourceLocation, LootTable.Builder> biConsumer) {
-        biConsumer.accept(EntityTypeRegistry.SKOGLET.get().getDefaultLootTable(), LootTable.lootTable()
+        biConsumer.accept(EntityTypeRegistry.SKELETON_HOGLET.get().getDefaultLootTable(), LootTable.lootTable()
                 .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                         .add(LootItem.lootTableItem(Items.BONE)).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F))).apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
                 )
@@ -34,7 +34,7 @@ public class EntityLootTableGenerator extends SimpleFabricLootTableProvider {
                         .add(LootItem.lootTableItem(Items.BONE)).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F))).apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
                 )
         );
-        biConsumer.accept(EntityTypeRegistry.ZOGLET.get().getDefaultLootTable(), LootTable.lootTable()
+        biConsumer.accept(EntityTypeRegistry.ZOMBIFIED_HOGLET.get().getDefaultLootTable(), LootTable.lootTable()
                 .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                         .add(LootItem.lootTableItem(Items.ROTTEN_FLESH)).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F))).apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
                 )

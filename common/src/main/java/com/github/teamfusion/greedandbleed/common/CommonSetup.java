@@ -48,8 +48,8 @@ public class CommonSetup {
     public static void onBootstrap() {
         MobRegistry.attributes(EntityTypeRegistry.SKELETAL_PIGLIN, SkeletalPiglin::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.HOGLET, Hoglet::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.SKOGLET, Hoglet::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.ZOGLET, Hoglet::setCustomAttributes);
+        MobRegistry.attributes(EntityTypeRegistry.SKELETON_HOGLET, Hoglet::setCustomAttributes);
+        MobRegistry.attributes(EntityTypeRegistry.ZOMBIFIED_HOGLET, Hoglet::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.SHAMAN_PIGLIN, ShamanPiglin::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.PYGMY, Pygmy::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.ZOMBIFIED_PYGMY, ZombifiedPygmy::setCustomAttributes);
@@ -158,8 +158,8 @@ public class CommonSetup {
 
         PotionRegistry.init();
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hoglet::checkHogletSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.ZOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
+        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.ZOMBIFIED_HOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
+        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKELETON_HOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKELETAL_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SHAMAN_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGGART.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);

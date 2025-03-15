@@ -166,7 +166,7 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     }
 
     protected void finishConversion(ServerLevel serverLevel) {
-        Zoglet zombifiedPiglin = this.convertTo(EntityTypeRegistry.ZOGLET.get(), true);
+        ZombifiedHoglet zombifiedPiglin = this.convertTo(EntityTypeRegistry.ZOMBIFIED_HOGLET.get(), true);
         if (zombifiedPiglin != null) {
             zombifiedPiglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
         }

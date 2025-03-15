@@ -38,8 +38,8 @@ public class ClientSetup {
         GreedAndBleedClientNetwork.registerReceivers();
         // HOGLET RENDERER
         RenderRegistry.entityModel(EntityTypeRegistry.HOGLET, HogletRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.ZOGLET, ZogletRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.SKOGLET, SkogletRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.ZOMBIFIED_HOGLET, ZombifiedHogletRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.SKELETON_HOGLET, SkeletonHogletRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SHAMAN_PIGLIN, ShamanPiglinRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.PYGMY, PygmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SHRYGMY, ShrygmyRenderer::new);
