@@ -3,6 +3,7 @@ package com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy;
 import com.github.teamfusion.greedandbleed.api.HasTaskManager;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -101,6 +102,9 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
     protected InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         InteractionResult result2 = super.mobInteract(player, interactionHand);
 
+        if (player.getItemInHand(interactionHand).is(ItemRegistry.AMULET.get()) && !isImmuneToZombification()) {
+            return InteractionResult.PASS;
+        }
         if (result2.consumesAction()) {
             return result2;
         } else

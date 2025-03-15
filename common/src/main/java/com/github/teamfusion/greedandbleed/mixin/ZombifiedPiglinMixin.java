@@ -204,11 +204,13 @@ public abstract class ZombifiedPiglinMixin extends Monster implements TraceAndSe
     @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
     private void gb$addData(CompoundTag tag, CallbackInfo ci) {
         tag.putBoolean("CanConvertToNormal", this.canConvertToNormal);
+        tag.putInt("ConvertTime", this.timeWithImmunity);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
     private void gb$readData(CompoundTag tag, CallbackInfo ci) {
         this.gb$setCanConvertToNormal(tag.getBoolean("CanConvertToNormal"));
+        this.timeWithImmunity = tag.getInt("ConvertTime");
     }
 
     @Unique

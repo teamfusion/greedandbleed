@@ -283,6 +283,7 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
             tag.putUUID("Owner", this.getOwnerUUID().get());
         }
         tag.putBoolean("CanConvertToNormal", this.canConvertToNormal);
+        tag.putInt("ConvertTime", this.timeWithImmunity);
     }
 
     @Override
@@ -293,6 +294,7 @@ public abstract class ZoglinMixin extends Monster implements TraceAndSetOwner, I
             this.setOwnerUUID(Optional.of(tag.getUUID("Owner")));
         }
         this.gb$setCanConvertToNormal(tag.getBoolean("CanConvertToNormal"));
+        this.timeWithImmunity = tag.getInt("ConvertTime");
     }
 
     public void setOwnerUUID(Optional<UUID> uuid) {

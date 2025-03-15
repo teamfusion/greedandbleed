@@ -1,16 +1,23 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy;
 
+import com.github.teamfusion.greedandbleed.common.entity.IConvertToNormal;
+import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -33,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class ZombifiedPygmy extends Monster implements NeutralMob {
+public class ZombifiedPygmy extends Monster implements NeutralMob, IConvertToNormal {
     private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(ZombifiedPygmy.class, EntityDataSerializers.BOOLEAN);
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
@@ -41,6 +48,9 @@ public class ZombifiedPygmy extends Monster implements NeutralMob {
     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(ZombifiedPygmy.class, EntityDataSerializers.INT);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
+
+    protected int timeWithImmunity;
+    protected boolean canConvertToNormal;
 
     private UUID persistentAngerTarget;
 
@@ -84,12 +94,14 @@ public class ZombifiedPygmy extends Monster implements NeutralMob {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("IsBaby", this.isBaby());
+        tag.putInt("ConvertTime", this.timeWithImmunity);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.setBaby(tag.getBoolean("IsBaby"));
+        this.timeWithImmunity = tag.getInt("ConvertTime");
     }
 
     @Nullable
@@ -168,5 +180,44 @@ public class ZombifiedPygmy extends Monster implements NeutralMob {
     @Override
     public void setPersistentAngerTarget(@Nullable UUID uUID) {
         this.persistentAngerTarget = uUID;
+    }
+
+    @Override
+    public boolean gb$hasCorrectConvert() {
+        return this.canConvertToNormal;
+    }
+
+    @Override
+    public void gb$setCanConvertToNormal(boolean canConvertToNormal) {
+        this.canConvertToNormal = canConvertToNormal;
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        if (!this.level().isClientSide()) {
+
+            if (this.hasEffect(PotionRegistry.IMMUNITY.get()) && this.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+                if (gb$hasCorrectConvert()) {
+                    if (++timeWithImmunity > 300) {
+                        finishImmunity((ServerLevel) this.level());
+                    }
+                    if (this.level() instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getRandomX(this.getBbWidth() / 2), this.getRandomY(), this.getRandomZ(this.getBbWidth() / 2), 2, 1.0F, 0D, 0D, 0D);
+                    }
+                } else if (timeWithImmunity > 0) {
+                    --this.timeWithImmunity;
+                }
+            }
+        }
+    }
+
+    protected void finishImmunity(ServerLevel serverLevel) {
+        Pygmy pig = this.convertTo(EntityTypeRegistry.PYGMY.get(), true);
+        if (pig != null) {
+            pig.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
+            pig.setImmuneToZombification(true);
+            pig.setPersistenceRequired();
+            pig.playSound(SoundEvents.ZOMBIE_VILLAGER_CONVERTED);
+        }
     }
 }
