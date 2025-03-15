@@ -2,6 +2,8 @@ package com.github.teamfusion.greedandbleed.common.entity.brain.sensor;
 
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -56,6 +58,11 @@ public class PygmySpecificSensor extends Sensor<LivingEntity> {
                     optional3 = Optional.of(hoglet);
                 }
             }
+
+            if (livingEntity2 instanceof Pygmy pygmy && livingEntity3 instanceof Hoggart hoggart && pygmy.getControlledVehicle() == null && !hoggart.hasControllingPassenger() && pygmy.isAggressive() && hoggart.isAggressive()) {
+                brain.setMemory(MemoryModuleType.RIDE_TARGET, hoggart);
+            }
+
             GBPygmy abstractPiglin;
             if (!(livingEntity3 instanceof GBPygmy) || !(abstractPiglin = (GBPygmy) livingEntity3).isAdult()) continue;
             list2.add(abstractPiglin);
@@ -65,6 +72,7 @@ public class PygmySpecificSensor extends Sensor<LivingEntity> {
         brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS, optional2);
         brain.setMemory(MemoryRegistry.NEARBY_ADULT_PYGMYS.get(), list2);
         brain.setMemory(MemoryRegistry.NEAREST_VISIBLE_ADULT_PYGMYS.get(), list);
+
     }
 }
 

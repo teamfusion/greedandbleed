@@ -47,7 +47,7 @@ public class AmuletItem extends Item {
     }
 
     public int getUseDuration(ItemStack itemStack) {
-        return 72000;
+        return 72000 * 2;
     }
 
     public UseAnim getUseAnimation(ItemStack itemStack) {
@@ -167,22 +167,27 @@ public class AmuletItem extends Item {
                 player.giveExperienceLevels(-3);
                 player.getCooldowns().addCooldown(this, 80);
             }
-            return level.dimension() == Level.NETHER ? EntityType.ZOGLIN : level.getRandom().nextBoolean() ? EntityType.STRAY : EntityType.HUSK;
+            return level.dimension() == Level.NETHER ? EntityType.ZOGLIN : EntityType.STRAY;
         } else if ((xp >= 2 || player.getAbilities().instabuild) && i >= 0.5F) {
             if (!player.getAbilities().instabuild) {
                 player.giveExperienceLevels(-2);
                 player.getCooldowns().addCooldown(this, 80);
             }
-            return level.dimension() == Level.NETHER ? EntityType.ZOMBIFIED_PIGLIN : EntityType.SKELETON;
+            return level.dimension() == Level.NETHER ? EntityType.ZOMBIFIED_PIGLIN : EntityType.HUSK;
 
-        } else if (xp >= 1 || player.getAbilities().instabuild) {
+        } else if ((xp >= 1 || player.getAbilities().instabuild) && i >= 0.25F) {
             if (!player.getAbilities().instabuild) {
                 player.giveExperienceLevels(-1);
                 player.getCooldowns().addCooldown(this, 80);
             }
-            return level.dimension() == Level.NETHER ? EntityTypeRegistry.SKELETAL_PIGLIN.get() : EntityType.ZOMBIE;
+            return level.dimension() == Level.NETHER ? EntityTypeRegistry.ZOMBIFIED_HOGLET.get() : EntityType.SKELETON;
+
+        } else {
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 80);
+            }
+            return level.dimension() != Level.NETHER ? EntityType.ZOMBIE : level.getRandom().nextBoolean() ? EntityTypeRegistry.SKELETAL_PIGLIN.get() : EntityTypeRegistry.ZOMBIFIED_PYGMY.get();
 
         }
-        return null;
     }
 }

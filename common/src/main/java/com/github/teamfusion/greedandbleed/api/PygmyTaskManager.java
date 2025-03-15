@@ -1,9 +1,6 @@
 package com.github.teamfusion.greedandbleed.api;
 
-import com.github.teamfusion.greedandbleed.common.entity.brain.FollowRecruitPlayer;
-import com.github.teamfusion.greedandbleed.common.entity.brain.SlingshotAttack;
-import com.github.teamfusion.greedandbleed.common.entity.brain.SwitchPygmySimpleJob;
-import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
+import com.github.teamfusion.greedandbleed.common.entity.brain.*;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
@@ -19,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
@@ -65,6 +63,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
         this.initIdleActivity(10);
         this.initFightActivity(10);
         this.initWorkActivity(10);
+        this.initRideActivity(5);
     }
 
     //I need work activity with condition so I'll override it
@@ -78,6 +77,12 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
         return new RunOne<>(
                 getWorkMovementBehaviors()
         );
+    }
+
+
+    @Override
+    protected void initRideActivity(int priorityStart) {
+        dynamicBrain.addActivityAndRemoveMemoryWhenStopped(Activity.RIDE, priorityStart, ImmutableList.of(Mount.create(1.25F)), MemoryModuleType.RIDE_TARGET);
     }
 
     @Override
@@ -101,7 +106,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getCoreTasks() {
-        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), StopBeingAngryIfTargetDead.create(), new SwitchPygmySimpleJob<>(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
+        return List.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), InteractWithDoor.create(), new SwitchPygmySimpleJob<>(), ValidateNearbyPoi.create(holder -> holder.is(PoiRegistry.PYGMY_STATION), MemoryModuleType.JOB_SITE), new CountDownCooldownTicks(MemoryRegistry.WORK_TIME.get()));
     }
 
     @Override
@@ -111,8 +116,10 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasSlingshot, BackUpIfTooClose.create(5, 0.75f)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15f), MeleeAttack.create(20), new SlingshotAttack<>());
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasSlingshotWithBackUp, BackUpIfTooClose.create(5, 0.75f)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasNotRiding, SetWalkTargetFromAttackTargetIfTargetFar.create(1.15f)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasNotRiding, MeleeAttack.create(20)), new SlingshotAttack<>());
     }
+
+
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -135,8 +142,16 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     @Override
     public void updateActivity() {
-        this.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.FIGHT, Activity.WORK, Activity.IDLE));
+        this.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.RIDE, Activity.FIGHT, Activity.WORK, Activity.IDLE));
         this.mob.setAggressive(this.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET));
+        if (this.mob.getControlledVehicle() instanceof Mob vehicle) {
+            if (this.getBrain().hasMemoryValue(MemoryModuleType.RIDE_TARGET)) {
+                this.getBrain().eraseMemory(MemoryModuleType.RIDE_TARGET);
+            }
+            if (!vehicle.isAggressive()) {
+                this.mob.unRide();
+            }
+        }
     }
 
     @Override
@@ -256,8 +271,16 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
         return SoundEvents.PIGLIN_AMBIENT;
     }
 
-    private static boolean hasSlingshot(LivingEntity arg) {
-        return arg.isHolding(is -> is.getItem() instanceof SlingshotItem);
+    private static boolean hasSlingshotWithBackUp(LivingEntity arg) {
+        return arg.isHolding(is -> is.getItem() instanceof SlingshotItem) && hasNotRiding(arg);
+    }
+
+    private static boolean hasNotRiding(LivingEntity arg) {
+        return !arg.getBrain().hasMemoryValue(MemoryModuleType.RIDE_TARGET);
+    }
+
+    private static boolean hasRiding(LivingEntity arg) {
+        return !hasNotRiding(arg);
     }
 
 }
