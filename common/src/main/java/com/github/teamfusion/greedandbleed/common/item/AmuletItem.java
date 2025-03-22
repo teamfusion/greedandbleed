@@ -10,6 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -36,7 +38,10 @@ public class AmuletItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         ItemStack itemStack = player.getItemInHand(interactionHand);
-        boolean bl = player.experienceLevel > 0;
+        int soulsand = ContainerHelper.clearOrCountMatchingItems(player.getInventory(), predicate -> {
+            return predicate.is(Items.SOUL_SAND) || predicate.is(Items.SOUL_SOIL);
+        }, 1, true);
+        boolean bl = player.experienceLevel > 0 || soulsand > 0;
         if (!player.getAbilities().instabuild && !bl) {
             return InteractionResultHolder.fail(itemStack);
         } else if (level.clip(new ClipContext(player.getEyePosition(), player.getEyePosition().add(player.getLookAngle().scale(8.0F)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player)).getType() == HitResult.Type.BLOCK) {
@@ -64,9 +69,12 @@ public class AmuletItem extends Item {
         if (livingEntity instanceof Player player) {
             HitResult hitResult = level.clip(new ClipContext(player.getEyePosition(), player.getEyePosition().add(player.getLookAngle().scale(8.0F)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
             int experienceLevel = player.experienceLevel;
-            if (experienceLevel > 0 && hitResult.getType() == HitResult.Type.BLOCK) {
+            int soulsand = ContainerHelper.clearOrCountMatchingItems(player.getInventory(), predicate -> {
+                return predicate.is(Items.SOUL_SAND) || predicate.is(Items.SOUL_SOIL);
+            }, 0, true);
+            if ((experienceLevel > 0 || soulsand > 0) && hitResult.getType() == HitResult.Type.BLOCK) {
                 Vec3 vec3 = hitResult.getLocation();
-                EntityType<?> entityType = getMobAndConsume(level, player, experienceLevel, f);
+                EntityType<?> entityType = getMobAndConsume(level, player, experienceLevel, soulsand, f);
                 if (entityType != null) {
                     if (level.isClientSide) {
                         for (int i2 = 0; i2 < 8; i2++) {
@@ -161,23 +169,36 @@ public class AmuletItem extends Item {
     }
 
     //Check the mob anc consume
-    public EntityType<?> getMobAndConsume(Level level, Player player, int xp, float i) {
-        if ((xp >= 3 || player.getAbilities().instabuild) && i >= 1.0F) {
+    public EntityType<?> getMobAndConsume(Level level, Player player, int xp, int soul, float i) {
+        int equipedSoul = soul + xp;
+
+
+        if ((equipedSoul >= 3 || player.getAbilities().instabuild) && i >= 1.0F) {
             if (!player.getAbilities().instabuild) {
-                player.giveExperienceLevels(-3);
+
+                int soulsand = ContainerHelper.clearOrCountMatchingItems(player.getInventory(), predicate -> {
+                    return predicate.is(Items.SOUL_SAND) || predicate.is(Items.SOUL_SOIL);
+                }, 3, false);
+                player.giveExperienceLevels(soulsand - 3);
                 player.getCooldowns().addCooldown(this, 80);
             }
             return level.dimension() == Level.NETHER ? EntityType.ZOGLIN : EntityType.STRAY;
-        } else if ((xp >= 2 || player.getAbilities().instabuild) && i >= 0.5F) {
+        } else if ((equipedSoul >= 2 || player.getAbilities().instabuild) && i >= 0.5F) {
             if (!player.getAbilities().instabuild) {
-                player.giveExperienceLevels(-2);
+                int soulsand = ContainerHelper.clearOrCountMatchingItems(player.getInventory(), predicate -> {
+                    return predicate.is(Items.SOUL_SAND) || predicate.is(Items.SOUL_SOIL);
+                }, 2, false);
+                player.giveExperienceLevels(soulsand - 2);
                 player.getCooldowns().addCooldown(this, 80);
             }
             return level.dimension() == Level.NETHER ? EntityType.ZOMBIFIED_PIGLIN : EntityType.HUSK;
 
-        } else if ((xp >= 1 || player.getAbilities().instabuild) && i >= 0.25F) {
+        } else if ((equipedSoul >= 1 || player.getAbilities().instabuild) && i >= 0.25F) {
             if (!player.getAbilities().instabuild) {
-                player.giveExperienceLevels(-1);
+                int soulsand = ContainerHelper.clearOrCountMatchingItems(player.getInventory(), predicate -> {
+                    return predicate.is(Items.SOUL_SAND) || predicate.is(Items.SOUL_SOIL);
+                }, 1, false);
+                player.giveExperienceLevels(soulsand - 1);
                 player.getCooldowns().addCooldown(this, 80);
             }
             return level.dimension() == Level.NETHER ? EntityTypeRegistry.ZOMBIFIED_HOGLET.get() : EntityType.SKELETON;
