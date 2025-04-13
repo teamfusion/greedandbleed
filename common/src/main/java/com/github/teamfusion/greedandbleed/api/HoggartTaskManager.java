@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.api;
 
 import com.github.teamfusion.greedandbleed.common.entity.brain.FollowRecruitPlayer;
+import com.github.teamfusion.greedandbleed.common.entity.brain.StrollToPoi;
 import com.github.teamfusion.greedandbleed.common.entity.brain.SwitchPygmySimpleJob;
 import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
@@ -78,8 +79,14 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
 
-        return ImmutableList.of(Pair.of(FollowRecruitPlayer.create(0.9F), 2), Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
-            return !predicate.isWaiting();
+        return ImmutableList.of(Pair.of(BehaviorBuilder.triggerIf(predicate -> {
+            return predicate.getMode() == GBPygmy.Mode.FOLLOW;
+        }, FollowRecruitPlayer.create(0.9F)), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
+            return predicate.getMode() == GBPygmy.Mode.PATROL;
+        }, StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.9F, this.mob.getPatrolRange())), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
+            return predicate.getMode() == GBPygmy.Mode.PATROL;
+        }, StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9F, this.mob.getPatrolRange(), 32)), 2), Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
+            return predicate.getMode() != GBPygmy.Mode.WAIT;
         }, RandomStroll.stroll(0.6F)), 5), Pair.of(new DoNothing(30, 60), 1));
     }
 
@@ -114,14 +121,17 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        boolean flag = this.mob.isWaiting();
+        GBPygmy.Mode mode = this.mob.getMode();
         if (this.getBrain().hasMemoryValue(MemoryModuleType.LIKED_PLAYER) && this.getBrain().getMemory(MemoryModuleType.LIKED_PLAYER).get() == player.getUUID()) {
-            if (flag) {
+            this.mob.setMode(GBPygmy.Mode.changeMode(this.mob.getMode()));
+            if (mode == GBPygmy.Mode.FOLLOW) {
                 player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.following"), true);
+            } else if (mode == GBPygmy.Mode.PATROL) {
+                player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.patrol"), true);
             } else {
                 player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.waiting"), true);
             }
-            this.mob.setWaiting(!flag);
+
 
             return InteractionResult.sidedSuccess(player.level().isClientSide);
         }

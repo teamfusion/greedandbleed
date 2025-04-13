@@ -10,6 +10,7 @@ import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -30,6 +31,41 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
     public static void registerReceivers() {
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, SELECT_SYNC_PACKET, GreedAndBleedServerNetwork::onSelectSync);
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, RECRUIT_PACKET, GreedAndBleedServerNetwork::onRecruit);
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PATROL_RANGE_PACKET, GreedAndBleedServerNetwork::onPatrol);
+    }
+
+    private static void onPatrol(FriendlyByteBuf friendlyByteBuf, NetworkManager.PacketContext packetContext) {
+        Player player = packetContext.getPlayer();
+        Level level = player.level();
+        GBPygmy pygmy = level.getNearestEntity(
+                GBPygmy.class,
+                TargetingConditions.forNonCombat()
+                        .range(10F)
+                        .ignoreLineOfSight()
+                        .ignoreInvisibilityTesting(),
+                player,
+                player.blockPosition().getX(),
+                player.blockPosition().getY(),
+                player.blockPosition().getZ(),
+                new AABB(player.blockPosition())
+                        .inflate(18F)
+        );
+
+        BlockPos origin = friendlyByteBuf.readBlockPos();
+        int range = friendlyByteBuf.readInt();
+        if (pygmy != null && level instanceof ServerLevel server) {
+            if (pygmy.getBrain().hasMemoryValue(MemoryModuleType.JOB_SITE) && pygmy.getBrain().getMemory(MemoryModuleType.JOB_SITE).get().pos().equals(origin)) {
+                if (pygmy.getPatrolRange() > 6 || pygmy.getPatrolRange() < 16) {
+                    player.displayClientMessage(Component.translatable("gui.pygmy_station.patrol_range", range + pygmy.getPatrolRange()), true);
+                    pygmy.setPatrolRange(range + pygmy.getPatrolRange());
+
+                } else {
+                    player.displayClientMessage(Component.translatable("gui.pygmy_station.patrol_range", pygmy.getPatrolRange()), true);
+                    pygmy.setPatrolRange(8);
+
+                }
+            }
+        }
     }
 
     private static void onRecruit(FriendlyByteBuf friendlyByteBuf, NetworkManager.PacketContext packetContext) {
@@ -68,7 +104,7 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
                             stack.shrink(stack.getCount());
                             pygmy.playSound(SoundEvents.ITEM_PICKUP, 0.7F, 1.25F);
                             pygmy.swing(InteractionHand.MAIN_HAND);
-                            pygmy.setWaiting(true);
+                            pygmy.setMode(GBPygmy.Mode.PATROL);
                             pygmy.setPersistenceRequired();
                             DebugPackets.sendPoiTicketCountPacket(server, origin);
                         });

@@ -45,8 +45,8 @@ public class SwitchPygmySimpleJob<E extends GBPygmy, T extends LivingEntity> ext
             if (brain.hasMemoryValue(MemoryModuleType.LIKED_PLAYER)) {
                 brain.eraseMemory(MemoryModuleType.LIKED_PLAYER);
             }
-            if (livingEntity.isWaiting()) {
-                livingEntity.setWaiting(false);
+            if (livingEntity.getMode() != GBPygmy.Mode.FOLLOW) {
+                livingEntity.setMode(GBPygmy.Mode.FOLLOW);
             }
             brain.setActiveActivityIfPossible(Activity.IDLE);
         }

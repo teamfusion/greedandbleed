@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -38,9 +39,10 @@ import java.util.UUID;
 
 public abstract class GBPygmy extends Monster implements HasTaskManager {
     protected static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(GBPygmy.class, EntityDataSerializers.BOOLEAN);
-    protected static final EntityDataAccessor<Boolean> DATA_WAITING_ID = SynchedEntityData.defineId(GBPygmy.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<String> DATA_MODE_ID = SynchedEntityData.defineId(GBPygmy.class, EntityDataSerializers.STRING);
 
     protected static final EntityDataAccessor<Boolean> DATA_IMMUNE_TO_ZOMBIFICATION = SynchedEntityData.defineId(GBPygmy.class, EntityDataSerializers.BOOLEAN);
+    protected static final EntityDataAccessor<Integer> DATA_PATROL_RANGE = SynchedEntityData.defineId(GBPygmy.class, EntityDataSerializers.INT);
     protected int timeInOverworld;
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     public static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
@@ -65,12 +67,12 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
         return !this.isBaby();
     }
 
-    public boolean isWaiting() {
-        return this.getEntityData().get(DATA_WAITING_ID);
+    public Mode getMode() {
+        return Mode.byType(this.getEntityData().get(DATA_MODE_ID));
     }
 
-    public void setWaiting(boolean waiting) {
-        this.getEntityData().set(DATA_WAITING_ID, waiting);
+    public void setMode(Mode string) {
+        this.getEntityData().set(DATA_MODE_ID, string.type);
     }
 
     @Override
@@ -132,6 +134,14 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
         return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
     }
 
+    public void setPatrolRange(int range) {
+        this.getEntityData().set(DATA_PATROL_RANGE, range);
+    }
+
+    public int getPatrolRange() {
+        return this.getEntityData().get(DATA_PATROL_RANGE);
+    }
+
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
         super.onSyncedDataUpdated(data);
@@ -145,7 +155,8 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
         super.defineSynchedData();
         this.entityData.define(DATA_BABY_ID, false);
         this.entityData.define(DATA_IMMUNE_TO_ZOMBIFICATION, false);
-        this.entityData.define(DATA_WAITING_ID, false);
+        this.entityData.define(DATA_MODE_ID, "idle");
+        this.entityData.define(DATA_PATROL_RANGE, 8);
     }
 
     @Override
@@ -155,7 +166,8 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
             compoundTag.putBoolean("IsImmuneToZombification", true);
         }
         compoundTag.putInt("TimeInOverworld", this.timeInOverworld);
-        compoundTag.putBoolean("Waiting", this.isWaiting());
+        compoundTag.putString("Mode", this.getMode().type);
+        compoundTag.putInt("PatrolRange", this.getPatrolRange());
     }
 
     @Override
@@ -168,7 +180,8 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
         super.readAdditionalSaveData(compoundTag);
         this.setImmuneToZombification(compoundTag.getBoolean("IsImmuneToZombification"));
         this.timeInOverworld = compoundTag.getInt("TimeInOverworld");
-        this.setWaiting(compoundTag.getBoolean("Waiting"));
+        this.setMode(Mode.byType(compoundTag.getString("Mode")));
+        this.setPatrolRange(compoundTag.getInt("PatrolRange"));
     }
 
     @Override
@@ -279,5 +292,35 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
     @Override
     public float getEquipmentDropChance(EquipmentSlot equipmentSlot) {
         return super.getEquipmentDropChance(equipmentSlot);
+    }
+
+    public static enum Mode implements StringRepresentable {
+        FOLLOW("follow", 0),
+        WAIT("wait", 1),
+        PATROL("patrol", 2);
+
+        public static final StringRepresentable.EnumCodec<Mode> CODEC = StringRepresentable.fromEnum(Mode::values);
+        final String type;
+        final int index;
+
+        private Mode(String string2, int index) {
+            this.type = string2;
+            this.index = index;
+        }
+
+        public String getSerializedName() {
+            return this.type;
+        }
+
+        static Mode byType(String string) {
+            return CODEC.byName(string, FOLLOW);
+        }
+
+        public static Mode changeMode(Mode mode) {
+            if (mode.index < Mode.values().length - 1) {
+                return Mode.values()[mode.index + 1];
+            }
+            return FOLLOW;
+        }
     }
 }

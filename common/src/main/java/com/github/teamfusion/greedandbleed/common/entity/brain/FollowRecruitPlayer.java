@@ -29,7 +29,7 @@ public class FollowRecruitPlayer {
 
             Optional<ServerPlayer> likedPlayer = getLikedPlayer(pygmy);
 
-            if (likedPlayer.isEmpty() || pygmy.isWaiting()) {
+            if (likedPlayer.isEmpty() || pygmy.getMode() == GBPygmy.Mode.WAIT) {
                 return false;
             }
             if (pygmy.closerThan(likedPlayer.get(), (double) (32)) && !pygmy.closerThan(likedPlayer.get(), (double) 5)) {
