@@ -44,7 +44,7 @@ public class PygmyStationScreen extends AbstractContainerScreen<PygmyStationMenu
                 buf.writeInt(1);
                 NetworkManager.sendToServer(GreedAndBleedServerNetwork.PATROL_RANGE_PACKET, buf);
             }
-        }).pos(k + 140, l + 40).size(21, 21).build());
+        }).pos(k + 140 - 22, l + 62).size(21, 21).build());
         this.addRenderableWidget(Button.builder(Component.literal("-"), button -> {
             if (Minecraft.getInstance().player instanceof IGBPlayer gbPlayer && gbPlayer.getBlockEntityPos() != null) {
                 FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());

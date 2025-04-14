@@ -37,12 +37,20 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
     private static void onPatrol(FriendlyByteBuf friendlyByteBuf, NetworkManager.PacketContext packetContext) {
         Player player = packetContext.getPlayer();
         Level level = player.level();
+        BlockPos origin = friendlyByteBuf.readBlockPos();
+        int range = friendlyByteBuf.readInt();
         GBPygmy pygmy = level.getNearestEntity(
                 GBPygmy.class,
                 TargetingConditions.forNonCombat()
-                        .range(10F)
+                        .range(18F)
                         .ignoreLineOfSight()
-                        .ignoreInvisibilityTesting(),
+                        .ignoreInvisibilityTesting().selector(livingEntity -> {
+                            if (livingEntity instanceof GBPygmy pygmy1) {
+                                return pygmy1.getBrain().hasMemoryValue(MemoryModuleType.JOB_SITE) && pygmy1.getBrain().getMemory(MemoryModuleType.JOB_SITE).get().pos().equals(origin);
+                            }
+
+                            return false;
+                        }),
                 player,
                 player.blockPosition().getX(),
                 player.blockPosition().getY(),
@@ -51,10 +59,8 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
                         .inflate(18F)
         );
 
-        BlockPos origin = friendlyByteBuf.readBlockPos();
-        int range = friendlyByteBuf.readInt();
+
         if (pygmy != null && level instanceof ServerLevel server) {
-            if (pygmy.getBrain().hasMemoryValue(MemoryModuleType.JOB_SITE) && pygmy.getBrain().getMemory(MemoryModuleType.JOB_SITE).get().pos().equals(origin)) {
                 if (pygmy.getPatrolRange() > 6 || pygmy.getPatrolRange() < 16) {
                     player.displayClientMessage(Component.translatable("gui.pygmy_station.patrol_range", range + pygmy.getPatrolRange()), true);
                     pygmy.setPatrolRange(range + pygmy.getPatrolRange());
@@ -64,7 +70,7 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
                     pygmy.setPatrolRange(8);
 
                 }
-            }
+
         }
     }
 
