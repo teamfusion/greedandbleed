@@ -9,16 +9,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class PygmyStationMenu extends AbstractContainerMenu {
     private final Container station;
     public PygmyStationMenu(int i, Inventory inventory) {
-        this(i, inventory, new SimpleContainer(1));
+        this(i, inventory, new SimpleContainer(2));
     }
 
     public PygmyStationMenu(int i, Inventory inventory, Container container) {
         super(MenuTypeRegistry.PYGMY_STATION.get(), i);
-        checkContainerSize(container, 1);
+        checkContainerSize(container, 2);
         this.station = container;
 
         container.startOpen(inventory.player);
@@ -32,6 +33,12 @@ public class PygmyStationMenu extends AbstractContainerMenu {
                         return itemStack.is(ItemRegistry.PIGLIN_BELT.get());
                     }
                 });
+        this.addSlot(new Slot(container, 1, 80, 37 + 18) {
+            @Override
+            public boolean mayPlace(ItemStack itemStack) {
+                return itemStack.is(Items.COOKED_PORKCHOP);
+            }
+        });
             /* else {
                 this.addSlot(new Slot(container, j, 80 + j * 18, 37));
             }*/
@@ -50,20 +57,24 @@ public class PygmyStationMenu extends AbstractContainerMenu {
 
     }
 
+    @Override
     public boolean stillValid(Player player) {
         return this.station.stillValid(player);
     }
 
+    @Override
     public ItemStack quickMoveStack(Player player, int i) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = (Slot) this.slots.get(i);
         if (slot != null && slot.hasItem()) {
             ItemStack itemStack2 = slot.getItem();
             itemStack = itemStack2.copy();
-            if (i < 1) {
-                if (!this.moveItemStackTo(itemStack2, 1, 41 - 4, true)) {
+            if (i < 2) {
+                if (!this.moveItemStackTo(itemStack2, 2, 41 - 3, true)) {
                     return ItemStack.EMPTY;
                 }
+            } else if (!this.moveItemStackTo(itemStack2, 0, 1, false)) {
+                return ItemStack.EMPTY;
             }
 
             if (itemStack2.isEmpty()) {

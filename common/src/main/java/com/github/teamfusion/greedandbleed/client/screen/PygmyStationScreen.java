@@ -37,7 +37,7 @@ public class PygmyStationScreen extends AbstractContainerScreen<PygmyStationMenu
             this.onClose();
         }).pos(k + 10, l + 50).size(69 - 16, 21).build());
 
-        this.addRenderableWidget(Button.builder(Component.literal("+"), button -> {
+      /*  this.addRenderableWidget(Button.builder(Component.literal("+"), button -> {
             if (Minecraft.getInstance().player instanceof IGBPlayer gbPlayer && gbPlayer.getBlockEntityPos() != null) {
                 FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
                 buf.writeBlockPos(gbPlayer.getBlockEntityPos());
@@ -53,6 +53,7 @@ public class PygmyStationScreen extends AbstractContainerScreen<PygmyStationMenu
                 NetworkManager.sendToServer(GreedAndBleedServerNetwork.PATROL_RANGE_PACKET, buf);
             }
         }).pos(k + 140, l + 62).size(21, 21).build());
+   */
     }
 
     protected void renderBg(GuiGraphics poseStack, float f, int i, int j) {

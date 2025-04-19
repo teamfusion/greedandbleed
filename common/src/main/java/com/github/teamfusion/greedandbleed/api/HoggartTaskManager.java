@@ -80,13 +80,13 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
 
         return ImmutableList.of(Pair.of(BehaviorBuilder.triggerIf(predicate -> {
-            return predicate.getMode() == GBPygmy.Mode.FOLLOW;
+            return predicate.getMode() == GBPygmy.Mode.FOLLOW && predicate.getPatrolRange() > 0;
         }, FollowRecruitPlayer.create(0.9F)), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
-            return predicate.getMode() == GBPygmy.Mode.PATROL;
+            return predicate.getMode() == GBPygmy.Mode.PATROL && predicate.getPatrolRange() > 0;
         }, StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.9F, this.mob.getPatrolRange())), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
-            return predicate.getMode() == GBPygmy.Mode.PATROL;
+            return predicate.getMode() == GBPygmy.Mode.PATROL && predicate.getPatrolRange() > 0;
         }, StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9F, this.mob.getPatrolRange(), 32)), 2), Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
-            return predicate.getMode() != GBPygmy.Mode.WAIT;
+            return predicate.getMode() != GBPygmy.Mode.WAIT && predicate.getPatrolRange() > 0;
         }, RandomStroll.stroll(0.6F)), 5), Pair.of(new DoNothing(30, 60), 1));
     }
 

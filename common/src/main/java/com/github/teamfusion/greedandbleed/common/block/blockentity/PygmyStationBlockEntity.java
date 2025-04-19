@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity implements MenuProvider {
     public static final int CONTAINER_SIZE = 1;
-    private NonNullList<ItemStack> items = NonNullList.withSize(1, ItemStack.EMPTY);
+    private NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
 
     public PygmyStationBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(BlockEntityRegistry.PYGMY_STATION.get(), blockPos, blockState);
@@ -71,6 +71,6 @@ public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity im
 
     @Override
     public int getContainerSize() {
-        return 1;
+        return 2;
     }
 }

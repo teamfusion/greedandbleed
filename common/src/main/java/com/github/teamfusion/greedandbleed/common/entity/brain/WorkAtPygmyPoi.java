@@ -39,7 +39,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
         } else {
             this.lastCheck = serverLevel.getGameTime();
             GlobalPos globalPos = (GlobalPos) pygmy.getBrain().getMemory(MemoryModuleType.JOB_SITE).get();
-            return globalPos.dimension() == serverLevel.dimension() && globalPos.pos().closerToCenterThan(pygmy.position(), 10);
+            return globalPos.dimension() == serverLevel.dimension();
         }
     }
 
@@ -57,8 +57,16 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
         BlockEntity armorStandAbove = serverLevel.getBlockEntity(globalPos.pos().above());
         BlockEntity blockEntity = serverLevel.getBlockEntity(globalPos.pos());
         if (blockEntity instanceof PygmyStationBlockEntity pygmyStationBlock) {
+            ItemStack meatStack = pygmyStationBlock.getItem(1);
 
-            if (getWorkTime(pygmy) <= 600) {
+            if (!meatStack.isEmpty()) {
+                pygmy.setPatrolRange(meatStack.getCount() * 2);
+            } else {
+                pygmy.setPatrolRange(0);
+            }
+
+            if (globalPos.pos().closerToCenterThan(pygmy.position(), 10)) {
+                if (getWorkTime(pygmy) <= 600) {
                     ItemStack stack2 = findBelt(pygmyStationBlock);
                     if (!stack2.isEmpty()) {
                         stack2.shrink(1);
@@ -96,6 +104,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
                         }
                     }
                 }
+            }
         }
     }
 

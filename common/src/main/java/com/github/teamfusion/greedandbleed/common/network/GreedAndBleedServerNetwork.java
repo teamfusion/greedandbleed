@@ -10,7 +10,6 @@ import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -31,47 +30,6 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
     public static void registerReceivers() {
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, SELECT_SYNC_PACKET, GreedAndBleedServerNetwork::onSelectSync);
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, RECRUIT_PACKET, GreedAndBleedServerNetwork::onRecruit);
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PATROL_RANGE_PACKET, GreedAndBleedServerNetwork::onPatrol);
-    }
-
-    private static void onPatrol(FriendlyByteBuf friendlyByteBuf, NetworkManager.PacketContext packetContext) {
-        Player player = packetContext.getPlayer();
-        Level level = player.level();
-        BlockPos origin = friendlyByteBuf.readBlockPos();
-        int range = friendlyByteBuf.readInt();
-        GBPygmy pygmy = level.getNearestEntity(
-                GBPygmy.class,
-                TargetingConditions.forNonCombat()
-                        .range(18F)
-                        .ignoreLineOfSight()
-                        .ignoreInvisibilityTesting().selector(livingEntity -> {
-                            if (livingEntity instanceof GBPygmy pygmy1) {
-                                return pygmy1.getBrain().hasMemoryValue(MemoryModuleType.JOB_SITE) && pygmy1.getBrain().getMemory(MemoryModuleType.JOB_SITE).get().pos().equals(origin);
-                            }
-
-                            return false;
-                        }),
-                player,
-                player.blockPosition().getX(),
-                player.blockPosition().getY(),
-                player.blockPosition().getZ(),
-                new AABB(player.blockPosition())
-                        .inflate(18F)
-        );
-
-
-        if (pygmy != null && level instanceof ServerLevel server) {
-                if (pygmy.getPatrolRange() > 6 || pygmy.getPatrolRange() < 16) {
-                    player.displayClientMessage(Component.translatable("gui.pygmy_station.patrol_range", range + pygmy.getPatrolRange()), true);
-                    pygmy.setPatrolRange(range + pygmy.getPatrolRange());
-
-                } else {
-                    player.displayClientMessage(Component.translatable("gui.pygmy_station.patrol_range", pygmy.getPatrolRange()), true);
-                    pygmy.setPatrolRange(8);
-
-                }
-
-        }
     }
 
     private static void onRecruit(FriendlyByteBuf friendlyByteBuf, NetworkManager.PacketContext packetContext) {
@@ -98,8 +56,9 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
 
             if (blockEntity instanceof PygmyStationBlockEntity station && !pygmy.getBrain().hasMemoryValue(MemoryModuleType.JOB_SITE)) {
                 ItemStack stack = station.getItem(0);
-                
-                if (stack.getItem() == ItemRegistry.PIGLIN_BELT.get()) {
+                ItemStack stack2 = station.getItem(1);
+
+                if (stack.getItem() == ItemRegistry.PIGLIN_BELT.get() && !stack2.isEmpty()) {
                     server.getPoiManager()
                         .take(holder -> holder.is(PoiRegistry.PYGMY_STATION), (holder, pos) -> pos.equals(origin), origin, 1)
                         .ifPresent(pos -> {
@@ -107,6 +66,7 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
                             brain.setMemory(MemoryModuleType.LIKED_PLAYER, player.getUUID());
                             brain.eraseMemory(MemoryModuleType.WALK_TARGET);
                             addWorkTime(pygmy, 24000 * stack.getCount());
+                            pygmy.setPatrolRange(2 * stack2.getCount());
                             stack.shrink(stack.getCount());
                             pygmy.playSound(SoundEvents.ITEM_PICKUP, 0.7F, 1.25F);
                             pygmy.swing(InteractionHand.MAIN_HAND);

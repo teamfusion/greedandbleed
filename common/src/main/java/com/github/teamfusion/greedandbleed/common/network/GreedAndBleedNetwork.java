@@ -12,8 +12,7 @@ public interface GreedAndBleedNetwork {
             SELECT_SYNC_PACKET = new ResourceLocation(GreedAndBleed.MOD_ID, "select_sync_packet");
     ResourceLocation
             RECRUIT_PACKET = new ResourceLocation(GreedAndBleed.MOD_ID, "recruit_packet");
-    ResourceLocation
-            PATROL_RANGE_PACKET = new ResourceLocation(GreedAndBleed.MOD_ID, "patrol_range_packet");
+
     static void registerReceivers() {
         //NetworkManager.registerReceiver(Side.S2C, SCREEN_OPEN_PACKET, GreedAndBleedNetwork::onOpenScreen);
     }
