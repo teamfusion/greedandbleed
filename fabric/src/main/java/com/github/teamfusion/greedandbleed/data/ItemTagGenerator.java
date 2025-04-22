@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -27,5 +28,6 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         this.getOrCreateTagBuilder(ItemTags.FENCE_GATES).add(BlockRegistry.HOGDEW_FENCE_GATE.get().asItem());
         this.getOrCreateTagBuilder(ItemTags.DOORS).add(BlockRegistry.HOGDEW_DOOR.get().asItem());
         this.getOrCreateTagBuilder(ItemTags.LOGS).addTag(GBItemTags.HOGDEW_LOG);
+        this.getOrCreateTagBuilder(GBItemTags.COOKED_FOOD).add(Items.COOKED_BEEF).add(Items.COOKED_PORKCHOP).add(Items.COOKED_CHICKEN).add(Items.COOKED_RABBIT).add(Items.COOKED_MUTTON).add(Items.BAKED_POTATO);
     }
 }

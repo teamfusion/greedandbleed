@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 
 public class GBItemTags {
     public static final TagKey<Item> HOGDEW_LOG = create("hogdew_log");
+    public static final TagKey<Item> COOKED_FOOD = create("cooked_food");
 
     private static TagKey<Item> create(String string) {
         return TagKey.create(Registries.ITEM, new ResourceLocation(GreedAndBleed.MOD_ID, string));

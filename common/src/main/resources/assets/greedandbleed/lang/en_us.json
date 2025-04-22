@@ -76,5 +76,5 @@
   "entity.greedandbleed.pygmy.waiting": "Pygmy Waiting",
   "entity.greedandbleed.pygmy.following": "Pygmy Following",
   "entity.greedandbleed.pygmy.patrol": "Pygmy Patrol",
-  "gui.pygmy_station.patrol_range": "Patrol Range : %s Block"
+  "gui.greedandbleed.pygmy_station.patrol_range": "%s Block"
 }

@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.inventory;
 
+import com.github.teamfusion.greedandbleed.common.registry.GBItemTags;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MenuTypeRegistry;
 import net.minecraft.world.Container;
@@ -7,21 +8,24 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 public class PygmyStationMenu extends AbstractContainerMenu {
     private final Container station;
+    private final ContainerData data;
     public PygmyStationMenu(int i, Inventory inventory) {
-        this(i, inventory, new SimpleContainer(2));
+        this(i, inventory, new SimpleContainer(2), new SimpleContainerData(1));
     }
 
-    public PygmyStationMenu(int i, Inventory inventory, Container container) {
+    public PygmyStationMenu(int i, Inventory inventory, Container container, ContainerData containerData) {
         super(MenuTypeRegistry.PYGMY_STATION.get(), i);
         checkContainerSize(container, 2);
+        checkContainerDataCount(containerData, 1);
         this.station = container;
-
+        this.data = containerData;
         container.startOpen(inventory.player);
 
         int j;
@@ -36,7 +40,7 @@ public class PygmyStationMenu extends AbstractContainerMenu {
         this.addSlot(new Slot(container, 1, 80, 37 + 18) {
             @Override
             public boolean mayPlace(ItemStack itemStack) {
-                return itemStack.is(Items.COOKED_PORKCHOP);
+                return itemStack.is(GBItemTags.COOKED_FOOD);
             }
         });
             /* else {
@@ -54,7 +58,7 @@ public class PygmyStationMenu extends AbstractContainerMenu {
         for (j = 0; j < 9; ++j) {
             this.addSlot(new Slot(inventory, j, 8 + j * 18, 142));
         }
-
+        this.addDataSlots(containerData);
     }
 
     @Override
@@ -96,5 +100,9 @@ public class PygmyStationMenu extends AbstractContainerMenu {
     public void removed(Player player) {
         super.removed(player);
         this.station.stopOpen(player);
+    }
+
+    public int getRangeCount() {
+        return this.data.get(0);
     }
 }

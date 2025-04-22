@@ -12,6 +12,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,11 +20,32 @@ import net.minecraft.world.level.block.state.BlockState;
 public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity implements MenuProvider {
     public static final int CONTAINER_SIZE = 1;
     private NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final ContainerData dataAccess = new ContainerData() {
+        public int get(int i) {
+            return i == 0 ? PygmyStationBlockEntity.this.pygmyRange : 0;
+        }
 
+        public void set(int i, int j) {
+            if (i == 0) {
+                PygmyStationBlockEntity.this.pygmyRange = j;
+            }
+
+        }
+
+        public int getCount() {
+            return 1;
+        }
+    };
+    private int pygmyRange;
     public PygmyStationBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(BlockEntityRegistry.PYGMY_STATION.get(), blockPos, blockState);
     }
 
+
+    public void setPygmyRange(int pygmyRange) {
+        this.pygmyRange = pygmyRange;
+        this.setChanged();
+    }
 
     @Override
     public NonNullList<ItemStack> getItems() {
@@ -47,13 +69,14 @@ public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity im
 
     @Override
     protected AbstractContainerMenu createMenu(int i, Inventory inventory) {
-        return new PygmyStationMenu(i, inventory, this);
+        return new PygmyStationMenu(i, inventory, this, dataAccess);
     }
 
     @Override
     public void load(CompoundTag compoundTag) {
         super.load(compoundTag);
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        this.pygmyRange = compoundTag.getInt("PygmyRange");
         if (!this.tryLoadLootTable(compoundTag)) {
             ContainerHelper.loadAllItems(compoundTag, this.items);
         }
@@ -66,11 +89,12 @@ public class PygmyStationBlockEntity extends RandomizableContainerBlockEntity im
         if (!this.trySaveLootTable(compoundTag)) {
             ContainerHelper.saveAllItems(compoundTag, this.items);
         }
-
+        compoundTag.putInt("PygmyRange", this.pygmyRange);
     }
 
     @Override
     public int getContainerSize() {
         return 2;
     }
+
 }
