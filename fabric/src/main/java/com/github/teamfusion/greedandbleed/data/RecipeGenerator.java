@@ -24,7 +24,8 @@ public class RecipeGenerator extends FabricRecipeProvider {
     @Override
     public void buildRecipes(Consumer<FinishedRecipe> consumer) {
         planksFromLog(consumer, BlockRegistry.HOGDEW_PLANKS.get(), GBItemTags.HOGDEW_LOG, 4);
-        woodFromLogs(consumer, Blocks.ACACIA_WOOD, BlockRegistry.HOGDEW_STEM.get());
+        woodFromLogs(consumer, BlockRegistry.HOGDEW_HYPHAE.get(), BlockRegistry.HOGDEW_STEM.get());
+        woodFromLogs(consumer, BlockRegistry.STRIPPED_HOGDEW_HYPHAE.get(), BlockRegistry.STRIPPED_HOGDEW_STEM.get());
         slabBuilder(RecipeCategory.BUILDING_BLOCKS, BlockRegistry.HOGDEW_PLANKS_SLAB.get(), Ingredient.of(BlockRegistry.HOGDEW_PLANKS.get().asItem()));
         stairBuilder(BlockRegistry.HOGDEW_PLANKS_STAIRS.get(), Ingredient.of(BlockRegistry.HOGDEW_PLANKS.get().asItem()));
 
@@ -32,6 +33,9 @@ public class RecipeGenerator extends FabricRecipeProvider {
         trapdoorBuilder(BlockRegistry.HOGDEW_TRAPDOOR.get(), Ingredient.of(BlockRegistry.HOGDEW_PLANKS.get().asItem()));
         fenceBuilder(BlockRegistry.HOGDEW_FENCE.get(), Ingredient.of(BlockRegistry.HOGDEW_PLANKS.get().asItem()));
         fenceGateBuilder(BlockRegistry.HOGDEW_FENCE_GATE.get(), Ingredient.of(BlockRegistry.HOGDEW_PLANKS.get().asItem()));
+        pressurePlateBuilder(RecipeCategory.BUILDING_BLOCKS, BlockRegistry.HOGDEW_PRESSURE_PLATE.get(), Ingredient.of(BlockRegistry.HOGDEW_PLANKS.get()));
+        buttonBuilder(BlockRegistry.HOGDEW_PRESSURE_PLATE.get(), Ingredient.of(BlockRegistry.HOGDEW_PLANKS.get().asItem()));
+
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.CRIMSON_FUNGUS_ON_A_STICK.get())
                 .define('S', Items.FISHING_ROD)

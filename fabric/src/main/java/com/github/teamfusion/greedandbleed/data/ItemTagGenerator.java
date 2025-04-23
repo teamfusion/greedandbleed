@@ -20,14 +20,18 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider arg) {
-        this.getOrCreateTagBuilder(GBItemTags.HOGDEW_LOG).add(BlockRegistry.HOGDEW_STEM.get().asItem()).add(BlockRegistry.STRIPPED_HOGDEW_STEM.get().asItem());
+        this.getOrCreateTagBuilder(GBItemTags.HOGDEW_LOG).add(BlockRegistry.HOGDEW_STEM.get().asItem()).add(BlockRegistry.STRIPPED_HOGDEW_STEM.get().asItem())
+                .add(BlockRegistry.HOGDEW_HYPHAE.get().asItem()).add(BlockRegistry.STRIPPED_HOGDEW_HYPHAE.get().asItem());
         this.getOrCreateTagBuilder(ItemTags.PLANKS).add(BlockRegistry.HOGDEW_PLANKS.get().asItem());
         this.getOrCreateTagBuilder(ItemTags.WOODEN_STAIRS).add(BlockRegistry.HOGDEW_PLANKS_STAIRS.get().asItem());
         this.getOrCreateTagBuilder(ItemTags.WOODEN_SLABS).add(BlockRegistry.HOGDEW_PLANKS_SLAB.get().asItem());
         this.getOrCreateTagBuilder(ItemTags.WOODEN_FENCES).add(BlockRegistry.HOGDEW_FENCE.get().asItem());
         this.getOrCreateTagBuilder(ItemTags.FENCE_GATES).add(BlockRegistry.HOGDEW_FENCE_GATE.get().asItem());
         this.getOrCreateTagBuilder(ItemTags.DOORS).add(BlockRegistry.HOGDEW_DOOR.get().asItem());
-        this.getOrCreateTagBuilder(ItemTags.LOGS).addTag(GBItemTags.HOGDEW_LOG);
+        this.getOrCreateTagBuilder(ItemTags.WOODEN_PRESSURE_PLATES).add(BlockRegistry.HOGDEW_PRESSURE_PLATE.get().asItem());
+        this.getOrCreateTagBuilder(ItemTags.WOODEN_BUTTONS).add(BlockRegistry.HOGDEW_BUTTON.get().asItem());
+        this.getOrCreateTagBuilder(ItemTags.BUTTONS).add(BlockRegistry.HOGDEW_BUTTON.get().asItem());
+        //this.getOrCreateTagBuilder(ItemTags.LOGS_THAT_BURN).addTag(GBItemTags.HOGDEW_LOG);
         this.getOrCreateTagBuilder(GBItemTags.COOKED_FOOD).add(Items.COOKED_BEEF).add(Items.COOKED_CHICKEN).add(Items.COOKED_SALMON).add(Items.COOKED_COD).add(Items.COOKED_RABBIT).add(Items.COOKED_MUTTON).add(Items.BAKED_POTATO);
     }
 }

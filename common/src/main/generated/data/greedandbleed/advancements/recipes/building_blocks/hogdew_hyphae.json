@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:acacia_wood"
+        "recipe": "greedandbleed:hogdew_hyphae"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:acacia_wood"
+      "greedandbleed:hogdew_hyphae"
     ]
   },
   "sends_telemetry_event": false

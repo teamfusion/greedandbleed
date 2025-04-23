@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/cube_column",
+  "parent": "minecraft:block/cube_column_uv_locked_y",
   "textures": {
     "end": "greedandbleed:block/stripped_hogdew_stem_top",
     "side": "greedandbleed:block/stripped_hogdew_stem"

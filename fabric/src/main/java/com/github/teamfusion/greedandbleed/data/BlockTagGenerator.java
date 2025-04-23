@@ -17,7 +17,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider arg) {
-        this.getOrCreateTagBuilder(GBBlockTags.HOGDEW_LOG).add(BlockRegistry.HOGDEW_STEM.get()).add(BlockRegistry.STRIPPED_HOGDEW_STEM.get());
+        this.getOrCreateTagBuilder(GBBlockTags.HOGDEW_LOG).add(BlockRegistry.HOGDEW_STEM.get()).add(BlockRegistry.STRIPPED_HOGDEW_STEM.get()).add(BlockRegistry.HOGDEW_HYPHAE.get()).add(BlockRegistry.STRIPPED_HOGDEW_HYPHAE.get());
         this.getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_AXE).addTag(GBBlockTags.HOGDEW_LOG).add(BlockRegistry.HOGDEW_DOOR.get()).add(BlockRegistry.HOGDEW_FENCE.get()).add(BlockRegistry.HOGDEW_FENCE_GATE.get())
                 .add(BlockRegistry.HOGDEW_TRAPDOOR.get()).add(BlockRegistry.HOGDEW_DOOR.get()).add(BlockRegistry.HOGDEW_PLANKS_SLAB.get()).add(BlockRegistry.HOGDEW_PLANKS_STAIRS.get());
         this.getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_PICKAXE).add(BlockRegistry.HOGDEW_NYLIUM.get());
@@ -27,6 +27,11 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         this.getOrCreateTagBuilder(BlockTags.WOODEN_STAIRS).add(BlockRegistry.HOGDEW_PLANKS_STAIRS.get());
         this.getOrCreateTagBuilder(BlockTags.WOODEN_SLABS).add(BlockRegistry.HOGDEW_PLANKS_SLAB.get());
         this.getOrCreateTagBuilder(BlockTags.WOODEN_FENCES).add(BlockRegistry.HOGDEW_FENCE.get());
+        this.getOrCreateTagBuilder(BlockTags.WOODEN_PRESSURE_PLATES).add(BlockRegistry.HOGDEW_PRESSURE_PLATE.get());
+        this.getOrCreateTagBuilder(BlockTags.PRESSURE_PLATES).add(BlockRegistry.HOGDEW_PRESSURE_PLATE.get());
+        this.getOrCreateTagBuilder(BlockTags.WOODEN_BUTTONS).add(BlockRegistry.HOGDEW_BUTTON.get());
+        this.getOrCreateTagBuilder(BlockTags.BUTTONS).add(BlockRegistry.HOGDEW_BUTTON.get());
+
         this.getOrCreateTagBuilder(BlockTags.FENCE_GATES).add(BlockRegistry.HOGDEW_FENCE_GATE.get());
         this.getOrCreateTagBuilder(BlockTags.DOORS).add(BlockRegistry.HOGDEW_DOOR.get());
     }

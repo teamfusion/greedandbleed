@@ -9,7 +9,6 @@ import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.data.models.model.ModelTemplates;
-import net.minecraft.data.models.model.TexturedModel;
 
 public class ModelGenerator extends FabricModelProvider {
     public ModelGenerator(FabricDataOutput dataGenerator) {
@@ -19,8 +18,9 @@ public class ModelGenerator extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockModelGenerators gen) {
         MobRegistry.eggs().forEach(item -> gen.delegateItemModel(item, ModelLocationUtils.decorateItemModelLocation("template_spawn_egg")));
-        gen.createAxisAlignedPillarBlock(BlockRegistry.HOGDEW_STEM.get(), TexturedModel.COLUMN);
-        gen.createAxisAlignedPillarBlock(BlockRegistry.STRIPPED_HOGDEW_STEM.get(), TexturedModel.COLUMN);
+        gen.woodProvider(BlockRegistry.HOGDEW_STEM.get()).logUVLocked(BlockRegistry.HOGDEW_STEM.get()).wood(BlockRegistry.HOGDEW_HYPHAE.get());
+        gen.woodProvider(BlockRegistry.STRIPPED_HOGDEW_STEM.get()).logUVLocked(BlockRegistry.STRIPPED_HOGDEW_STEM.get()).wood(BlockRegistry.STRIPPED_HOGDEW_HYPHAE.get());
+
         gen.createTrivialCube(BlockRegistry.HOGDEW_CLUSTER.get());
         gen.createCrossBlock(BlockRegistry.HOGDEW_FUNGUS.get(), BlockModelGenerators.TintState.NOT_TINTED);
 
@@ -28,7 +28,7 @@ public class ModelGenerator extends FabricModelProvider {
         gen.createDoor(BlockRegistry.HOGDEW_DOOR.get());
         gen.createMultiface(BlockRegistry.HOGDEW_LUMPS.get());
         gen.createTrapdoor(BlockRegistry.HOGDEW_TRAPDOOR.get());
-        gen.family(BlockRegistry.HOGDEW_PLANKS.get()).stairs(BlockRegistry.HOGDEW_PLANKS_STAIRS.get()).slab(BlockRegistry.HOGDEW_PLANKS_SLAB.get()).fenceGate(BlockRegistry.HOGDEW_FENCE_GATE.get()).fence(BlockRegistry.HOGDEW_FENCE.get());
+        gen.family(BlockRegistry.HOGDEW_PLANKS.get()).stairs(BlockRegistry.HOGDEW_PLANKS_STAIRS.get()).slab(BlockRegistry.HOGDEW_PLANKS_SLAB.get()).fenceGate(BlockRegistry.HOGDEW_FENCE_GATE.get()).fence(BlockRegistry.HOGDEW_FENCE.get()).button(BlockRegistry.HOGDEW_BUTTON.get()).pressurePlate(BlockRegistry.HOGDEW_PRESSURE_PLATE.get());
         gen.createNyliumBlock(BlockRegistry.HOGDEW_NYLIUM.get());
     }
     @Override
