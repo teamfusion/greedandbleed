@@ -1,11 +1,11 @@
 package com.github.teamfusion.greedandbleed.client.models;
 
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.ZombifiedPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.ZombifiedPygmies;
 import net.minecraft.client.model.AnimationUtils;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.geom.ModelPart;
 
-public class ZombifiedPygmyModel<T extends ZombifiedPygmy> extends AbstractPygmyModel<T> implements ArmedModel {
+public class ZombifiedPygmyModel<T extends ZombifiedPygmies> extends AbstractPygmyModel<T> implements ArmedModel {
     public ZombifiedPygmyModel(ModelPart root) {
         super(root);
     }

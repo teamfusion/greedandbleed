@@ -207,7 +207,7 @@ public class AmuletItem extends Item {
             if (!player.getAbilities().instabuild) {
                 player.getCooldowns().addCooldown(this, 80);
             }
-            return level.dimension() != Level.NETHER ? EntityType.ZOMBIE : level.getRandom().nextBoolean() ? EntityTypeRegistry.SKELETAL_PIGLIN.get() : EntityTypeRegistry.ZOMBIFIED_PYGMY.get();
+            return level.dimension() != Level.NETHER ? EntityType.ZOMBIE : level.getRandom().nextBoolean() ? EntityTypeRegistry.SKELETAL_PIGLIN.get() : EntityTypeRegistry.ZOMBIFIED_PYGMIES.get();
 
         }
     }

@@ -224,7 +224,7 @@ public abstract class GBPygmy extends Monster implements HasTaskManager {
     }
 
     protected void finishConversion(ServerLevel serverLevel) {
-        ZombifiedPygmy zombifiedPiglin = this.convertTo(EntityTypeRegistry.ZOMBIFIED_PYGMY.get(), true);
+        ZombifiedPygmies zombifiedPiglin = this.convertTo(EntityTypeRegistry.ZOMBIFIED_PYGMIES.get(), true);
         if (zombifiedPiglin != null) {
             zombifiedPiglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
         }

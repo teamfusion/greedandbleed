@@ -2,13 +2,13 @@ package com.github.teamfusion.greedandbleed.client.renderer;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.ZombifiedPygmyModel;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.ZombifiedPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.ZombifiedPygmies;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
-public class ZombifiedPygmyRenderer<T extends ZombifiedPygmy> extends MobRenderer<T, ZombifiedPygmyModel<T>> {
+public class ZombifiedPygmyRenderer<T extends ZombifiedPygmies> extends MobRenderer<T, ZombifiedPygmyModel<T>> {
     public ZombifiedPygmyRenderer(EntityRendererProvider.Context context) {
         super(context, new ZombifiedPygmyModel<>(context.bakeLayer(PygmyRenderer.MAIN)), 0.3F);
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
