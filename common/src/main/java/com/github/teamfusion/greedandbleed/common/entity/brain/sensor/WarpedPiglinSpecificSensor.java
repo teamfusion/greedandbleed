@@ -3,7 +3,9 @@ package com.github.teamfusion.greedandbleed.common.entity.brain.sensor;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.Brain;
@@ -13,6 +15,9 @@ import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +55,17 @@ public class WarpedPiglinSpecificSensor extends Sensor<LivingEntity> {
         brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS, optional2);
         brain.setMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS, list2);
         brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, list);
+        brain.setMemory(MemoryModuleType.NEAREST_REPELLENT, findNearestRepellent(serverLevel, livingEntity2));
+    }
+
+    private static Optional<BlockPos> findNearestRepellent(ServerLevel serverLevel, LivingEntity livingEntity) {
+        return BlockPos.findClosestMatch(livingEntity.blockPosition(), 8, 4, (blockPos) -> isValidRepellent(serverLevel, blockPos));
+    }
+
+    private static boolean isValidRepellent(ServerLevel serverLevel, BlockPos blockPos) {
+        BlockState blockState = serverLevel.getBlockState(blockPos);
+        boolean bl = blockState.is(BlockTags.PIGLIN_REPELLENTS);
+        return bl && blockState.is(Blocks.SOUL_CAMPFIRE) ? CampfireBlock.isLitCampfire(blockState) : bl;
     }
 }
 

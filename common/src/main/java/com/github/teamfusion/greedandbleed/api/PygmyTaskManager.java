@@ -18,6 +18,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
@@ -117,7 +118,11 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(PygmyTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
+        return ImmutableList.of(StartAttacking.create(PygmyTaskManager::findNearestValidAttackTarget), avoidRepellent(), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
+    }
+
+    protected static BehaviorControl<PathfinderMob> avoidRepellent() {
+        return SetWalkTargetAwayFrom.pos(MemoryModuleType.NEAREST_REPELLENT, 1.0F, 8, false);
     }
 
     @Override
@@ -277,7 +282,7 @@ public class PygmyTaskManager<T extends Pygmy> extends TaskManager<T> {
             return SoundEvents.PIGLIN_ANGRY;
         }
 
-        return SoundEvents.PIGLIN_AMBIENT;
+        return isNearRepellent(this.mob) ? SoundEvents.PIGLIN_RETREAT : SoundEvents.PIGLIN_AMBIENT;
     }
 
     private static boolean hasSlingshotWithBackUp(LivingEntity arg) {

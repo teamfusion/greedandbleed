@@ -66,12 +66,23 @@ public class WarpedPiglinTaskManager<T extends WarpedPiglin> extends PiglinTaskM
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(WarpedPiglinTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createIdleMovementBehaviors());
+        return ImmutableList.of(StartAttacking.create(WarpedPiglinTaskManager::findNearestValidAttackTarget), avoidRepellent(), createIdleLookBehaviors(), createIdleMovementBehaviors());
+    }
+
+
+    protected static BehaviorControl<PathfinderMob> avoidRepellent() {
+        return SetWalkTargetAwayFrom.pos(MemoryModuleType.NEAREST_REPELLENT, 1.0F, 8, false);
     }
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
         return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.0f), new WarpedSpitAttack<>(), new JumpTheSky<>());
+    }
+
+    @Override
+    protected List<BehaviorControl<? super T>> getAvoidTasks() {
+
+        return super.getAvoidTasks();
     }
 
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
@@ -170,6 +181,6 @@ public class WarpedPiglinTaskManager<T extends WarpedPiglin> extends PiglinTaskM
             return SoundEvents.PIGLIN_ANGRY;
         }
 
-        return SoundEvents.PIGLIN_AMBIENT;
+        return isNearRepellent(this.mob) ? SoundEvents.PIGLIN_RETREAT : SoundEvents.PIGLIN_AMBIENT;
     }
 }
