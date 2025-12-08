@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.data.worldgen.structure;
 
+import com.github.teamfusion.greedandbleed.data.worldgen.structure.piece.PigmyEncampmentPieces;
 import com.github.teamfusion.greedandbleed.data.worldgen.structure.piece.ShamanBasePieces;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
@@ -18,6 +19,16 @@ public class StructureTemplatePoolGenerator extends FabricDynamicRegistryProvide
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
         this.add(registries, entries, ShamanBasePieces.SHAMAN_BASE);
+        this.add(registries, entries, PigmyEncampmentPieces.MOB_PIGMY);
+        this.add(registries, entries, PigmyEncampmentPieces.MOB_HOGLIN);
+        this.add(registries, entries, PigmyEncampmentPieces.MOB_HOGGART);
+        this.add(registries, entries, PigmyEncampmentPieces.MOB_HOGLET);
+        this.add(registries, entries, PigmyEncampmentPieces.FARM);
+        this.add(registries, entries, PigmyEncampmentPieces.HUT);
+        this.add(registries, entries, PigmyEncampmentPieces.TENT);
+        this.add(registries, entries, PigmyEncampmentPieces.MISC);
+        this.add(registries, entries, PigmyEncampmentPieces.PILLAR);
+        this.add(registries, entries, PigmyEncampmentPieces.WALL);
     }
 
     private void add(HolderLookup.Provider registries, Entries entries, ResourceKey<StructureTemplatePool> key) {

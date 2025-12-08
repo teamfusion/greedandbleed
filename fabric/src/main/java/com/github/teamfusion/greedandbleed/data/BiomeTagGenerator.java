@@ -19,6 +19,6 @@ public class BiomeTagGenerator extends FabricTagProvider<Biome> {
     @Override
     protected void addTags(HolderLookup.Provider arg) {
         this.getOrCreateTagBuilder(GBBiomeTags.HAS_SHAMAN_BASE).add(Biomes.CRIMSON_FOREST);
-        this.getOrCreateTagBuilder(GBBiomeTags.HAS_PYGMY_ENCAMPMENTS).add(BiomeRegistry.HOGDEW_HOLLOW);
+        this.getOrCreateTagBuilder(GBBiomeTags.HAS_PIGMY_ENCAMPMENTS).add(BiomeRegistry.HOGDEW_HOLLOW);
     }
 }
