@@ -13,7 +13,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.monster.Monster;
 
-public class AbstractPygmyModel<T extends Monster> extends HierarchicalModel<T> implements ArmedModel, IGBArmor {
+public class AbstractPigmyModel<T extends Monster> extends HierarchicalModel<T> implements ArmedModel, IGBArmor {
     private final ModelPart Entity;
 
     private final ModelPart body;
@@ -24,7 +24,7 @@ public class AbstractPygmyModel<T extends Monster> extends HierarchicalModel<T> 
     public final ModelPart left_leg;
     private final ModelPart head;
 
-    public AbstractPygmyModel(ModelPart root) {
+    public AbstractPigmyModel(ModelPart root) {
         this.Entity = root.getChild("Entity");
 
         this.body = this.Entity.getChild("body");

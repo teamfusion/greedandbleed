@@ -1,4 +1,4 @@
-package com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy;
+package com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy;
 
 import com.github.teamfusion.greedandbleed.common.entity.IConvertToNormal;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
@@ -40,12 +40,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class ZombifiedPygmies extends Monster implements NeutralMob, IConvertToNormal {
-    private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(ZombifiedPygmies.class, EntityDataSerializers.BOOLEAN);
+public class ZombifiedPigmies extends Monster implements NeutralMob, IConvertToNormal {
+    private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(ZombifiedPigmies.class, EntityDataSerializers.BOOLEAN);
     private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("766bfa64-11f3-11ea-8d71-362b9e155667");
     private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.2F, AttributeModifier.Operation.MULTIPLY_BASE);
 
-    private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(ZombifiedPygmies.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(ZombifiedPigmies.class, EntityDataSerializers.INT);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
 
@@ -54,7 +54,7 @@ public class ZombifiedPygmies extends Monster implements NeutralMob, IConvertToN
 
     private UUID persistentAngerTarget;
 
-    public ZombifiedPygmies(EntityType<? extends Monster> entityType, Level level) {
+    public ZombifiedPigmies(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -212,7 +212,7 @@ public class ZombifiedPygmies extends Monster implements NeutralMob, IConvertToN
     }
 
     protected void finishImmunity(ServerLevel serverLevel) {
-        Pygmy pig = this.convertTo(EntityTypeRegistry.PYGMY.get(), true);
+        Pigmy pig = this.convertTo(EntityTypeRegistry.PIGMY.get(), true);
         if (pig != null) {
             pig.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
             pig.setImmuneToZombification(true);

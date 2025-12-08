@@ -3,9 +3,9 @@ package com.github.teamfusion.greedandbleed.api;
 import com.github.teamfusion.greedandbleed.common.entity.brain.FollowRecruitPlayer;
 import com.github.teamfusion.greedandbleed.common.entity.brain.StrollToPoi;
 import com.github.teamfusion.greedandbleed.common.entity.brain.SwitchPygmySimpleJob;
-import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPygmyPoi;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.brain.WorkAtPigmyPoi;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Hoggart;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PoiRegistry;
 import com.google.common.collect.ImmutableList;
@@ -80,13 +80,13 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getWorkMovementBehaviors() {
 
         return ImmutableList.of(Pair.of(BehaviorBuilder.triggerIf(predicate -> {
-            return predicate.getMode() == GBPygmy.Mode.FOLLOW && predicate.getPatrolRange() > 0;
+            return predicate.getMode() == GBPigmy.Mode.FOLLOW && predicate.getPatrolRange() > 0;
         }, FollowRecruitPlayer.create(0.9F)), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
-            return predicate.getMode() == GBPygmy.Mode.PATROL && predicate.getPatrolRange() > 0;
+            return predicate.getMode() == GBPigmy.Mode.PATROL && predicate.getPatrolRange() > 0;
         }, StrollAroundPoi.create(MemoryModuleType.JOB_SITE, 0.9F, this.mob.getPatrolRange())), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
-            return predicate.getMode() == GBPygmy.Mode.PATROL && predicate.getPatrolRange() > 0;
-        }, StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9F, this.mob.getPatrolRange(), 32)), 2), Pair.of(new WorkAtPygmyPoi(), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
-            return predicate.getMode() != GBPygmy.Mode.WAIT && predicate.getPatrolRange() > 0;
+            return predicate.getMode() == GBPigmy.Mode.PATROL && predicate.getPatrolRange() > 0;
+        }, StrollToPoi.create(MemoryModuleType.JOB_SITE, 0.9F, this.mob.getPatrolRange(), 32)), 2), Pair.of(new WorkAtPigmyPoi(), 2), Pair.of(BehaviorBuilder.triggerIf(predicate -> {
+            return predicate.getMode() != GBPigmy.Mode.WAIT && predicate.getPatrolRange() > 0;
         }, RandomStroll.stroll(0.6F)), 5), Pair.of(new DoNothing(30, 60), 1));
     }
 
@@ -121,12 +121,12 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        GBPygmy.Mode mode = this.mob.getMode();
+        GBPigmy.Mode mode = this.mob.getMode();
         if (this.getBrain().hasMemoryValue(MemoryModuleType.LIKED_PLAYER) && this.getBrain().getMemory(MemoryModuleType.LIKED_PLAYER).get() == player.getUUID()) {
-            this.mob.setMode(GBPygmy.Mode.changeMode(this.mob.getMode()));
-            if (mode == GBPygmy.Mode.FOLLOW) {
+            this.mob.setMode(GBPigmy.Mode.changeMode(this.mob.getMode()));
+            if (mode == GBPigmy.Mode.FOLLOW) {
                 player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.following"), true);
-            } else if (mode == GBPygmy.Mode.PATROL) {
+            } else if (mode == GBPigmy.Mode.PATROL) {
                 player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.patrol"), true);
             } else {
                 player.displayClientMessage(Component.translatable("entity.greedandbleed.pygmy.waiting"), true);
@@ -147,7 +147,7 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
 
     @Override
     public void wasHurtBy(LivingEntity entity) {
-        if (entity instanceof GBPygmy) {
+        if (entity instanceof GBPigmy) {
             return;
         }
         if (entity instanceof Hoglin) {
@@ -156,7 +156,7 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
         maybeRetaliate(this.mob, entity);
     }
 
-    public static void maybeRetaliate(GBPygmy piglin, LivingEntity targetIn) {
+    public static void maybeRetaliate(GBPigmy piglin, LivingEntity targetIn) {
         if (!piglin.getBrain().isActive(Activity.AVOID)) {
             if (isAttackAllowed(piglin, targetIn)) {
                 if (!BehaviorUtils.isOtherTargetMuchFurtherAwayThanCurrentAttackTarget(piglin, targetIn, 4.0D)) {
@@ -173,7 +173,7 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
         }
     }
 
-    public static void broadcastAngerTarget(GBPygmy piglin, LivingEntity targetIn) {
+    public static void broadcastAngerTarget(GBPigmy piglin, LivingEntity targetIn) {
         getAdultPygmys(piglin).forEach((adultPiglin) -> {
             if (!(targetIn instanceof Hoglin hoglin)
                     || piglin.canHunt()
@@ -184,11 +184,11 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
     }
 
 
-    public static void broadcastUniversalAnger(GBPygmy piglin) {
+    public static void broadcastUniversalAnger(GBPigmy piglin) {
         getAdultPygmys(piglin).forEach((adultPiglin) -> getNearestVisibleTargetablePlayer(adultPiglin).ifPresent((player) -> setAngerTarget(adultPiglin, player)));
     }
 
-    public static void setAngerTarget(GBPygmy piglin, LivingEntity targetIn) {
+    public static void setAngerTarget(GBPigmy piglin, LivingEntity targetIn) {
         if (isAttackAllowed(piglin, targetIn)) {
             piglin.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
             piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, targetIn.getUUID(), 600L);
@@ -200,7 +200,7 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
         }
     }
 
-    public static void setAngerTargetToNearestTargetablePlayerIfFound(GBPygmy piglin, LivingEntity targetIn) {
+    public static void setAngerTargetToNearestTargetablePlayerIfFound(GBPigmy piglin, LivingEntity targetIn) {
         Optional<Player> nearestPlayer = getNearestVisibleTargetablePlayer(piglin);
         if (nearestPlayer.isPresent()) {
             setAngerTarget(piglin, nearestPlayer.get());
@@ -210,7 +210,7 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
 
     }
 
-    public static void setAngerTargetIfCloserThanCurrent(GBPygmy piglin, LivingEntity targetIn) {
+    public static void setAngerTargetIfCloserThanCurrent(GBPigmy piglin, LivingEntity targetIn) {
         Optional<LivingEntity> angerTarget = getAngerTarget(piglin);
         LivingEntity nearestTarget = BehaviorUtils.getNearestTarget(piglin, angerTarget, targetIn);
         if (angerTarget.isEmpty() || angerTarget.get() != nearestTarget) {
@@ -223,7 +223,7 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
         return findNearestValidAttackTarget(this.mob);
     }
 
-    private static Optional<? extends LivingEntity> findNearestValidAttackTarget(GBPygmy abstractPiglin) {
+    private static Optional<? extends LivingEntity> findNearestValidAttackTarget(GBPigmy abstractPiglin) {
         Optional<LivingEntity> optional = BehaviorUtils.getLivingEntityFromUUIDMemory(abstractPiglin, MemoryModuleType.ANGRY_AT);
         if (optional.isPresent() && Sensor.isEntityAttackableIgnoringLineOfSight(abstractPiglin, optional.get())) {
             return optional;
@@ -238,7 +238,7 @@ public class HoggartTaskManager<T extends Hoggart> extends TaskManager<T> {
         return abstractPiglin.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS);
     }
 
-    private static Optional<? extends LivingEntity> getTargetIfWithinRange(GBPygmy abstractPiglin, MemoryModuleType<? extends LivingEntity> memoryModuleType) {
+    private static Optional<? extends LivingEntity> getTargetIfWithinRange(GBPigmy abstractPiglin, MemoryModuleType<? extends LivingEntity> memoryModuleType) {
         return abstractPiglin.getBrain().getMemory(memoryModuleType).filter(livingEntity -> livingEntity.closerThan(abstractPiglin, 18.0));
     }
 

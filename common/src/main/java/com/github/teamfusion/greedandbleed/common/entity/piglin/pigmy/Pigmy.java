@@ -1,7 +1,8 @@
-package com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy;
+package com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy;
 
-import com.github.teamfusion.greedandbleed.api.HoggartTaskManager;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
+import com.github.teamfusion.greedandbleed.api.PygmyTaskManager;
+import com.github.teamfusion.greedandbleed.common.entity.projectile.ThrownDamageableEntity;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.SensorRegistry;
@@ -10,7 +11,6 @@ import com.mojang.serialization.Dynamic;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -22,19 +22,21 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
-public class Hoggart extends GBPygmy {
-    protected static final ImmutableList<SensorType<? extends Sensor<? super Hoggart>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorRegistry.PYGMY_SPECIFIC_SENSOR.get());
+public class Pigmy extends GBPigmy implements RangedAttackMob {
+    protected static final ImmutableList<SensorType<? extends Sensor<? super Pigmy>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorRegistry.PYGMY_SPECIFIC_SENSOR.get());
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS
             , MemoryRegistry.NEAREST_HOGLET.get(), MemoryRegistry.NEAREST_TAMED_HOGLET.get()
-            , MemoryModuleType.LIKED_PLAYER, MemoryRegistry.WORK_TIME.get(), MemoryModuleType.JOB_SITE
+            , MemoryModuleType.LIKED_PLAYER, MemoryRegistry.WORK_TIME.get(), MemoryModuleType.JOB_SITE, MemoryModuleType.RIDE_TARGET
             , MemoryModuleType.NEAREST_REPELLENT);
 
-    public Hoggart(EntityType<? extends Hoggart> entityType, Level level) {
+    public Pigmy(EntityType<? extends Pigmy> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -45,18 +47,15 @@ public class Hoggart extends GBPygmy {
 
     public static AttributeSupplier.Builder setCustomAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 26.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.ATTACK_DAMAGE, 5.5F);
+                .add(Attributes.MAX_HEALTH, 12.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.ATTACK_DAMAGE, 2.0F);
     }
 
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
-        return entityDimensions.height * 0.85F;
-    }
+
 
     @Override
     protected void customServerAiStep() {
-        this.level().getProfiler().push("hoggardBrain");
+        this.level().getProfiler().push("pygmyBrain");
         this.getBrain().tick((ServerLevel) this.level(), this);
         this.level().getProfiler().pop();
         this.taskManager.updateActivity();
@@ -64,7 +63,7 @@ public class Hoggart extends GBPygmy {
     }
 
     @Override
-    protected Brain.Provider<Hoggart> brainProvider() {
+    protected Brain.Provider<Pigmy> brainProvider() {
         return Brain.provider(MEMORY_TYPES, SENSOR_TYPES);
     }
 
@@ -75,14 +74,14 @@ public class Hoggart extends GBPygmy {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Brain<Hoggart> getBrain() {
-        return (Brain<Hoggart>) super.getBrain();
+    public Brain<Pigmy> getBrain() {
+        return (Brain<Pigmy>) super.getBrain();
     }
 
 
     @Override
     public ITaskManager<?> createTaskManager(Dynamic<?> dynamic) {
-        return new HoggartTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
+        return new PygmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
     }
 
     @Override
@@ -95,34 +94,9 @@ public class Hoggart extends GBPygmy {
         this.setItemInHand(InteractionHand.OFF_HAND, stack);
     }
 
-    @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
-        if (mobSpawnType != MobSpawnType.STRUCTURE) {
-            /*if (random.nextBoolean()) {
-                Pygmy pygmy = EntityTypeRegistry.PYGMY.get().create(serverLevelAccessor.getLevel());
-                pygmy.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0f);
-                pygmy.finalizeSpawn(serverLevelAccessor, difficultyInstance, MobSpawnType.JOCKEY, null, null);
-                pygmy.startRiding(this);
-                serverLevelAccessor.addFreshEntity(pygmy);
-            }*/
-/*
-            if(random.nextInt(3) == 0) {
-                Hoglin hoglin = EntityType.HOGLIN.create(serverLevelAccessor.getLevel());
-
-                hoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0f);
-                hoglin.finalizeSpawn(serverLevelAccessor, difficultyInstance, MobSpawnType.JOCKEY, null, null);
-                this.startRiding(hoglin);
-                serverLevelAccessor.addFreshEntity(hoglin);
-            }*/
-        }
-        this.populateDefaultEquipmentSlots(serverLevelAccessor.getRandom(), difficultyInstance);
-        return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
-    }
-
-    @Override
-    protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyInstance) {
-        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemRegistry.CLUB.get()));
+    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
+        return entityDimensions.height * 0.85F;
     }
 
     @Override
@@ -130,26 +104,43 @@ public class Hoggart extends GBPygmy {
         this.playSound(SoundEvents.PIGLIN_CONVERTED_TO_ZOMBIFIED, 1.0f, this.getVoicePitch());
     }
 
+    @Nullable
     @Override
-    protected void positionRider(Entity entity, Entity.MoveFunction moveFunction) {
-        super.positionRider(entity, moveFunction);
-        float f = Mth.sin(this.yBodyRot * ((float) Math.PI / 180));
-        float g = Mth.cos(this.yBodyRot * ((float) Math.PI / 180));
-        float h = 0.55f * 1;
-        float i = 0f * 1;
-        moveFunction.accept(entity, this.getX() + (double) (h * f), this.getY() + this.getPassengersRidingOffset() + entity.getMyRidingOffset() + (double) i, this.getZ() - (double) (h * g));
-        if (entity instanceof LivingEntity) {
-            ((LivingEntity) entity).yBodyRot = this.yBodyRot;
-        }
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
+        this.populateDefaultEquipmentSlots(serverLevelAccessor.getRandom(), difficultyInstance);
+        return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
     }
 
     @Override
-    public double getPassengersRidingOffset() {
-        return super.getPassengersRidingOffset();
+    protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyInstance) {
+        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemRegistry.SLINGSHOT.get()));
+        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemRegistry.CRIMSON_FUNGUS.get()));
+    }
+
+    @Override
+    public boolean canFireProjectileWeapon(ProjectileWeaponItem projectileWeaponItem) {
+        return projectileWeaponItem == ItemRegistry.SLINGSHOT.get();
     }
 
     @Override
     public float getVoicePitch() {
-        return super.getVoicePitch() - 0.1F;
+        return super.getVoicePitch() + 0.25F;
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity livingEntity, float f) {
+        ThrownDamageableEntity snowball = new ThrownDamageableEntity(this.level(), this);
+        double e = livingEntity.getX() - this.getX();
+        double g = livingEntity.getEyeY() - this.getEyeY();
+        double h = livingEntity.getZ() - this.getZ();
+        snowball.shoot(e, g, h, 1.4f, 12.0f - this.level().getDifficulty().getId() * 3F);
+        if (this.getOffhandItem().isEmpty()) {
+            snowball.setItem(new ItemStack(ItemRegistry.CRIMSON_FUNGUS.get()));
+        } else {
+            snowball.setItem(this.getOffhandItem().copy());
+        }
+
+        this.playSound(SoundEvents.SNOW_GOLEM_SHOOT, 1.0f, 0.4f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
+        this.level().addFreshEntity(snowball);
     }
 }

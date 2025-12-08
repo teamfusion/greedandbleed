@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.network.protocol.game.DebugPackets;
@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.schedule.Activity;
 
-public class SwitchPygmySimpleJob<E extends GBPygmy, T extends LivingEntity> extends Behavior<E> {
+public class SwitchPygmySimpleJob<E extends GBPigmy, T extends LivingEntity> extends Behavior<E> {
     public SwitchPygmySimpleJob() {
         super(ImmutableMap.of(MemoryRegistry.WORK_TIME.get(), MemoryStatus.REGISTERED, MemoryModuleType.JOB_SITE, MemoryStatus.REGISTERED, MemoryModuleType.LIKED_PLAYER, MemoryStatus.REGISTERED), 1200);
     }
@@ -45,8 +45,8 @@ public class SwitchPygmySimpleJob<E extends GBPygmy, T extends LivingEntity> ext
             if (brain.hasMemoryValue(MemoryModuleType.LIKED_PLAYER)) {
                 brain.eraseMemory(MemoryModuleType.LIKED_PLAYER);
             }
-            if (livingEntity.getMode() != GBPygmy.Mode.FOLLOW) {
-                livingEntity.setMode(GBPygmy.Mode.FOLLOW);
+            if (livingEntity.getMode() != GBPigmy.Mode.FOLLOW) {
+                livingEntity.setMode(GBPigmy.Mode.FOLLOW);
             }
             brain.setActiveActivityIfPossible(Activity.IDLE);
         }

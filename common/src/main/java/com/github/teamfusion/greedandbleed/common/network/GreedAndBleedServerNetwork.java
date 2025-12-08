@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.network;
 
 import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyStationBlockEntity;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchItem;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
@@ -39,13 +39,13 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
         Level level = player.level();
         BlockPos origin = friendlyByteBuf.readBlockPos();
         int range = friendlyByteBuf.readInt();
-        GBPygmy pygmy = level.getNearestEntity(
-                GBPygmy.class,
+        GBPigmy pygmy = level.getNearestEntity(
+                GBPigmy.class,
                 TargetingConditions.forNonCombat()
                         .range(18F)
                         .ignoreLineOfSight()
                         .ignoreInvisibilityTesting().selector(livingEntity -> {
-                            if (livingEntity instanceof GBPygmy pygmy1) {
+                            if (livingEntity instanceof GBPigmy pygmy1) {
                                 return pygmy1.getBrain().hasMemoryValue(MemoryModuleType.JOB_SITE) && pygmy1.getBrain().getMemory(MemoryModuleType.JOB_SITE).get().pos().equals(origin);
                             }
 
@@ -75,8 +75,8 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
     private static void onRecruit(FriendlyByteBuf friendlyByteBuf, NetworkManager.PacketContext packetContext) {
         Player player = packetContext.getPlayer();
         Level level = player.level();
-        GBPygmy pygmy = level.getNearestEntity(
-                GBPygmy.class,
+        GBPigmy pygmy = level.getNearestEntity(
+                GBPigmy.class,
                 TargetingConditions.forNonCombat()
                         .range(10F)
                         .ignoreLineOfSight()
@@ -111,7 +111,7 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
                                 stack.shrink(stack.getCount());
                                 pygmy.playSound(SoundEvents.ITEM_PICKUP, 0.7F, 1.25F);
                                 pygmy.swing(InteractionHand.MAIN_HAND);
-                                pygmy.setMode(GBPygmy.Mode.PATROL);
+                                pygmy.setMode(GBPigmy.Mode.PATROL);
                                 pygmy.setPersistenceRequired();
                                 DebugPackets.sendPoiTicketCountPacket(server, origin);
                             });
@@ -130,12 +130,12 @@ public class GreedAndBleedServerNetwork implements GreedAndBleedNetwork {
         }
     }
 
-    public static void addWorkTime(GBPygmy gbPygmy, int time) {
-        if (gbPygmy.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
-            gbPygmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time + gbPygmy.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get());
+    public static void addWorkTime(GBPigmy gbPigmy, int time) {
+        if (gbPigmy.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
+            gbPigmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time + gbPigmy.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get());
         } else {
-            gbPygmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time);
+            gbPigmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time);
         }
-        gbPygmy.getBrain().setActiveActivityIfPossible(Activity.WORK);
+        gbPigmy.getBrain().setActiveActivityIfPossible(Activity.WORK);
     }
 }

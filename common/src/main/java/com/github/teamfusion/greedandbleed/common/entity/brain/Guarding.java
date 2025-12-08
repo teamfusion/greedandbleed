@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Shrygmy;
 import com.github.teamfusion.greedandbleed.util.PiglinUtils;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.server.level.ServerLevel;

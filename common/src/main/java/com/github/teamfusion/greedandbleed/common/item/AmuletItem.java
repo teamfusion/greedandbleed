@@ -2,7 +2,7 @@ package com.github.teamfusion.greedandbleed.common.item;
 
 import com.github.teamfusion.greedandbleed.common.entity.IConvertToNormal;
 import com.github.teamfusion.greedandbleed.common.entity.TraceAndSetOwner;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
@@ -140,9 +140,9 @@ public class AmuletItem extends Item {
             }
 
 
-            if (livingEntity instanceof GBPygmy gbPygmy) {
-                if (!gbPygmy.isImmuneToZombification() && itemStack.is(ItemRegistry.AMULET.get()) && gbPygmy.hasEffect(PotionRegistry.IMMUNITY.get()) && gbPygmy.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
-                    gbPygmy.setImmuneToZombification(true);
+            if (livingEntity instanceof GBPigmy gbPigmy) {
+                if (!gbPigmy.isImmuneToZombification() && itemStack.is(ItemRegistry.AMULET.get()) && gbPigmy.hasEffect(PotionRegistry.IMMUNITY.get()) && gbPigmy.getEffect(PotionRegistry.IMMUNITY.get()).getAmplifier() > 0) {
+                    gbPigmy.setImmuneToZombification(true);
                     player.getCooldowns().addCooldown(this, 80);
                     if (!player.getAbilities().mayfly) {
                         player.giveExperienceLevels(-3);
@@ -207,7 +207,7 @@ public class AmuletItem extends Item {
             if (!player.getAbilities().instabuild) {
                 player.getCooldowns().addCooldown(this, 80);
             }
-            return level.dimension() != Level.NETHER ? EntityType.ZOMBIE : level.getRandom().nextBoolean() ? EntityTypeRegistry.SKELETAL_PIGLIN.get() : EntityTypeRegistry.ZOMBIFIED_PYGMIES.get();
+            return level.dimension() != Level.NETHER ? EntityType.ZOMBIE : level.getRandom().nextBoolean() ? EntityTypeRegistry.SKELETAL_PIGLIN.get() : EntityTypeRegistry.ZOMBIFIED_PIGMIES.get();
 
         }
     }

@@ -5,7 +5,7 @@ import com.github.teamfusion.greedandbleed.client.layers.CustomArmorLayer;
 import com.github.teamfusion.greedandbleed.client.models.HoggartBackPackModel;
 import com.github.teamfusion.greedandbleed.client.models.HoggartModel;
 import com.github.teamfusion.greedandbleed.client.renderer.layer.SecondModelLayer;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Hoggart;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.api;
 
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
@@ -375,11 +375,11 @@ public abstract class TaskManager<T extends LivingEntity & HasTaskManager> imple
         return livingEntity.getBrain().getMemory(MemoryModuleType.NEARBY_ADULT_PIGLINS).orElse(ImmutableList.of());
     }
 
-    public static List<GBPygmy> getVisibleAdultPygmys(LivingEntity livingEntity) {
+    public static List<GBPigmy> getVisibleAdultPygmys(LivingEntity livingEntity) {
         return livingEntity.getBrain().getMemory(MemoryRegistry.NEAREST_VISIBLE_ADULT_PYGMYS.get()).orElse(ImmutableList.of());
     }
 
-    public static List<GBPygmy> getAdultPygmys(LivingEntity livingEntity) {
+    public static List<GBPigmy> getAdultPygmys(LivingEntity livingEntity) {
         return livingEntity.getBrain().getMemory(MemoryRegistry.NEARBY_ADULT_PYGMYS.get()).orElse(ImmutableList.of());
     }
 

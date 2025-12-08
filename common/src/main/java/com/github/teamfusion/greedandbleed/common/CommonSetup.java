@@ -5,10 +5,10 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.WarpedPiglin;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.ZombifiedPygmies;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Pigmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Shrygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.ZombifiedPigmies;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.BuckshotSlingshotBehavior;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotBehavior;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
@@ -51,8 +51,8 @@ public class CommonSetup {
         MobRegistry.attributes(EntityTypeRegistry.SKELETON_HOGLET, Hoglet::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.ZOMBIFIED_HOGLET, Hoglet::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.SHAMAN_PIGLIN, ShamanPiglin::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.PYGMY, Pygmy::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.ZOMBIFIED_PYGMIES, ZombifiedPygmies::setCustomAttributes);
+        MobRegistry.attributes(EntityTypeRegistry.PIGMY, Pigmy::setCustomAttributes);
+        MobRegistry.attributes(EntityTypeRegistry.ZOMBIFIED_PIGMIES, ZombifiedPigmies::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.SHRYGMY, Shrygmy::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.HOGGART, Hoggart::setCustomAttributes);
         MobRegistry.attributes(EntityTypeRegistry.WARPED_PIGLIN, WarpedPiglin::setCustomAttributes);
@@ -163,8 +163,8 @@ public class CommonSetup {
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKELETAL_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SHAMAN_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGGART.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.PYGMY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.ZOMBIFIED_PYGMIES.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
+        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.PIGMY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
+        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.ZOMBIFIED_PIGMIES.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SHRYGMY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
         BiomeManager.registrySpawnPlacement(EntityTypeRegistry.WARPED_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
 

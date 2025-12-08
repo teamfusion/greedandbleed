@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -20,16 +20,16 @@ public class FollowRecruitPlayer {
     public FollowRecruitPlayer() {
     }
 
-    public static OneShot<GBPygmy> create(float f) {
+    public static OneShot<GBPigmy> create(float f) {
         return create((livingEntity) -> f);
     }
 
-    public static OneShot<GBPygmy> create(Function<GBPygmy, Float> function) {
+    public static OneShot<GBPigmy> create(Function<GBPigmy, Float> function) {
         return BehaviorBuilder.create((instance) -> instance.group(instance.present(MemoryModuleType.LIKED_PLAYER), instance.registered(MemoryModuleType.LOOK_TARGET), instance.registered(MemoryModuleType.WALK_TARGET)).apply(instance, (memoryAccessor, memoryAccessor2, memoryAccessor3) -> (serverLevel, pygmy, l) -> {
 
             Optional<ServerPlayer> likedPlayer = getLikedPlayer(pygmy);
 
-            if (likedPlayer.isEmpty() || pygmy.getMode() == GBPygmy.Mode.WAIT) {
+            if (likedPlayer.isEmpty() || pygmy.getMode() == GBPigmy.Mode.WAIT) {
                 return false;
             }
             if (pygmy.closerThan(likedPlayer.get(), (double) (32)) && !pygmy.closerThan(likedPlayer.get(), (double) 5)) {

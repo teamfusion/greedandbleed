@@ -41,10 +41,10 @@ public class ClientSetup {
         RenderRegistry.entityModel(EntityTypeRegistry.ZOMBIFIED_HOGLET, ZombifiedHogletRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SKELETON_HOGLET, SkeletonHogletRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SHAMAN_PIGLIN, ShamanPiglinRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.PYGMY, PygmyRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.PIGMY, PigmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.SHRYGMY, ShrygmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.HOGGART, HoggartRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.ZOMBIFIED_PYGMIES, ZombifiedPygmyRenderer::new);
+        RenderRegistry.entityModel(EntityTypeRegistry.ZOMBIFIED_PIGMIES, ZombifiedPigmyRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.WARPED_PIGLIN, WarpedPiglinRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.THROWN_DAMAGEABLE, ThrownItemRenderer::new);
         RenderRegistry.entityModel(EntityTypeRegistry.WARPED_SPIT, WarpedSpitRenderer::new);
@@ -60,7 +60,7 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(HOGLIN, () -> GBHoglinModelComplete.createBodyLayer(0.0F));
         RenderRegistry.layerDefinition(HOGLIN_ARMOR, () -> GBHoglinModelComplete.createBodyLayer(0.05F));
         RenderRegistry.layerDefinition(ShamanPiglinRenderer.MAIN, ShamanPiglinModel::createBodyLayer);
-        RenderRegistry.layerDefinition(PygmyRenderer.MAIN, PygmyModel::createBodyLayer);
+        RenderRegistry.layerDefinition(PigmyRenderer.MAIN, PigmyModel::createBodyLayer);
         RenderRegistry.layerDefinition(ShrygmyRenderer.MAIN, ShrygmyModel::createBodyLayer);
         RenderRegistry.layerDefinition(HoggartRenderer.MAIN, HoggartModel::createBodyLayer);
         RenderRegistry.layerDefinition(WarpedPiglinRenderer.MAIN, WarpedPiglinModel::createBodyLayer);

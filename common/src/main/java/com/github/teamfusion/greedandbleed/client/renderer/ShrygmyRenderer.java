@@ -3,7 +3,7 @@ package com.github.teamfusion.greedandbleed.client.renderer;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.layers.CustomArmorLayer;
 import com.github.teamfusion.greedandbleed.client.models.ShrygmyModel;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Shrygmy;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -21,7 +21,7 @@ public class ShrygmyRenderer<T extends Shrygmy> extends MobRenderer<T, ShrygmyMo
 
     @Override
     public ResourceLocation getTextureLocation(T entity) {
-        return new ResourceLocation(GreedAndBleed.MOD_ID, "textures/entity/piglin/pygmy/shrygmy.png");
+        return new ResourceLocation(GreedAndBleed.MOD_ID, "textures/entity/piglin/pigmy/shrygmy.png");
     }
 
     @Override

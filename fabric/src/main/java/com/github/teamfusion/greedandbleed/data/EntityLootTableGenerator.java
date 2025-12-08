@@ -39,7 +39,7 @@ public class EntityLootTableGenerator extends SimpleFabricLootTableProvider {
                         .add(LootItem.lootTableItem(Items.ROTTEN_FLESH)).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F))).apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
                 )
         );
-        biConsumer.accept(EntityTypeRegistry.ZOMBIFIED_PYGMIES.get().getDefaultLootTable(), LootTable.lootTable()
+        biConsumer.accept(EntityTypeRegistry.ZOMBIFIED_PIGMIES.get().getDefaultLootTable(), LootTable.lootTable()
                 .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                         .add(LootItem.lootTableItem(Items.ROTTEN_FLESH)).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F))).apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
                 )

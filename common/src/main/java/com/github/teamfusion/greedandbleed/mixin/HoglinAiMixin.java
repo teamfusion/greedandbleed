@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.mixin;
 
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Pigmy;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.monster.hoglin.HoglinAi;
@@ -14,7 +14,7 @@ public class HoglinAiMixin {
 
     @Inject(method = "wasHurtBy", at = @At("HEAD"), cancellable = true)
     private static void wasHurtBy(Hoglin hoglin, LivingEntity livingEntity, CallbackInfo ci) {
-        if (livingEntity instanceof Pygmy) {
+        if (livingEntity instanceof Pigmy) {
             ci.cancel();
         }
     }

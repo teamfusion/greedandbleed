@@ -2,10 +2,10 @@ package com.github.teamfusion.greedandbleed.common.registry;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.*;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.ZombifiedPygmies;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Pigmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Shrygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.ZombifiedPigmies;
 import com.github.teamfusion.greedandbleed.common.entity.projectile.ThrownDamageableEntity;
 import com.github.teamfusion.greedandbleed.common.entity.projectile.WarpedSpit;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
@@ -24,9 +24,9 @@ public class EntityTypeRegistry {
     public static final Supplier<EntityType<ZombifiedHoglet>> ZOMBIFIED_HOGLET = create("zombified_hoglet", EntityType.Builder.of(ZombifiedHoglet::new, MobCategory.MONSTER).fireImmune().sized(0.6F, 0.55F));
     public static final Supplier<EntityType<SkeletonHoglet>> SKELETON_HOGLET = create("skeleton_hoglet", EntityType.Builder.of(SkeletonHoglet::new, MobCategory.MONSTER).sized(0.6F, 0.55F));
     public static final Supplier<EntityType<ShamanPiglin>> SHAMAN_PIGLIN = create("shaman_piglin", EntityType.Builder.of(ShamanPiglin::new, MobCategory.MONSTER).sized(0.6F, 1.95F));
-    public static final Supplier<EntityType<Pygmy>> PYGMY = create("pygmy", EntityType.Builder.of(Pygmy::new, MobCategory.MONSTER).sized(0.6F, 1.55F));
+    public static final Supplier<EntityType<Pigmy>> PIGMY = create("pigmy", EntityType.Builder.of(Pigmy::new, MobCategory.MONSTER).sized(0.6F, 1.55F));
     public static final Supplier<EntityType<Shrygmy>> SHRYGMY = create("shrygmy", EntityType.Builder.of(Shrygmy::new, MobCategory.MONSTER).sized(0.6F, 1.55F));
-    public static final Supplier<EntityType<ZombifiedPygmies>> ZOMBIFIED_PYGMIES = create("zombified_pygmies", EntityType.Builder.of(ZombifiedPygmies::new, MobCategory.MONSTER).fireImmune().sized(0.6F, 1.55F));
+    public static final Supplier<EntityType<ZombifiedPigmies>> ZOMBIFIED_PIGMIES = create("zombified_pigmies", EntityType.Builder.of(ZombifiedPigmies::new, MobCategory.MONSTER).fireImmune().sized(0.6F, 1.55F));
 
     public static final Supplier<EntityType<Hoggart>> HOGGART = create("hoggart", EntityType.Builder.of(Hoggart::new, MobCategory.MONSTER).sized(0.6F, 1.95F));
     public static final Supplier<EntityType<WarpedPiglin>> WARPED_PIGLIN = create("warped_piglin", EntityType.Builder.of(WarpedPiglin::new, MobCategory.MONSTER).sized(0.6F, 1.95F));

@@ -2,7 +2,7 @@ package com.github.teamfusion.greedandbleed.client.models;
 
 import com.github.teamfusion.greedandbleed.api.IGBArmor;
 import com.github.teamfusion.greedandbleed.client.animation.HumanoidAnimations;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Shrygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Shrygmy;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;

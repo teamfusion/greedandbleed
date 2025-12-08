@@ -2,7 +2,7 @@ package com.github.teamfusion.greedandbleed.common.entity.brain;
 
 import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyArmorStandBlockEntity;
 import com.github.teamfusion.greedandbleed.common.block.blockentity.PygmyStationBlockEntity;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
 import com.github.teamfusion.greedandbleed.common.item.ClubItem;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
@@ -23,17 +23,17 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Optional;
 
-public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
+public class WorkAtPigmyPoi extends Behavior<GBPigmy> {
     private static final int CHECK_COOLDOWN = 300;
     private static final double DISTANCE = 1.73;
     private long lastCheck;
 
-    public WorkAtPygmyPoi() {
+    public WorkAtPigmyPoi() {
         super(ImmutableMap.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT, MemoryModuleType.LOOK_TARGET, MemoryStatus.REGISTERED));
     }
 
     @Override
-    protected boolean checkExtraStartConditions(ServerLevel serverLevel, GBPygmy pygmy) {
+    protected boolean checkExtraStartConditions(ServerLevel serverLevel, GBPigmy pygmy) {
         if (serverLevel.getGameTime() - this.lastCheck < 30L) {
             return false;
         } else {
@@ -44,7 +44,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
     }
 
     @Override
-    protected void start(ServerLevel serverLevel, GBPygmy pygmy, long l) {
+    protected void start(ServerLevel serverLevel, GBPigmy pygmy, long l) {
         Brain<?> brain = pygmy.getBrain();
         brain.getMemory(MemoryModuleType.JOB_SITE).ifPresent((globalPos) -> {
             brain.setMemory(MemoryModuleType.LOOK_TARGET, new BlockPosTracker(globalPos.pos()));
@@ -52,7 +52,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
         });
     }
 
-    protected void useWorkstation(ServerLevel serverLevel, GlobalPos globalPos, GBPygmy pygmy) {
+    protected void useWorkstation(ServerLevel serverLevel, GlobalPos globalPos, GBPigmy pygmy) {
         BlockEntity armorStand = serverLevel.getBlockEntity(globalPos.pos().below());
         BlockEntity armorStandAbove = serverLevel.getBlockEntity(globalPos.pos().above());
         BlockEntity blockEntity = serverLevel.getBlockEntity(globalPos.pos());
@@ -109,18 +109,18 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
     }
 
 
-    public void addWorkTime(GBPygmy gbPygmy, int time) {
-        if (gbPygmy.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
-            gbPygmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time + gbPygmy.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get());
+    public void addWorkTime(GBPigmy gbPigmy, int time) {
+        if (gbPigmy.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
+            gbPigmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time + gbPigmy.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get());
         } else {
-            gbPygmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time);
+            gbPigmy.getBrain().setMemory(MemoryRegistry.WORK_TIME.get(), time);
         }
-        gbPygmy.getBrain().setActiveActivityIfPossible(Activity.WORK);
+        gbPigmy.getBrain().setActiveActivityIfPossible(Activity.WORK);
     }
 
-    public int getWorkTime(GBPygmy gbPygmy) {
-        if (gbPygmy.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
-            return gbPygmy.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get();
+    public int getWorkTime(GBPigmy gbPigmy) {
+        if (gbPigmy.getBrain().hasMemoryValue(MemoryRegistry.WORK_TIME.get())) {
+            return gbPigmy.getBrain().getMemory(MemoryRegistry.WORK_TIME.get()).get();
         } else {
             return 0;
         }
@@ -147,7 +147,7 @@ public class WorkAtPygmyPoi extends Behavior<GBPygmy> {
     }
 
     @Override
-    protected boolean canStillUse(ServerLevel serverLevel, GBPygmy pygmy, long l) {
+    protected boolean canStillUse(ServerLevel serverLevel, GBPigmy pygmy, long l) {
         Optional<GlobalPos> optional = pygmy.getBrain().getMemory(MemoryModuleType.JOB_SITE);
         if (!optional.isPresent()) {
             return false;

@@ -1,9 +1,9 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain.sensor;
 
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.GBPygmy;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Hoggart;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pygmy.Pygmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Hoggart;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Pigmy;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class PygmySpecificSensor extends Sensor<LivingEntity> {
+public class PigmySpecificSensor extends Sensor<LivingEntity> {
     @Override
     public Set<MemoryModuleType<?>> requires() {
         return ImmutableSet.of(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryRegistry.NEAREST_VISIBLE_ADULT_PYGMYS.get(), MemoryRegistry.NEARBY_ADULT_PYGMYS.get(), MemoryRegistry.NEAREST_HOGLET.get(), MemoryRegistry.NEAREST_TAMED_HOGLET.get());
@@ -43,8 +43,8 @@ public class PygmySpecificSensor extends Sensor<LivingEntity> {
         Optional<Hoglet> optional3 = Optional.empty();
         Optional<Mob> optional2 = Optional.empty();
         int i = 0;
-        ArrayList<GBPygmy> list = Lists.newArrayList();
-        ArrayList<GBPygmy> list2 = Lists.newArrayList();
+        ArrayList<GBPigmy> list = Lists.newArrayList();
+        ArrayList<GBPigmy> list2 = Lists.newArrayList();
         NearestVisibleLivingEntities nearestVisibleLivingEntities = brain.getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).orElse(NearestVisibleLivingEntities.empty());
         for (LivingEntity livingEntity22 : nearestVisibleLivingEntities.findAll(livingEntity -> true)) {
 
@@ -64,12 +64,12 @@ public class PygmySpecificSensor extends Sensor<LivingEntity> {
                 }
             }
 
-            if (livingEntity2 instanceof Pygmy pygmy && livingEntity3 instanceof Hoggart hoggart && pygmy.getControlledVehicle() == null && !hoggart.hasControllingPassenger() && pygmy.isAggressive() && hoggart.isAggressive()) {
+            if (livingEntity2 instanceof Pigmy pigmy && livingEntity3 instanceof Hoggart hoggart && pigmy.getControlledVehicle() == null && !hoggart.hasControllingPassenger() && pigmy.isAggressive() && hoggart.isAggressive()) {
                 brain.setMemory(MemoryModuleType.RIDE_TARGET, hoggart);
             }
 
-            GBPygmy abstractPiglin;
-            if (!(livingEntity3 instanceof GBPygmy) || !(abstractPiglin = (GBPygmy) livingEntity3).isAdult()) continue;
+            GBPigmy abstractPiglin;
+            if (!(livingEntity3 instanceof GBPigmy) || !(abstractPiglin = (GBPigmy) livingEntity3).isAdult()) continue;
             list2.add(abstractPiglin);
         }
         brain.setMemory(MemoryRegistry.NEAREST_HOGLET.get(), optional);
