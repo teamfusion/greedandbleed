@@ -49,8 +49,8 @@ public class CreativeTabRegistry {
                     output.acceptAll(Stream.of(
                             BlockRegistry.CRIMSON_NYLIUM_PATH,
                             BlockRegistry.WARPED_NYLIUM_PATH,
-                            BlockRegistry.HOGDEW_NYLIUM,
                             BlockRegistry.HOGDEW_NYLIUM_PATH,
+                            BlockRegistry.HOGDEW_NYLIUM,
                             BlockRegistry.HOGDEW_STEM,
                             BlockRegistry.STRIPPED_HOGDEW_STEM,
                             BlockRegistry.HOGDEW_HYPHAE,

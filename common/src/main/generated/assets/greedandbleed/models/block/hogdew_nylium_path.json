@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
+  "parent": "greedandbleed:block/nylium_path",
   "textures": {
     "bottom": "minecraft:block/netherrack",
     "side": "greedandbleed:block/hogdew_nylium_path_side",
