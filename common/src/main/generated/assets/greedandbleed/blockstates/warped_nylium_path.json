@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "greedandbleed:block/warped_nylium_path"
+      },
+      {
+        "model": "greedandbleed:block/warped_nylium_path",
+        "y": 90
+      },
+      {
+        "model": "greedandbleed:block/warped_nylium_path",
+        "y": 180
+      },
+      {
+        "model": "greedandbleed:block/warped_nylium_path",
+        "y": 270
+      }
+    ]
+  }
+}

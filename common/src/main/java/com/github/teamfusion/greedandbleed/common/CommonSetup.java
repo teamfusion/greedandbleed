@@ -14,16 +14,17 @@ import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotBehavi
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedNetwork;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedServerNetwork;
-import com.github.teamfusion.greedandbleed.common.registry.EnchantmentRegistry;
-import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
-import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
-import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
+import com.github.teamfusion.greedandbleed.common.registry.*;
 import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeManager;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.event.events.common.LootEvent;
 import dev.architectury.registry.level.biome.BiomeModifications;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,9 +34,13 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -206,6 +211,37 @@ public class CommonSetup {
                     context.addPool(pool);
                 }
             }
+        });
+
+        InteractionEvent.RIGHT_CLICK_BLOCK.register((player, hand, blockPos, direction) -> {
+            ItemStack stack = player.getItemInHand(hand);
+            Level level = player.level();
+            if (stack.getItem() instanceof ShovelItem) {
+                BlockState state = Blocks.AIR.defaultBlockState();
+
+                if (player.level().getBlockState(blockPos).is(Blocks.CRIMSON_NYLIUM)) {
+                    state = BlockRegistry.CRIMSON_NYLIUM_PATH.get().defaultBlockState();
+
+                }
+                if (player.level().getBlockState(blockPos).is(Blocks.WARPED_NYLIUM)) {
+                    state = BlockRegistry.WARPED_NYLIUM_PATH.get().defaultBlockState();
+
+                }
+                if (player.level().getBlockState(blockPos).is(BlockRegistry.HOGDEW_NYLIUM.get())) {
+                    state = BlockRegistry.HOGDEW_NYLIUM_PATH.get().defaultBlockState();
+                }
+                if (!state.isAir()) {
+                    level.playSound(player, blockPos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+                    level.setBlock(blockPos, state, 11);
+                    level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(player, state));
+                    if (player != null) {
+                        stack.hurtAndBreak(1, player, (playerx) -> playerx.broadcastBreakEvent(hand));
+                    }
+                    return EventResult.interruptTrue();
+                }
+            }
+            return EventResult.pass();
         });
 
         BiomeManager.setup();

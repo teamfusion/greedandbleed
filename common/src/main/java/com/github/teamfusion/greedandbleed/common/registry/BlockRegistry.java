@@ -2,15 +2,19 @@ package com.github.teamfusion.greedandbleed.common.registry;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.block.HogdewLumpBlock;
+import com.github.teamfusion.greedandbleed.common.block.NyliumPathBlock;
 import com.github.teamfusion.greedandbleed.common.block.PygmyArmorStandBlock;
 import com.github.teamfusion.greedandbleed.common.block.PygmyStationBlock;
 import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -38,12 +42,24 @@ public class BlockRegistry {
     public static final Supplier<Block> HOGDEW_HYPHAE = createWithItem("hogdew_hyphae", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.STEM)));
     public static final Supplier<Block> STRIPPED_HOGDEW_HYPHAE = createWithItem("stripped_hogdew_hyphae", () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.STEM)));
     public static final Supplier<Block> HOGDEW_NYLIUM = createWithItem("hogdew_nylium", () -> new NyliumBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.4f).sound(SoundType.NYLIUM).randomTicks()));
+    public static final Supplier<Block> HOGDEW_NYLIUM_PATH = createWithItem("hogdew_nylium_path", () -> new NyliumPathBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.4f).sound(SoundType.NYLIUM).isViewBlocking(BlockRegistry::always).isSuffocating(BlockRegistry::always)));
+    public static final Supplier<Block> CRIMSON_NYLIUM_PATH = createWithItem("crimson_nylium_path", () -> new NyliumPathBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.4f).sound(SoundType.NYLIUM).isViewBlocking(BlockRegistry::always).isSuffocating(BlockRegistry::always)));
+    public static final Supplier<Block> WARPED_NYLIUM_PATH = createWithItem("warped_nylium_path", () -> new NyliumPathBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLUE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(0.4f).sound(SoundType.NYLIUM).isViewBlocking(BlockRegistry::always).isSuffocating(BlockRegistry::always)));
     public static final Supplier<Block> HOGDEW_FUNGUS = createWithItem("hogdew_fungus", () -> new NetherSproutsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().instabreak().sound(SoundType.FUNGUS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY)));
 
     public static final Supplier<MultifaceBlock> HOGDEW_LUMPS = createWithItem("hogdew_lumps", () -> new HogdewLumpBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).replaceable().noCollission().strength(0.2f).sound(SoundType.FUNGUS).lightLevel(HogdewLumpBlock.emission(10)).pushReaction(PushReaction.DESTROY)));
 
     public static final Supplier<Block> PYGMY_STATION = createWithItem("pygmy_station", () -> new PygmyStationBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).strength(0.5f).sound(SoundType.NETHER_WOOD)));
     public static final Supplier<Block> PYGMY_ARMOR_STAND = createWithItem("pygmy_armor_stand", () -> new PygmyArmorStandBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).strength(0.5f).sound(SoundType.NETHER_WOOD)));
+
+    private static boolean always(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+        return true;
+    }
+
+    private static boolean never(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+        return false;
+    }
+
 
     private static Block netherStem(MapColor mapColor) {
         return new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(blockState -> mapColor).instrument(NoteBlockInstrument.BASS).strength(2.0f).sound(SoundType.STEM));

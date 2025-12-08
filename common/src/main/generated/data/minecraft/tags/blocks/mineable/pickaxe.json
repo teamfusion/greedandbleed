@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "greedandbleed:hogdew_nylium"
+    "greedandbleed:hogdew_nylium",
+    "greedandbleed:hogdew_nylium_path",
+    "greedandbleed:crimson_nylium_path",
+    "greedandbleed:warped_nylium_path"
   ]
 }

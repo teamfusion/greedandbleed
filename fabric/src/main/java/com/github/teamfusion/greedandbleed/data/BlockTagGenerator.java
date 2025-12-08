@@ -20,7 +20,8 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         this.getOrCreateTagBuilder(GBBlockTags.HOGDEW_LOG).add(BlockRegistry.HOGDEW_STEM.get()).add(BlockRegistry.STRIPPED_HOGDEW_STEM.get()).add(BlockRegistry.HOGDEW_HYPHAE.get()).add(BlockRegistry.STRIPPED_HOGDEW_HYPHAE.get());
         this.getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_AXE).addTag(GBBlockTags.HOGDEW_LOG).add(BlockRegistry.HOGDEW_DOOR.get()).add(BlockRegistry.HOGDEW_FENCE.get()).add(BlockRegistry.HOGDEW_FENCE_GATE.get())
                 .add(BlockRegistry.HOGDEW_TRAPDOOR.get()).add(BlockRegistry.HOGDEW_DOOR.get()).add(BlockRegistry.HOGDEW_PLANKS_SLAB.get()).add(BlockRegistry.HOGDEW_PLANKS_STAIRS.get());
-        this.getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_PICKAXE).add(BlockRegistry.HOGDEW_NYLIUM.get());
+        this.getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_PICKAXE).add(BlockRegistry.HOGDEW_NYLIUM.get())
+                .add(BlockRegistry.HOGDEW_NYLIUM_PATH.get()).add(BlockRegistry.CRIMSON_NYLIUM_PATH.get()).add(BlockRegistry.WARPED_NYLIUM_PATH.get());
         this.getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_HOE).add(BlockRegistry.HOGDEW_FUNGUS.get()).add(BlockRegistry.HOGDEW_CLUSTER.get()).add(BlockRegistry.HOGDEW_WART_BLOCK.get()).add(BlockRegistry.HOGDEW_WART_BLOCK.get());
         this.getOrCreateTagBuilder(BlockTags.NYLIUM).add(BlockRegistry.HOGDEW_NYLIUM.get());
         this.getOrCreateTagBuilder(BlockTags.PLANKS).add(BlockRegistry.HOGDEW_PLANKS.get());

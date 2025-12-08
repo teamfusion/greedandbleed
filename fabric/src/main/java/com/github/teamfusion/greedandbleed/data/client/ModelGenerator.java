@@ -9,6 +9,8 @@ import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.data.models.model.ModelTemplates;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 
 public class ModelGenerator extends FabricModelProvider {
     public ModelGenerator(FabricDataOutput dataGenerator) {
@@ -30,6 +32,10 @@ public class ModelGenerator extends FabricModelProvider {
         gen.createOrientableTrapdoor(BlockRegistry.HOGDEW_TRAPDOOR.get());
         gen.family(BlockRegistry.HOGDEW_PLANKS.get()).stairs(BlockRegistry.HOGDEW_PLANKS_STAIRS.get()).slab(BlockRegistry.HOGDEW_PLANKS_SLAB.get()).fenceGate(BlockRegistry.HOGDEW_FENCE_GATE.get()).fence(BlockRegistry.HOGDEW_FENCE.get()).button(BlockRegistry.HOGDEW_BUTTON.get()).pressurePlate(BlockRegistry.HOGDEW_PRESSURE_PLATE.get());
         gen.createNyliumBlock(BlockRegistry.HOGDEW_NYLIUM.get());
+
+        createNyliumPath(gen, BlockRegistry.HOGDEW_NYLIUM_PATH.get());
+        createNyliumPath(gen, BlockRegistry.CRIMSON_NYLIUM_PATH.get());
+        createNyliumPath(gen, BlockRegistry.WARPED_NYLIUM_PATH.get());
     }
     @Override
     public void generateItemModels(ItemModelGenerators gen) {
@@ -44,5 +50,10 @@ public class ModelGenerator extends FabricModelProvider {
         gen.generateFlatItem(ItemRegistry.PEBBLE.get(), ModelTemplates.FLAT_ITEM);
         gen.generateFlatItem(ItemRegistry.PIGLIN_BELT.get(), ModelTemplates.FLAT_ITEM);
         gen.generateFlatItem(BlockRegistry.HOGDEW_FUNGUS.get().asItem(), ModelTemplates.FLAT_ITEM);
+    }
+
+    private void createNyliumPath(BlockModelGenerators generators, Block block) {
+        ResourceLocation resourceLocation = GBTexturedModel.NYLIUM_PATH.create(block, generators.modelOutput);
+        generators.blockStateOutput.accept(generators.createRotatedVariant(block, resourceLocation));
     }
 }
