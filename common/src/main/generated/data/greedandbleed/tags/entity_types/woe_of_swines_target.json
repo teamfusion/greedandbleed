@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "greedandbleed:hoglet",
+    "greedandbleed:skeleton_hoglet",
+    "greedandbleed:skeletal_piglin",
+    "greedandbleed:zombified_hoglet",
+    "greedandbleed:zombified_pigmies",
+    "greedandbleed:shaman_piglin",
+    "greedandbleed:warped_piglin",
+    "#greedandbleed:pigmy",
+    "greedandbleed:hoglet",
+    "minecraft:pig",
+    "minecraft:piglin",
+    "minecraft:piglin_brute",
+    "minecraft:zombified_piglin"
+  ]
+}

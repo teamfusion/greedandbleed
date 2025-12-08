@@ -17,10 +17,13 @@ public class EntityTagGenerator extends FabricTagProvider<EntityType<?>> {
 
     @Override
     protected void addTags(HolderLookup.Provider arg) {
-        this.getOrCreateTagBuilder(GBEntityTypeTags.WOE_OF_SWINES_TARGET).add(EntityTypeRegistry.HOGGART.get()).add(EntityTypeRegistry.HOGLET.get())
+        this.getOrCreateTagBuilder(GBEntityTypeTags.PIGMY).add(EntityTypeRegistry.PIGMY.get()).add(EntityTypeRegistry.SHRYGMY.get()).add(EntityTypeRegistry.HOGGART.get());
+
+        this.getOrCreateTagBuilder(GBEntityTypeTags.WOE_OF_SWINES_TARGET)
+                .add(EntityTypeRegistry.HOGLET.get())
                 .add(EntityTypeRegistry.SKELETON_HOGLET.get()).add(EntityTypeRegistry.SKELETAL_PIGLIN.get()).add(EntityTypeRegistry.ZOMBIFIED_HOGLET.get()).add(EntityTypeRegistry.ZOMBIFIED_PIGMIES.get())
                 .add(EntityTypeRegistry.SHAMAN_PIGLIN.get()).add(EntityTypeRegistry.WARPED_PIGLIN.get())
-                .add(EntityTypeRegistry.PIGMY.get()).add(EntityTypeRegistry.SHRYGMY.get())
+                .addTag(GBEntityTypeTags.PIGMY)
                 .add(EntityTypeRegistry.HOGLET.get()).add(EntityType.PIG).add(EntityType.PIGLIN).add(EntityType.PIGLIN_BRUTE).add(EntityType.ZOMBIFIED_PIGLIN);
     }
 }

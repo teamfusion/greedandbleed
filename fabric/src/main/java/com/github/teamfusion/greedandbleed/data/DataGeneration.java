@@ -16,7 +16,7 @@ public class DataGeneration implements DataGeneratorEntrypoint {
         BlockTagGenerator blockTagGenerator = pack.addProvider(BlockTagGenerator::new);
 
         pack.addProvider((output, registriesFuture) -> new ItemTagGenerator(output, registriesFuture, blockTagGenerator));
-        
+        pack.addProvider(EntityTagGenerator::new);
         pack.addProvider(ConfiguredFeatureGenerator::new);
         pack.addProvider(PlacedFeatureGenerator::new);
         pack.addProvider(BiomeGenerator::new);

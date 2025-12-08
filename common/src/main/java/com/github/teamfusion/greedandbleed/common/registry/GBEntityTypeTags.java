@@ -8,6 +8,7 @@ import net.minecraft.world.entity.EntityType;
 
 public class GBEntityTypeTags {
     public static final TagKey<EntityType<?>> WOE_OF_SWINES_TARGET = create("woe_of_swines_target");
+    public static final TagKey<EntityType<?>> PIGMY = create("pigmy");
 
     private static TagKey<EntityType<?>> create(String string) {
         return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(GreedAndBleed.MOD_ID, string));
