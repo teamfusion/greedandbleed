@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.data;
 
 import com.github.teamfusion.greedandbleed.data.client.ModelGenerator;
+import com.github.teamfusion.greedandbleed.data.worldgen.structure.*;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.core.RegistrySetBuilder;
@@ -19,6 +20,10 @@ public class DataGeneration implements DataGeneratorEntrypoint {
         pack.addProvider(ConfiguredFeatureGenerator::new);
         pack.addProvider(PlacedFeatureGenerator::new);
         pack.addProvider(BiomeGenerator::new);
+        pack.addProvider(BiomeTagGenerator::new);
+        pack.addProvider(StructureTemplatePoolGenerator::new);
+        pack.addProvider(StructureSetGenerator::new);
+        pack.addProvider(StructureGenerator::new);
         pack.addProvider(ChestLootTableGenerator::new);
         pack.addProvider(EntityLootTableGenerator::new);
 
@@ -28,6 +33,9 @@ public class DataGeneration implements DataGeneratorEntrypoint {
     public void buildRegistry(RegistrySetBuilder builder) {
         builder.add(Registries.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap);
         builder.add(Registries.PLACED_FEATURE, ModPlacedFeatures::bootstrap);
+        builder.add(Registries.STRUCTURE_SET, ModStructureSets::bootstrap);
+        builder.add(Registries.TEMPLATE_POOL, ModStructureTemplatePools::bootstrap);
+        builder.add(Registries.STRUCTURE, ModStructures::bootstrap);
         builder.add(Registries.BIOME, ModBiomes::bootstrap);
     }
 }
