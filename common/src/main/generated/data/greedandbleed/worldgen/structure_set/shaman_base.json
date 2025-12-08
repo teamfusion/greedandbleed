@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 28184232,
+    "separation": 6,
+    "spacing": 32
+  },
+  "structures": [
+    {
+      "structure": "greedandbleed:shaman_base",
+      "weight": 1
+    }
+  ]
+}
