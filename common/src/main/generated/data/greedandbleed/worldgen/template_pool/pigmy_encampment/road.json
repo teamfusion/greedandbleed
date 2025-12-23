@@ -1,0 +1,59 @@
+{
+  "elements": [
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greedandbleed:pigmy_encampment/road/corner_1",
+        "processors": "minecraft:bastion_generic_degradation",
+        "projection": "rigid"
+      },
+      "weight": 1
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greedandbleed:pigmy_encampment/road/corner_2",
+        "processors": "minecraft:bastion_generic_degradation",
+        "projection": "rigid"
+      },
+      "weight": 1
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greedandbleed:pigmy_encampment/road/crossroad_1",
+        "processors": "minecraft:bastion_generic_degradation",
+        "projection": "rigid"
+      },
+      "weight": 1
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greedandbleed:pigmy_encampment/road/crossroad_2",
+        "processors": "minecraft:bastion_generic_degradation",
+        "projection": "rigid"
+      },
+      "weight": 1
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greedandbleed:pigmy_encampment/road/straight_01",
+        "processors": "minecraft:bastion_generic_degradation",
+        "projection": "rigid"
+      },
+      "weight": 1
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greedandbleed:pigmy_encampment/road/straight_02",
+        "processors": "minecraft:bastion_generic_degradation",
+        "projection": "rigid"
+      },
+      "weight": 1
+    }
+  ],
+  "fallback": "minecraft:empty"
+}

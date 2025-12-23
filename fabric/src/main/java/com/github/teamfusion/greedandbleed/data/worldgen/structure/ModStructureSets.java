@@ -16,6 +16,7 @@ import java.util.List;
 
 public class ModStructureSets {
     public static final ResourceKey<StructureSet> SHAMAN_BASE = registerKey("shaman_base");
+    public static final ResourceKey<StructureSet> PIGMY_ENCAMPMENT = registerKey("pigmy_encampment");
 
     public static ResourceKey<StructureSet> registerKey(String name) {
         return ResourceKey.create(Registries.STRUCTURE_SET, new ResourceLocation(GreedAndBleed.MOD_ID, name));
@@ -26,5 +27,6 @@ public class ModStructureSets {
         HolderGetter<Biome> holderGetter2 = bootstapContext.lookup(Registries.BIOME);
 
         bootstapContext.register(SHAMAN_BASE, new StructureSet(List.of(StructureSet.entry(holderGetter.getOrThrow(ModStructures.SHAMAN_BASE), 1)), new RandomSpreadStructurePlacement(32, 6, RandomSpreadType.LINEAR, 28184232)));
+        bootstapContext.register(PIGMY_ENCAMPMENT, new StructureSet(List.of(StructureSet.entry(holderGetter.getOrThrow(ModStructures.PIGMY_ENCAMPMENT), 1)), new RandomSpreadStructurePlacement(26, 6, RandomSpreadType.LINEAR, 23184232)));
     }
 }

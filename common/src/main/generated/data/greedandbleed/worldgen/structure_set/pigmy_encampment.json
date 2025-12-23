@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 23184232,
+    "separation": 6,
+    "spacing": 26
+  },
+  "structures": [
+    {
+      "structure": "greedandbleed:pigmy_encampment",
+      "weight": 1
+    }
+  ]
+}

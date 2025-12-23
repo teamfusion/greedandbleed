@@ -17,6 +17,7 @@ public class StructureGenerator extends FabricDynamicRegistryProvider {
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
         this.add(registries, entries, ModStructures.SHAMAN_BASE);
+        this.add(registries, entries, ModStructures.PIGMY_ENCAMPMENT);
     }
 
     private void add(HolderLookup.Provider registries, Entries entries, ResourceKey<Structure> key) {
