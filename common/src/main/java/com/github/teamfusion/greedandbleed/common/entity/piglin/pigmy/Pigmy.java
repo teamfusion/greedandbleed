@@ -36,6 +36,21 @@ public class Pigmy extends GBPigmy implements RangedAttackMob {
             , MemoryModuleType.LIKED_PLAYER, MemoryRegistry.WORK_TIME.get(), MemoryModuleType.JOB_SITE, MemoryModuleType.RIDE_TARGET
             , MemoryModuleType.NEAREST_REPELLENT);
 
+    public static final int SLINGSHOT_ANIMATION_ID = 101;
+    public static final int TALK_HOGGART_ANIMATION_ID = 102;
+    public static final int TALK_PIGMY_ANIMATION_ID = 103;
+    public static final int PET_HOGLET_ANIMATION_ID = 104;
+    public static final int PET_HOGLIN_ANIMATION_ID = 105;
+    public static final int FARMING_ANIMATION_ID = 106;
+
+    public final AnimationState SLINGSHOT_ANIMATION = new AnimationState();
+    public final AnimationState TALK_HOGGART_ANIMATION = new AnimationState();
+    public final AnimationState TALK_PIGMY_ANIMATION = new AnimationState();
+    public final AnimationState PET_HOGLET_ANIMATION = new AnimationState();
+    public final AnimationState PET_HOGLIN_ANIMATION = new AnimationState();
+    public final AnimationState FARMING_ANIMATION = new AnimationState();
+
+
     public Pigmy(EntityType<? extends Pigmy> entityType, Level level) {
         super(entityType, level);
     }
@@ -52,6 +67,24 @@ public class Pigmy extends GBPigmy implements RangedAttackMob {
     }
 
 
+    @Override
+    public void handleEntityEvent(byte b) {
+        if (b == SLINGSHOT_ANIMATION_ID) {
+            SLINGSHOT_ANIMATION.start(this.tickCount);
+        } else if (b == TALK_HOGGART_ANIMATION_ID) {
+            TALK_HOGGART_ANIMATION.start(this.tickCount);
+        } else if (b == TALK_PIGMY_ANIMATION_ID) {
+            TALK_PIGMY_ANIMATION.start(this.tickCount);
+        } else if (b == PET_HOGLET_ANIMATION_ID) {
+            PET_HOGLET_ANIMATION.start(this.tickCount);
+        } else if (b == PET_HOGLIN_ANIMATION_ID) {
+            PET_HOGLIN_ANIMATION.start(this.tickCount);
+        } else if (b == FARMING_ANIMATION_ID) {
+            FARMING_ANIMATION.start(this.tickCount);
+        } else {
+            super.handleEntityEvent(b);
+        }
+    }
 
     @Override
     protected void customServerAiStep() {
@@ -115,6 +148,11 @@ public class Pigmy extends GBPigmy implements RangedAttackMob {
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyInstance) {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemRegistry.SLINGSHOT.get()));
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemRegistry.CRIMSON_FUNGUS.get()));
+    }
+
+    @Override
+    public boolean isLeftHanded() {
+        return false;
     }
 
     @Override

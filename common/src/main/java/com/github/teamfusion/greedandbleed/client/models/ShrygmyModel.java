@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.client.models;
 
 import com.github.teamfusion.greedandbleed.api.IGBArmor;
 import com.github.teamfusion.greedandbleed.client.animation.HumanoidAnimations;
+import com.github.teamfusion.greedandbleed.client.animation.PigmyAnimations;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Shrygmy;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.google.common.collect.ImmutableList;
@@ -11,6 +12,7 @@ import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 
 public class ShrygmyModel<T extends Shrygmy> extends HierarchicalModel<T> implements ArmedModel, IGBArmor {
@@ -80,7 +82,7 @@ public class ShrygmyModel<T extends Shrygmy> extends HierarchicalModel<T> implem
         if (entity.isPassenger()) {
             this.applyStatic(HumanoidAnimations.SIT);
         } else {
-            this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+            this.animateWalk(PigmyAnimations.walk, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         }
         if (entity.isAggressive()) {
             if (entity.isHolding(ItemRegistry.SLINGSHOT.get())) {
@@ -92,18 +94,19 @@ public class ShrygmyModel<T extends Shrygmy> extends HierarchicalModel<T> implem
                     this.applyStatic(HumanoidAnimations.ATTACK_RIGHT);
                 }
             }
-        } else if (entity.walkAnimation.isMoving()) {
-            this.animateWalk(HumanoidAnimations.WALK_SWING, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         } else {
-            this.animateWalk(HumanoidAnimations.IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
+            if (entity.walkAnimation.isMoving()) {
+                if (entity.getId() % 2 == 0) {
+                    this.animateWalk(PigmyAnimations.idle1, ageInTicks, Mth.clamp(1.0F - limbSwingAmount, 0, 1F), 1.0F, 1F);
+                } else {
+                    this.animateWalk(PigmyAnimations.idle2, ageInTicks, Mth.clamp(1.0F - limbSwingAmount, 0, 1F), 1.0F, 1F);
+                }
+            }
         }
 
         if (entity.isBaby()) {
             this.applyStatic(HumanoidAnimations.BABY);
         }
-        this.animateWalk(HumanoidAnimations.EAR_MOVING, limbSwing, limbSwingAmount, 1.0F, 1.5F);
-
-        this.animateWalk(HumanoidAnimations.EAR_IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
     }
 
     @Override

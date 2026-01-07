@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
+import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Pigmy;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.server.level.ServerLevel;
@@ -49,11 +50,11 @@ public class SlingshotAttack<E extends Mob, T extends LivingEntity> extends Beha
     }
 
     private void slingShotAttack(E mob, LivingEntity livingEntity) {
-        if (this.slingshotState == SlingshotAttack.SlingshotState.UNCHARGED) {
+        if (this.slingshotState == SlingshotAttack.SlingshotState.UNCHARGED && --this.attackDelay <= 0) {
             mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(mob, ItemRegistry.SLINGSHOT.get()));
             this.slingshotState = SlingshotState.CHARGED;
-            this.attackDelay = 30 + mob.getRandom().nextInt(5);
-
+            this.attackDelay = 40;
+            mob.level().broadcastEntityEvent(mob, (byte) Pigmy.SLINGSHOT_ANIMATION_ID);
         } else if (this.slingshotState == SlingshotAttack.SlingshotState.CHARGED) {
             --this.attackDelay;
             if (this.attackDelay == 0) {
