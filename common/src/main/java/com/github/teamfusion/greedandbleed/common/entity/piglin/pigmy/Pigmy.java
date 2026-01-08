@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy;
 
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
-import com.github.teamfusion.greedandbleed.api.PygmyTaskManager;
+import com.github.teamfusion.greedandbleed.api.PigmyTaskManager;
 import com.github.teamfusion.greedandbleed.common.entity.projectile.ThrownDamageableEntity;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
@@ -114,7 +114,7 @@ public class Pigmy extends GBPigmy implements RangedAttackMob {
 
     @Override
     public ITaskManager<?> createTaskManager(Dynamic<?> dynamic) {
-        return new PygmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
+        return new PigmyTaskManager<>(this, this.brainProvider().makeBrain(dynamic));
     }
 
     @Override

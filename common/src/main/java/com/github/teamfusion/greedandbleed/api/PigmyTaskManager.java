@@ -39,7 +39,7 @@ import java.util.Optional;
  * @author Thelnfamous1
  * @param <T> A class that extends LivingEntity
  */
-public class PygmyTaskManager<T extends Pigmy> extends TaskManager<T> {
+public class PigmyTaskManager<T extends Pigmy> extends TaskManager<T> {
     /**
      * Constructs a new TaskManager instance given a LivingEntity and a Brain.
      * Note that this should only be instantiated inside LivingEntity#makeBrain,
@@ -50,7 +50,7 @@ public class PygmyTaskManager<T extends Pigmy> extends TaskManager<T> {
      * @param mob          The LivingEntity to associate with this TaskManager
      * @param dynamicBrain The Brain to associate with this TaskManager
      */
-    public PygmyTaskManager(T mob, Brain<T> dynamicBrain) {
+    public PigmyTaskManager(T mob, Brain<T> dynamicBrain) {
         super(mob, dynamicBrain);
     }
 
@@ -70,7 +70,7 @@ public class PygmyTaskManager<T extends Pigmy> extends TaskManager<T> {
     //I need work activity with condition so I'll override it
     @Override
     protected void initWorkActivity(int priorityStart) {
-        dynamicBrain.addActivity(Activity.WORK, priorityStart, ImmutableList.of(StartAttacking.create(PygmyTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createWorkMovementBehaviors()));
+        dynamicBrain.addActivity(Activity.WORK, priorityStart, ImmutableList.of(StartAttacking.create(PigmyTaskManager::findNearestValidAttackTarget), createIdleLookBehaviors(), createWorkMovementBehaviors()));
 
     }
 
@@ -117,7 +117,7 @@ public class PygmyTaskManager<T extends Pigmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(PygmyTaskManager::findNearestValidAttackTarget), avoidRepellent(), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
+        return ImmutableList.of(StartAttacking.create(PigmyTaskManager::findNearestValidAttackTarget), avoidRepellent(), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
     }
 
     protected static BehaviorControl<PathfinderMob> avoidRepellent() {
@@ -126,7 +126,7 @@ public class PygmyTaskManager<T extends Pigmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasSlingshotWithBackUp, BackUpIfTooClose.create(5, 0.75f)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15F), BehaviorBuilder.triggerIf(PygmyTaskManager::hasNotRiding, MeleeAttack.create(20)), new SlingshotAttack<>());
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), BehaviorBuilder.triggerIf(PigmyTaskManager::hasSlingshotWithBackUp, BackUpIfTooClose.create(5, 0.75f)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15F), BehaviorBuilder.triggerIf(PigmyTaskManager::hasNotRiding, MeleeAttack.create(20)), new SlingshotAttack<>());
     }
 
 
