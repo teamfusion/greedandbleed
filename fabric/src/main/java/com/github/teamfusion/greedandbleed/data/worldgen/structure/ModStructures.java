@@ -48,6 +48,6 @@ public class ModStructures {
         HolderGetter<Biome> holderGetter = bootstapContext.lookup(Registries.BIOME);
         HolderGetter<StructureTemplatePool> holderGetter2 = bootstapContext.lookup(Registries.TEMPLATE_POOL);
         bootstapContext.register(SHAMAN_BASE, new JigsawStructure(structure(holderGetter.getOrThrow(GBBiomeTags.HAS_SHAMAN_BASE), TerrainAdjustment.BEARD_THIN), holderGetter2.getOrThrow(ShamanBasePieces.SHAMAN_BASE), 6, ConstantHeight.of(VerticalAnchor.absolute(80)), false));
-        bootstapContext.register(PIGMY_ENCAMPMENT, new JigsawStructure(structure(holderGetter.getOrThrow(GBBiomeTags.HAS_PIGMY_ENCAMPMENTS), GenerationStep.Decoration.UNDERGROUND_STRUCTURES, TerrainAdjustment.BEARD_THIN), holderGetter2.getOrThrow(PigmyEncampmentPieces.MAIN), 7, ConstantHeight.of(VerticalAnchor.absolute(80)), false));
+        bootstapContext.register(PIGMY_ENCAMPMENT, new JigsawStructure(structure(holderGetter.getOrThrow(GBBiomeTags.HAS_PIGMY_ENCAMPMENTS), GenerationStep.Decoration.UNDERGROUND_STRUCTURES, TerrainAdjustment.BEARD_THIN), holderGetter2.getOrThrow(PigmyEncampmentPieces.MAIN), 6, ConstantHeight.of(VerticalAnchor.absolute(80)), false));
     }
 }

@@ -85,7 +85,7 @@ public class PigmyEncampmentPieces {
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/road/straight_02"), holder), 1)),
                 StructureTemplatePool.Projection.RIGID));
         bootstapContext.register(TENT_ROAD, new StructureTemplatePool(holder2, ImmutableList.of(
-                Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/tent_road/straight_1"), holder), 1)),
+                Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/tent_road/straight_01"), holder), 1)),
                 StructureTemplatePool.Projection.RIGID));
 
         bootstapContext.register(STATUE, new StructureTemplatePool(holder2, ImmutableList.of(
