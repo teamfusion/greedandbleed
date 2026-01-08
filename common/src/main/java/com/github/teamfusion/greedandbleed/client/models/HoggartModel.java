@@ -89,7 +89,7 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
         if (entity.isPassenger()) {
             this.applyStatic(HumanoidAnimations.SIT);
         } else {
-            this.animateWalk(HumanoidAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+            this.animateWalk(HoggartAnimations.walk, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         }
         if (entity.isAggressive()) {
             if (entity.isLeftHanded()) {
@@ -97,14 +97,16 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
             } else {
                 this.applyStatic(HumanoidAnimations.ATTACK_RIGHT);
             }
-        } else if (entity.walkAnimation.isMoving()) {
-            this.animateWalk(HumanoidAnimations.WALK_SWING, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         } else {
-            this.animateWalk(HumanoidAnimations.IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
+            this.animateWalk(HoggartAnimations.idle, ageInTicks, 1.0F, 1.0F, 1.0F);
         }
         if (entity.isBaby()) {
             this.applyStatic(HoggartAnimations.BABY);
         }
+        this.animate(entity.ATTACK_ANIMATION, HoggartAnimations.attack, ageInTicks);
+        this.animate(entity.PET_HOGLET_ANIMATION, HoggartAnimations.pethoglet, ageInTicks);
+        this.animate(entity.PET_HOGLIN_ANIMATION, HoggartAnimations.pethoglin, ageInTicks);
+        this.animate(entity.TALK_PIGMY_ANIMATION, HoggartAnimations.talkpigmy, ageInTicks);
 
         this.piggy_backpack.visible = false;
     }

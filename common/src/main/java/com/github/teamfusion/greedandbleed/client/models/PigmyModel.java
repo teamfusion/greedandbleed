@@ -13,5 +13,11 @@ public class PigmyModel<T extends Pigmy> extends AbstractPigmyModel<T> implement
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         this.animate(entity.SLINGSHOT_ANIMATION, PigmyAnimations.slingshot, ageInTicks);
+        this.animate(entity.PET_HOGLET_ANIMATION, PigmyAnimations.pethoglet, ageInTicks);
+        this.animate(entity.PET_HOGLIN_ANIMATION, PigmyAnimations.pethoglin, ageInTicks);
+        this.animate(entity.TALK_PIGMY_ANIMATION, PigmyAnimations.talkpigmy, ageInTicks);
+        this.animate(entity.TALK_PIGMY_ANIMATION2, PigmyAnimations.talkpigmy2, ageInTicks);
+        this.animate(entity.TALK_HOGGART_ANIMATION, PigmyAnimations.talkhoggart, ageInTicks);
+
     }
 }

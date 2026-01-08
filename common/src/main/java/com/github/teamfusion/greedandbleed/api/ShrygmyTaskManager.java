@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.api;
 
 import com.github.teamfusion.greedandbleed.common.entity.brain.*;
 import com.github.teamfusion.greedandbleed.common.entity.brain.StrollToPoi;
+import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Shrygmy;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
@@ -75,7 +76,11 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleLookBehaviors() {
         return ImmutableList.of(Pair.of(SetEntityLookTargetWithTalk.create((livingEntity) -> {
             return livingEntity instanceof GBPigmy;
-        }, 8), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1), Pair.of(new DoNothing(30, 60), 1));
+        }, 8), 1), Pair.of(SetEntityLookTargetWithTalk.create((livingEntity) -> {
+            return livingEntity instanceof Hoglin;
+        }, 4), 1), Pair.of(SetEntityLookTargetWithTalk.create((livingEntity) -> {
+            return livingEntity instanceof Hoglet;
+        }, 4), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override

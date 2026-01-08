@@ -37,6 +37,20 @@ public class Shrygmy extends GBPigmy {
             , MemoryModuleType.LIKED_PLAYER, MemoryRegistry.WORK_TIME.get(), MemoryModuleType.JOB_SITE
             , MemoryModuleType.NEAREST_REPELLENT);
 
+    public static final int SLINGSHOT_ANIMATION_ID = 101;
+    public static final int TALK_HOGGART_ANIMATION_ID = 102;
+    public static final int TALK_PIGMY_ANIMATION_ID = 103;
+    public static final int PET_HOGLET_ANIMATION_ID = 104;
+    public static final int PET_HOGLIN_ANIMATION_ID = 105;
+    public static final int FARMING_ANIMATION_ID = 106;
+
+    public final AnimationState SLINGSHOT_ANIMATION = new AnimationState();
+    public final AnimationState TALK_HOGGART_ANIMATION = new AnimationState();
+    public final AnimationState TALK_PIGMY_ANIMATION = new AnimationState();
+    public final AnimationState TALK_PIGMY_ANIMATION2 = new AnimationState();
+    public final AnimationState PET_HOGLET_ANIMATION = new AnimationState();
+    public final AnimationState PET_HOGLIN_ANIMATION = new AnimationState();
+    public final AnimationState FARMING_ANIMATION = new AnimationState();
 
     public int shieldCooldown = 0;
     public Shrygmy(EntityType<? extends Shrygmy> entityType, Level level) {
@@ -53,6 +67,46 @@ public class Shrygmy extends GBPigmy {
                 .add(Attributes.MAX_HEALTH, 12.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.ATTACK_DAMAGE, 2.5F);
     }
+
+    @Override
+    public void handleEntityEvent(byte b) {
+        if (b == SLINGSHOT_ANIMATION_ID) {
+            this.resetAnimation();
+            SLINGSHOT_ANIMATION.start(this.tickCount);
+        } else if (b == TALK_HOGGART_ANIMATION_ID) {
+            this.resetAnimation();
+            TALK_HOGGART_ANIMATION.start(this.tickCount);
+        } else if (b == TALK_PIGMY_ANIMATION_ID) {
+            this.resetAnimation();
+            if (this.getRandom().nextBoolean()) {
+                TALK_PIGMY_ANIMATION.start(this.tickCount);
+            } else {
+                TALK_PIGMY_ANIMATION2.start(this.tickCount);
+            }
+        } else if (b == PET_HOGLET_ANIMATION_ID) {
+            this.resetAnimation();
+            PET_HOGLET_ANIMATION.start(this.tickCount);
+        } else if (b == PET_HOGLIN_ANIMATION_ID) {
+            this.resetAnimation();
+            PET_HOGLIN_ANIMATION.start(this.tickCount);
+        } else if (b == FARMING_ANIMATION_ID) {
+            this.resetAnimation();
+            FARMING_ANIMATION.start(this.tickCount);
+        } else {
+            super.handleEntityEvent(b);
+        }
+    }
+
+    public void resetAnimation() {
+        SLINGSHOT_ANIMATION.stop();
+        TALK_HOGGART_ANIMATION.stop();
+        TALK_PIGMY_ANIMATION.stop();
+        TALK_PIGMY_ANIMATION2.stop();
+        PET_HOGLET_ANIMATION.stop();
+        PET_HOGLIN_ANIMATION.stop();
+        FARMING_ANIMATION.stop();
+    }
+
 
     @Override
     public void startUsingItem(InteractionHand interactionHand) {

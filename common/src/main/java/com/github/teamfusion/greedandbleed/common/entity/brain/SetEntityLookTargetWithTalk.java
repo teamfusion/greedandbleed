@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.entity.brain;
 
+import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Hoggart;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Pigmy;
 import net.minecraft.world.entity.Entity;
@@ -12,21 +13,22 @@ import net.minecraft.world.entity.ai.behavior.OneShot;
 import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
+import net.minecraft.world.entity.monster.hoglin.Hoglin;
 
 import java.util.Optional;
 import java.util.function.Predicate;
 
 public class SetEntityLookTargetWithTalk {
     public static BehaviorControl<LivingEntity> create(MobCategory mobCategory, float f) {
-        return create((Predicate) ((livingEntity) -> mobCategory.equals(livingEntity.getType().getCategory())), f);
+        return create(((livingEntity) -> mobCategory.equals(livingEntity.getType().getCategory())), f);
     }
 
     public static OneShot<LivingEntity> create(EntityType<?> entityType, float f) {
-        return create((Predicate) ((livingEntity) -> entityType.equals(livingEntity.getType())), f);
+        return create(((livingEntity) -> entityType.equals(livingEntity.getType())), f);
     }
 
     public static OneShot<LivingEntity> create(float f) {
-        return create((Predicate) ((livingEntity) -> true), f);
+        return create(((livingEntity) -> true), f);
     }
 
     public static OneShot<LivingEntity> create(Predicate<LivingEntity> predicate, float f) {
@@ -38,8 +40,12 @@ public class SetEntityLookTargetWithTalk {
             } else {
                 if (optional.get() instanceof Pigmy) {
                     serverLevel.broadcastEntityEvent(livingEntity, (byte) Pigmy.TALK_PIGMY_ANIMATION_ID);
-                } else if (optional.get() instanceof Hoggart) {
+                } else if (optional.get() instanceof Hoggart && !(livingEntity instanceof Hoggart)) {
                     serverLevel.broadcastEntityEvent(livingEntity, (byte) Pigmy.TALK_HOGGART_ANIMATION_ID);
+                } else if (optional.get() instanceof Hoglet) {
+                    serverLevel.broadcastEntityEvent(livingEntity, (byte) Pigmy.PET_HOGLET_ANIMATION_ID);
+                } else if (optional.get() instanceof Hoglin) {
+                    serverLevel.broadcastEntityEvent(livingEntity, (byte) Pigmy.PET_HOGLIN_ANIMATION_ID);
                 }
                 memoryAccessor.set(new EntityTracker((Entity) optional.get(), true));
                 return true;

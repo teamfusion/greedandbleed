@@ -34,6 +34,16 @@ public class Hoggart extends GBPigmy {
             , MemoryModuleType.LIKED_PLAYER, MemoryRegistry.WORK_TIME.get(), MemoryModuleType.JOB_SITE
             , MemoryModuleType.NEAREST_REPELLENT);
 
+    public static final int ATTACK_ANIMATION_ID = 4;
+    public static final int TALK_PIGMY_ANIMATION_ID = 103;
+    public static final int PET_HOGLET_ANIMATION_ID = 104;
+    public static final int PET_HOGLIN_ANIMATION_ID = 105;
+    public final AnimationState ATTACK_ANIMATION = new AnimationState();
+    public final AnimationState TALK_PIGMY_ANIMATION = new AnimationState();
+    public final AnimationState PET_HOGLET_ANIMATION = new AnimationState();
+    public final AnimationState PET_HOGLIN_ANIMATION = new AnimationState();
+
+
     public Hoggart(EntityType<? extends Hoggart> entityType, Level level) {
         super(entityType, level);
     }
@@ -52,6 +62,41 @@ public class Hoggart extends GBPigmy {
     @Override
     protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
         return entityDimensions.height * 0.85F;
+    }
+
+    @Override
+    public void handleEntityEvent(byte b) {
+        if (b == ATTACK_ANIMATION_ID) {
+            this.resetAnimation();
+            ATTACK_ANIMATION.start(this.tickCount);
+        } else if (b == TALK_PIGMY_ANIMATION_ID) {
+            this.resetAnimation();
+            TALK_PIGMY_ANIMATION.start(this.tickCount);
+        } else if (b == PET_HOGLET_ANIMATION_ID) {
+            this.resetAnimation();
+            PET_HOGLET_ANIMATION.start(this.tickCount);
+        } else if (b == PET_HOGLIN_ANIMATION_ID) {
+            this.resetAnimation();
+            PET_HOGLIN_ANIMATION.start(this.tickCount);
+        } else {
+            super.handleEntityEvent(b);
+        }
+    }
+
+    public void resetAnimation() {
+        TALK_PIGMY_ANIMATION.stop();
+        PET_HOGLET_ANIMATION.stop();
+        PET_HOGLIN_ANIMATION.stop();
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity entity) {
+        boolean hurt = super.doHurtTarget(entity);
+        if (hurt) {
+            this.level().broadcastEntityEvent(entity, (byte) ATTACK_ANIMATION_ID);
+        }
+
+        return hurt;
     }
 
     @Override

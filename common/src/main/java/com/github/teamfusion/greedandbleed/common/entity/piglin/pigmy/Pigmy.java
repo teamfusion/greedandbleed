@@ -46,6 +46,7 @@ public class Pigmy extends GBPigmy implements RangedAttackMob {
     public final AnimationState SLINGSHOT_ANIMATION = new AnimationState();
     public final AnimationState TALK_HOGGART_ANIMATION = new AnimationState();
     public final AnimationState TALK_PIGMY_ANIMATION = new AnimationState();
+    public final AnimationState TALK_PIGMY_ANIMATION2 = new AnimationState();
     public final AnimationState PET_HOGLET_ANIMATION = new AnimationState();
     public final AnimationState PET_HOGLIN_ANIMATION = new AnimationState();
     public final AnimationState FARMING_ANIMATION = new AnimationState();
@@ -70,20 +71,40 @@ public class Pigmy extends GBPigmy implements RangedAttackMob {
     @Override
     public void handleEntityEvent(byte b) {
         if (b == SLINGSHOT_ANIMATION_ID) {
+            this.resetAnimation();
             SLINGSHOT_ANIMATION.start(this.tickCount);
         } else if (b == TALK_HOGGART_ANIMATION_ID) {
+            this.resetAnimation();
             TALK_HOGGART_ANIMATION.start(this.tickCount);
         } else if (b == TALK_PIGMY_ANIMATION_ID) {
-            TALK_PIGMY_ANIMATION.start(this.tickCount);
+            this.resetAnimation();
+            if (this.getRandom().nextBoolean()) {
+                TALK_PIGMY_ANIMATION.start(this.tickCount);
+            } else {
+                TALK_PIGMY_ANIMATION2.start(this.tickCount);
+            }
         } else if (b == PET_HOGLET_ANIMATION_ID) {
+            this.resetAnimation();
             PET_HOGLET_ANIMATION.start(this.tickCount);
         } else if (b == PET_HOGLIN_ANIMATION_ID) {
+            this.resetAnimation();
             PET_HOGLIN_ANIMATION.start(this.tickCount);
         } else if (b == FARMING_ANIMATION_ID) {
+            this.resetAnimation();
             FARMING_ANIMATION.start(this.tickCount);
         } else {
             super.handleEntityEvent(b);
         }
+    }
+
+    public void resetAnimation() {
+        SLINGSHOT_ANIMATION.stop();
+        TALK_HOGGART_ANIMATION.stop();
+        TALK_PIGMY_ANIMATION.stop();
+        TALK_PIGMY_ANIMATION2.stop();
+        PET_HOGLET_ANIMATION.stop();
+        PET_HOGLIN_ANIMATION.stop();
+        FARMING_ANIMATION.stop();
     }
 
     @Override
