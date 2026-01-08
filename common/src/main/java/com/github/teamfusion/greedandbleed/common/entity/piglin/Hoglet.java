@@ -1,7 +1,9 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
+import com.github.teamfusion.greedandbleed.api.IPatbleMob;
 import com.github.teamfusion.greedandbleed.common.entity.goal.AngryForStealerGoal;
 import com.github.teamfusion.greedandbleed.common.entity.goal.DiggingHogdewGoal;
+import com.github.teamfusion.greedandbleed.common.entity.goal.PatGoal;
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import net.minecraft.core.BlockPos;
@@ -42,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 @SuppressWarnings("ConstantConditions")
-public class Hoglet extends TamableAnimal implements NeutralMob {
+public class Hoglet extends TamableAnimal implements NeutralMob, IPatbleMob {
     protected static final EntityDataAccessor<Boolean> DATA_IMMUNE_TO_ZOMBIFICATION = SynchedEntityData.defineId(Hoglet.class, EntityDataSerializers.BOOLEAN);
 
     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Hoglet.class, EntityDataSerializers.INT);
@@ -59,6 +61,7 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     private LivingEntity stealTarget;
 
     protected int timeInOverworld;
+    private int patTick;
 
     public Hoglet(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -95,6 +98,7 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
 
     @Override
     protected void registerGoals() {
+        this.goalSelector.addGoal(0, new PatGoal(this));
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.15D, true));
@@ -111,6 +115,14 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (this.patTick > 0) {
+            --this.patTick;
+        }
     }
 
     @Override
@@ -366,5 +378,15 @@ public class Hoglet extends TamableAnimal implements NeutralMob {
     @Override
     public boolean removeWhenFarAway(double d) {
         return !this.isTame() && !this.hasHogdew();
+    }
+
+    @Override
+    public void responsePet(LivingEntity target) {
+        this.patTick = 200;
+    }
+
+    @Override
+    public boolean isPat() {
+        return this.patTick > 0;
     }
 }

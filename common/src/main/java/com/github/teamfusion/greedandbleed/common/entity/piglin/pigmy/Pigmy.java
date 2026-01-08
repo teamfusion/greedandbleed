@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Unit;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.*;
@@ -32,7 +33,8 @@ import org.jetbrains.annotations.Nullable;
 public class Pigmy extends GBPigmy implements RangedAttackMob {
     protected static final ImmutableList<SensorType<? extends Sensor<? super Pigmy>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorRegistry.PYGMY_SPECIFIC_SENSOR.get());
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.NEAREST_VISIBLE_NEMESIS
-            , MemoryRegistry.NEAREST_HOGLET.get(), MemoryRegistry.NEAREST_TAMED_HOGLET.get()
+            , MemoryRegistry.NEAREST_HOGLET.get(), MemoryRegistry.NEAREST_TAMED_HOGLET.get(), MemoryRegistry.TALK_TARGET.get(), MemoryRegistry.PET_TARGET.get()
+            , MemoryRegistry.TALK_COOLDOWN.get(), MemoryRegistry.PET_COOLDOWN.get()
             , MemoryModuleType.LIKED_PLAYER, MemoryRegistry.WORK_TIME.get(), MemoryModuleType.JOB_SITE, MemoryModuleType.RIDE_TARGET
             , MemoryModuleType.NEAREST_REPELLENT);
 
@@ -201,5 +203,11 @@ public class Pigmy extends GBPigmy implements RangedAttackMob {
 
         this.playSound(SoundEvents.SNOW_GOLEM_SHOOT, 1.0f, 0.4f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
         this.level().addFreshEntity(snowball);
+    }
+
+    @Override
+    public void responseTalk(LivingEntity target) {
+        this.getBrain().setMemory(MemoryRegistry.TALK_TARGET.get(), target);
+        this.getBrain().setMemoryWithExpiry(MemoryRegistry.TALK_COOLDOWN.get(), Unit.INSTANCE, 400 + this.getRandom().nextInt(200));
     }
 }

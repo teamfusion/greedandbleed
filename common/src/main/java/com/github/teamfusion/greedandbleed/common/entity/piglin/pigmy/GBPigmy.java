@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy;
 
 import com.github.teamfusion.greedandbleed.api.HasTaskManager;
+import com.github.teamfusion.greedandbleed.api.ITalkableMob;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public abstract class GBPigmy extends Monster implements HasTaskManager {
+public abstract class GBPigmy extends Monster implements HasTaskManager, ITalkableMob {
     protected static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(GBPigmy.class, EntityDataSerializers.BOOLEAN);
     protected static final EntityDataAccessor<String> DATA_MODE_ID = SynchedEntityData.defineId(GBPigmy.class, EntityDataSerializers.STRING);
 

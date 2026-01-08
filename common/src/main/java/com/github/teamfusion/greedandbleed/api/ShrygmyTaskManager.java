@@ -74,14 +74,21 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
 
     @Override
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleLookBehaviors() {
-        return ImmutableList.of(Pair.of(SetEntityLookTargetWithTalk.create((livingEntity) -> {
+        return ImmutableList.of(Pair.of(SetEntityLookTarget.create((livingEntity) -> {
             return livingEntity instanceof GBPigmy;
-        }, 8), 1), Pair.of(SetEntityLookTargetWithTalk.create((livingEntity) -> {
+        }, 8), 1), Pair.of(SetEntityLookTarget.create((livingEntity) -> {
             return livingEntity instanceof Hoglin;
-        }, 4), 1), Pair.of(SetEntityLookTargetWithTalk.create((livingEntity) -> {
+        }, 8), 1), Pair.of(SetEntityLookTarget.create((livingEntity) -> {
             return livingEntity instanceof Hoglet;
-        }, 4), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 3), 1), Pair.of(SetEntityLookTarget.create(3.0F), 1), Pair.of(new DoNothing(30, 60), 1));
+        }, 8), 1), Pair.of(TargetWithTalk.create((livingEntity) -> {
+            return livingEntity instanceof GBPigmy;
+        }, 8), 1), Pair.of(TargetWithPet.create((livingEntity) -> {
+            return livingEntity instanceof Hoglin;
+        }, 8), 1), Pair.of(TargetWithPet.create((livingEntity) -> {
+            return livingEntity instanceof Hoglet;
+        }, 8), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1), Pair.of(new DoNothing(30, 60), 1));
     }
+
 
     @Override
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleMovementBehaviors() {
@@ -117,7 +124,7 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(ShrygmyTaskManager::findNearestValidAttackTarget), avoidRepellent(), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
+        return ImmutableList.of(StartAttacking.create(ShrygmyTaskManager::findNearestValidAttackTarget), avoidRepellent(), new TalkToPigmy<>(90, 0.8F), new PetSomeMob<>(80, 0.8F), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
     }
 
     @Override
