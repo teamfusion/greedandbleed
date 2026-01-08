@@ -33,11 +33,12 @@ public class SetEntityLookTargetWithTalk {
 
     public static OneShot<LivingEntity> create(Predicate<LivingEntity> predicate, float f) {
         float g = f * f;
-        return BehaviorBuilder.create((instance) -> instance.group(instance.absent(MemoryModuleType.LOOK_TARGET), instance.present(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES)).apply(instance, (memoryAccessor, memoryAccessor2) -> (serverLevel, livingEntity, l) -> {
+        return BehaviorBuilder.create((instance) -> instance.group(instance.absent(MemoryModuleType.LOOK_TARGET), instance.present(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES), instance.registered(MemoryModuleType.WALK_TARGET)).apply(instance, (memoryAccessor, memoryAccessor2, walkTarget) -> (serverLevel, livingEntity, l) -> {
             Optional<LivingEntity> optional = ((NearestVisibleLivingEntities) instance.get(memoryAccessor2)).findClosest(predicate.and((livingEntity2) -> livingEntity2.distanceToSqr(livingEntity) <= (double) g && !livingEntity.hasPassenger(livingEntity2)));
             if (optional.isEmpty()) {
                 return false;
             } else {
+                walkTarget.erase();
                 if (optional.get() instanceof Pigmy) {
                     serverLevel.broadcastEntityEvent(livingEntity, (byte) Pigmy.TALK_PIGMY_ANIMATION_ID);
                 } else if (optional.get() instanceof Hoggart && !(livingEntity instanceof Hoggart)) {
