@@ -22,6 +22,7 @@ public class PigmyEncampmentPieces {
     public static final ResourceKey<StructureTemplatePool> MISC = registerKey("pigmy_encampment/misc");
     public static final ResourceKey<StructureTemplatePool> STATUE = registerKey("pigmy_encampment/statue");
     public static final ResourceKey<StructureTemplatePool> ROAD = registerKey("pigmy_encampment/road");
+    public static final ResourceKey<StructureTemplatePool> TENT_ROAD = registerKey("pigmy_encampment/tent_road");
     public static final ResourceKey<StructureTemplatePool> MAIN = registerKey("pigmy_encampment/main");
     public static final ResourceKey<StructureTemplatePool> PILLAR = registerKey("pigmy_encampment/pillar");
     public static final ResourceKey<StructureTemplatePool> WALL = registerKey("pigmy_encampment/wall");
@@ -72,7 +73,8 @@ public class PigmyEncampmentPieces {
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/camp/pigmy_tent3"), holder), 1)),
                 StructureTemplatePool.Projection.RIGID));
         bootstapContext.register(MAIN, new StructureTemplatePool(holder2, ImmutableList.of(
-                Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/main"), holder), 1)),
+                Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/main/campfire_1"), holder), 1),
+                Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/main/campfire_2"), holder), 1)),
                 StructureTemplatePool.Projection.RIGID));
         bootstapContext.register(ROAD, new StructureTemplatePool(holder2, ImmutableList.of(
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/road/corner_1"), holder), 1),
@@ -81,6 +83,9 @@ public class PigmyEncampmentPieces {
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/road/crossroad_2"), holder), 1),
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/road/straight_01"), holder), 1),
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/road/straight_02"), holder), 1)),
+                StructureTemplatePool.Projection.RIGID));
+        bootstapContext.register(TENT_ROAD, new StructureTemplatePool(holder2, ImmutableList.of(
+                Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/tent_road/straight_1"), holder), 1)),
                 StructureTemplatePool.Projection.RIGID));
 
         bootstapContext.register(STATUE, new StructureTemplatePool(holder2, ImmutableList.of(
@@ -97,8 +102,6 @@ public class PigmyEncampmentPieces {
         bootstapContext.register(MISC, new StructureTemplatePool(holder2, ImmutableList.of(
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/hut/pigmy_tower1"), holder), 1),
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/hut/pigmy_tower2"), holder), 1),
-                Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/hut/campfire_1"), holder), 1),
-                Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/hut/campfire_2"), holder), 1),
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/hut/cooker_1"), holder), 1),
                 Pair.of(StructurePoolElement.single(prefix("pigmy_encampment/hut/cooker_2"), holder), 1)),
                 StructureTemplatePool.Projection.RIGID));

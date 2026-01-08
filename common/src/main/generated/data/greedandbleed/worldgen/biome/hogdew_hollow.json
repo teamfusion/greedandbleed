@@ -35,7 +35,9 @@
   "features": [
     [],
     [],
-    [],
+    [
+      "greedandbleed:hogdew_bubble"
+    ],
     [],
     [],
     [],
@@ -47,6 +49,7 @@
       "minecraft:glowstone",
       "minecraft:ore_magma",
       "minecraft:spring_closed",
+      "greedandbleed:hogdew_patch",
       "minecraft:ore_gravel_nether",
       "minecraft:ore_blackstone",
       "minecraft:ore_gold_nether",
@@ -59,8 +62,6 @@
       "minecraft:spring_lava",
       "minecraft:brown_mushroom_normal",
       "minecraft:red_mushroom_normal",
-      "greedandbleed:hogdew_patch",
-      "greedandbleed:hogdew_bubble",
       "greedandbleed:hogdew_fungus",
       "greedandbleed:hogdew_lumps",
       "greedandbleed:hogdew_hollow_vegitation"

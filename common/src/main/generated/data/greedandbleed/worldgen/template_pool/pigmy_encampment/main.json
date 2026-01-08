@@ -3,7 +3,16 @@
     {
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "greedandbleed:pigmy_encampment/main",
+        "location": "greedandbleed:pigmy_encampment/main/campfire_1",
+        "processors": "minecraft:bastion_generic_degradation",
+        "projection": "rigid"
+      },
+      "weight": 1
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "greedandbleed:pigmy_encampment/main/campfire_2",
         "processors": "minecraft:bastion_generic_degradation",
         "projection": "rigid"
       },

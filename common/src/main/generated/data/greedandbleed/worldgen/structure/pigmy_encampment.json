@@ -2,13 +2,13 @@
   "type": "minecraft:jigsaw",
   "biomes": "#greedandbleed:has_structure/pigmy_encampments",
   "max_distance_from_center": 80,
-  "size": 6,
+  "size": 7,
   "spawn_overrides": {},
   "start_height": {
     "absolute": 80
   },
   "start_pool": "greedandbleed:pigmy_encampment/main",
-  "step": "surface_structures",
+  "step": "underground_structures",
   "terrain_adaptation": "beard_thin",
   "use_expansion_hack": false
 }

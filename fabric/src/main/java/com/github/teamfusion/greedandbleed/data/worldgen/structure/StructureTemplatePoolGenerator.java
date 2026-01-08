@@ -28,6 +28,7 @@ public class StructureTemplatePoolGenerator extends FabricDynamicRegistryProvide
         this.add(registries, entries, PigmyEncampmentPieces.TENT);
         this.add(registries, entries, PigmyEncampmentPieces.MAIN);
         this.add(registries, entries, PigmyEncampmentPieces.ROAD);
+        this.add(registries, entries, PigmyEncampmentPieces.TENT_ROAD);
         this.add(registries, entries, PigmyEncampmentPieces.STATUE);
         this.add(registries, entries, PigmyEncampmentPieces.MISC);
         this.add(registries, entries, PigmyEncampmentPieces.PILLAR);

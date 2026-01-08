@@ -114,9 +114,6 @@ public class WarpedPiglinModel<T extends WarpedPiglin> extends HierarchicalModel
         if (entity.isBaby()) {
             this.applyStatic(WarpedPiglinAnimation.baby);
         }
-        this.animateWalk(HumanoidAnimations.EAR_MOVING, limbSwing, limbSwingAmount, 1.0F, 1.5F);
-
-        this.animateWalk(HumanoidAnimations.EAR_IDLE, ageInTicks, 1.0F, 1.0F, 1.0F);
     }
 
     @Override
