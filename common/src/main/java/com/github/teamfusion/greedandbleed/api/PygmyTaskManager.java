@@ -25,7 +25,6 @@ import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
-import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
@@ -89,8 +88,8 @@ public class PygmyTaskManager<T extends Pigmy> extends TaskManager<T> {
 
     @Override
     protected List<Pair<? extends BehaviorControl<? super T>, Integer>> getIdleLookBehaviors() {
-        return ImmutableList.of(Pair.of(SetEntityLookTarget.create((livingEntity) -> {
-            return livingEntity instanceof AbstractPiglin;
+        return ImmutableList.of(Pair.of(SetEntityLookTargetWithTalk.create((livingEntity) -> {
+            return livingEntity instanceof GBPigmy;
         }, 8), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1), Pair.of(new DoNothing(30, 60), 1));
     }
 
@@ -127,7 +126,7 @@ public class PygmyTaskManager<T extends Pigmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getFightTasks() {
-        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasSlingshotWithBackUp, BackUpIfTooClose.create(5, 0.75f)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasNotRiding, SetWalkTargetFromAttackTargetIfTargetFar.create(1.15f)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasNotRiding, MeleeAttack.create(20)), new SlingshotAttack<>());
+        return ImmutableList.of(StopAttackingIfTargetInvalid.create(livingEntity -> !isNearestValidAttackTarget(livingEntity)), BehaviorBuilder.triggerIf(PygmyTaskManager::hasSlingshotWithBackUp, BackUpIfTooClose.create(5, 0.75f)), SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.15F), BehaviorBuilder.triggerIf(PygmyTaskManager::hasNotRiding, MeleeAttack.create(20)), new SlingshotAttack<>());
     }
 
 
@@ -286,7 +285,7 @@ public class PygmyTaskManager<T extends Pigmy> extends TaskManager<T> {
     }
 
     private static boolean hasSlingshotWithBackUp(LivingEntity arg) {
-        return arg.isHolding(is -> is.getItem() instanceof SlingshotItem) && hasNotRiding(arg);
+        return arg.isHolding(is -> is.getItem() instanceof SlingshotItem);
     }
 
     private static boolean hasNotRiding(LivingEntity arg) {

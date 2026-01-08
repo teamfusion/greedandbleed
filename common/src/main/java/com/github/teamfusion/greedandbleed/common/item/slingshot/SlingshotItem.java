@@ -196,7 +196,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
 
     @Override
     public int getDefaultProjectileRange() {
-        return 16;
+        return 8;
     }
 
 }
