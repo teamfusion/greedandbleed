@@ -80,7 +80,7 @@ public class ShrygmyTaskManager<T extends Shrygmy> extends TaskManager<T> {
             return livingEntity instanceof Hoglin;
         }, 4), 1), Pair.of(SetEntityLookTargetWithTalk.create((livingEntity) -> {
             return livingEntity instanceof Hoglet;
-        }, 4), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1), Pair.of(new DoNothing(30, 60), 1));
+        }, 4), 1), Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 3), 1), Pair.of(SetEntityLookTarget.create(3.0F), 1), Pair.of(new DoNothing(30, 60), 1));
     }
 
     @Override
