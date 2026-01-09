@@ -110,6 +110,7 @@ public class ShrygmyModel<T extends Shrygmy> extends HierarchicalModel<T> implem
         this.animate(entity.TALK_PIGMY_ANIMATION, PigmyAnimations.talkpigmy, ageInTicks);
         this.animate(entity.TALK_PIGMY_ANIMATION2, PigmyAnimations.talkpigmy2, ageInTicks);
         this.animate(entity.TALK_HOGGART_ANIMATION, PigmyAnimations.talkhoggart, ageInTicks);
+        this.animate(entity.FARMING_ANIMATION, PigmyAnimations.farming, ageInTicks);
 
 
         if (entity.isBaby()) {

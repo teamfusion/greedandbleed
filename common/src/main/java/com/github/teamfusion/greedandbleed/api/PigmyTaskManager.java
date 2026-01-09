@@ -128,7 +128,7 @@ public class PigmyTaskManager<T extends Pigmy> extends TaskManager<T> {
 
     @Override
     protected List<BehaviorControl<? super T>> getIdleTasks() {
-        return ImmutableList.of(StartAttacking.create(PigmyTaskManager::findNearestValidAttackTarget), avoidRepellent(), new TalkToPigmy<>(90, 0.8F), new PetSomeMob<>(80, 0.8F), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
+        return ImmutableList.of(StartAttacking.create(PigmyTaskManager::findNearestValidAttackTarget), avoidRepellent(), new TalkToPigmy<>(90, 0.8F), new PetSomeMob<>(80, 0.8F), new FarmingWart(), createIdleLookBehaviors(), createIdleMovementBehaviors(), SetLookAndInteract.create(EntityType.PLAYER, 4));
     }
 
     protected static BehaviorControl<PathfinderMob> avoidRepellent() {
