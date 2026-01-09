@@ -79,7 +79,7 @@ public class TalkToPigmy<E extends Mob, T extends LivingEntity> extends Behavior
 
     @Override
     protected void stop(ServerLevel serverLevel, E mob, long l) {
-        mob.getBrain().setMemoryWithExpiry(MemoryRegistry.TALK_COOLDOWN.get(), Unit.INSTANCE, 600 + mob.getRandom().nextInt(600));
+        mob.getBrain().setMemoryWithExpiry(MemoryRegistry.TALK_COOLDOWN.get(), Unit.INSTANCE, 600 + mob.getRandom().nextInt(900));
         mob.getBrain().eraseMemory(MemoryRegistry.TALK_TARGET.get());
         mob.getBrain().eraseMemory(MemoryModuleType.LOOK_TARGET);
         mob.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
