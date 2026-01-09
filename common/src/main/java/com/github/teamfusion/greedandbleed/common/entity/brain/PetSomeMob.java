@@ -62,12 +62,16 @@ public class PetSomeMob<E extends Mob, T extends LivingEntity> extends Behavior<
     @Override
     protected void tick(ServerLevel serverLevel, E mob, long l) {
         LivingEntity target = PetSomeMob.getPetTarget(mob);
-        this.move(mob, target);
+
         if (!this.pat) {
-            if (target != null && mob.position().distanceTo(target.position()) < 1) {
+            if (target != null && mob.position().distanceTo(target.position()) < 1 + target.getBbWidth()) {
                 this.patAnimation(serverLevel, mob);
+            } else {
+                this.move(mob, target);
             }
         } else {
+            mob.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new EntityTracker(target, true));
+
             this.talkTick++;
         }
 

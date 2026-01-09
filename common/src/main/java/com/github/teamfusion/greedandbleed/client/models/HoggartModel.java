@@ -88,7 +88,7 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
 
         if (entity.isPassenger()) {
             this.applyStatic(HumanoidAnimations.SIT);
-        } else {
+        } else if (entity.walkAnimation.isMoving()) {
             this.animateWalk(HoggartAnimations.walk, limbSwing, limbSwingAmount, 2.0F, 2.5F);
         }
         if (entity.isAggressive()) {
@@ -97,7 +97,7 @@ public class HoggartModel<T extends Hoggart> extends HierarchicalModel<T> implem
             } else {
                 this.applyStatic(HumanoidAnimations.ATTACK_RIGHT);
             }
-        } else {
+        } else if (!entity.PET_HOGLET_ANIMATION.isStarted() && !entity.PET_HOGLIN_ANIMATION.isStarted() && !entity.TALK_PIGMY_ANIMATION.isStarted() && !entity.ATTACK_ANIMATION.isStarted()) {
             this.animateWalk(HoggartAnimations.idle, ageInTicks, 1.0F, 1.0F, 1.0F);
         }
         if (entity.isBaby()) {

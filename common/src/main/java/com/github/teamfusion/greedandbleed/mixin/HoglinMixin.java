@@ -2,6 +2,7 @@ package com.github.teamfusion.greedandbleed.mixin;
 
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.api.HogEquipable;
+import com.github.teamfusion.greedandbleed.api.IPatbleMob;
 import com.github.teamfusion.greedandbleed.common.entity.CanOpenMountInventory;
 import com.github.teamfusion.greedandbleed.common.entity.HasMountArmor;
 import com.github.teamfusion.greedandbleed.common.entity.HasMountInventory;
@@ -19,6 +20,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -47,7 +49,7 @@ import java.util.function.Predicate;
 
 @SuppressWarnings("WrongEntityDataParameterClass")
 @Mixin(Hoglin.class)
-public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEquipable, ToleratingMount, ContainerListener, HasMountArmor, HasMountInventory {
+public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEquipable, ToleratingMount, ContainerListener, HasMountArmor, HasMountInventory, IPatbleMob {
 
     @Shadow
     @Final
@@ -56,6 +58,9 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
     @Shadow
     protected abstract boolean isImmuneToZombification();
 
+    @Shadow
+    public abstract Brain<Hoglin> getBrain();
+
     private static final EntityDataAccessor<Boolean> DATA_HAS_SADDLE = SynchedEntityData.defineId(Hoglin.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(Hoglin.class, EntityDataSerializers.INT);
     private final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME, DATA_HAS_SADDLE);
@@ -63,6 +68,8 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
     private static final UUID ARMOR_MODIFIER_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
     protected SimpleContainer inventory;
     private static final EntityDataAccessor<Boolean> DATA_HAS_CHEST = SynchedEntityData.defineId(Hoglin.class, EntityDataSerializers.BOOLEAN);
+
+    private int patTime;
 
     protected HoglinMixin(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -76,6 +83,17 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
             callbackInfoReturnable.setReturnValue(false);
         }
     }
+
+    @Inject(method = "customServerAiStep", at = @At("HEAD"), cancellable = true)
+    public void serverAiStep(CallbackInfo ci) {
+        if (this.patTime > 0) {
+            this.patTime--;
+        } else {
+            this.getBrain().eraseMemory(MemoryModuleType.LOOK_TARGET);
+            this.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
+        }
+    }
+
     @Inject(method = "finishConversion", at = @At("RETURN"))
     private void gb$dropInventoryWhenZombified(ServerLevel level, CallbackInfo ci) {
         this.dropEquipment();
@@ -597,5 +615,17 @@ public abstract class HoglinMixin extends Animal implements ItemSteerable, HogEq
     @Override
     public boolean isArmor(ItemStack stack) {
         return stack.getItem() instanceof HoglinArmorItem;
+    }
+
+    @Override
+    public void responsePet(LivingEntity target) {
+        this.patTime = 100;
+        this.getBrain().eraseMemory(MemoryModuleType.LOOK_TARGET);
+        this.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
+    }
+
+    @Override
+    public boolean isPat() {
+        return this.patTime > 0;
     }
 }

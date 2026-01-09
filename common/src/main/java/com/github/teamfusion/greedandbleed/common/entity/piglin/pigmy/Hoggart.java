@@ -44,6 +44,7 @@ public class Hoggart extends GBPigmy {
     public final AnimationState TALK_PIGMY_ANIMATION = new AnimationState();
     public final AnimationState PET_HOGLET_ANIMATION = new AnimationState();
     public final AnimationState PET_HOGLIN_ANIMATION = new AnimationState();
+    public int animationTick;
 
 
     public Hoggart(EntityType<? extends Hoggart> entityType, Level level) {
@@ -67,18 +68,36 @@ public class Hoggart extends GBPigmy {
     }
 
     @Override
+    public void baseTick() {
+        super.baseTick();
+        if (this.level().isClientSide) {
+            if (this.animationTick > 0) {
+                this.animationTick--;
+            }
+
+            if (this.animationTick <= 0) {
+                this.resetAnimation();
+            }
+        }
+    }
+
+    @Override
     public void handleEntityEvent(byte b) {
         if (b == ATTACK_ANIMATION_ID) {
             this.resetAnimation();
+            this.animationTick = 25;
             ATTACK_ANIMATION.start(this.tickCount);
         } else if (b == TALK_PIGMY_ANIMATION_ID) {
             this.resetAnimation();
+            this.animationTick = 100;
             TALK_PIGMY_ANIMATION.start(this.tickCount);
         } else if (b == PET_HOGLET_ANIMATION_ID) {
             this.resetAnimation();
+            this.animationTick = 60;
             PET_HOGLET_ANIMATION.start(this.tickCount);
         } else if (b == PET_HOGLIN_ANIMATION_ID) {
             this.resetAnimation();
+            this.animationTick = 60;
             PET_HOGLIN_ANIMATION.start(this.tickCount);
         } else {
             super.handleEntityEvent(b);
