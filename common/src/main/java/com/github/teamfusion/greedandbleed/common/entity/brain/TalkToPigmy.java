@@ -64,19 +64,22 @@ public class TalkToPigmy<E extends Mob, T extends LivingEntity> extends Behavior
     @Override
     protected void tick(ServerLevel serverLevel, E mob, long l) {
         LivingEntity target = TalkToPigmy.getTalkTarget(mob);
-        this.move(mob, target);
         if (!this.talked) {
             if (target != null && mob.position().distanceTo(target.position()) < 5) {
                 this.talkAnimation(serverLevel, mob);
+            } else {
+                this.move(mob, target);
             }
         } else {
+            mob.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new EntityTracker(target, true));
+
             this.talkTick++;
         }
     }
 
     @Override
     protected void stop(ServerLevel serverLevel, E mob, long l) {
-        mob.getBrain().setMemoryWithExpiry(MemoryRegistry.TALK_COOLDOWN.get(), Unit.INSTANCE, 400 + mob.getRandom().nextInt(200));
+        mob.getBrain().setMemoryWithExpiry(MemoryRegistry.TALK_COOLDOWN.get(), Unit.INSTANCE, 600 + mob.getRandom().nextInt(600));
         mob.getBrain().eraseMemory(MemoryRegistry.TALK_TARGET.get());
         mob.getBrain().eraseMemory(MemoryModuleType.LOOK_TARGET);
         mob.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);

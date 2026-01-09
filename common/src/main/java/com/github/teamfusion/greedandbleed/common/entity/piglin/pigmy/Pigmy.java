@@ -208,6 +208,6 @@ public class Pigmy extends GBPigmy implements RangedAttackMob {
     @Override
     public void responseTalk(LivingEntity target) {
         this.getBrain().setMemory(MemoryRegistry.TALK_TARGET.get(), target);
-        this.getBrain().setMemoryWithExpiry(MemoryRegistry.TALK_COOLDOWN.get(), Unit.INSTANCE, 400 + this.getRandom().nextInt(200));
+        this.getBrain().setMemoryWithExpiry(MemoryRegistry.TALK_COOLDOWN.get(), Unit.INSTANCE, 600 + this.getRandom().nextInt(600));
     }
 }

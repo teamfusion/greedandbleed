@@ -79,7 +79,7 @@ public class PetSomeMob<E extends Mob, T extends LivingEntity> extends Behavior<
 
     @Override
     protected void stop(ServerLevel serverLevel, E mob, long l) {
-        mob.getBrain().setMemoryWithExpiry(MemoryRegistry.PET_COOLDOWN.get(), Unit.INSTANCE, 400 + mob.getRandom().nextInt(200));
+        mob.getBrain().setMemoryWithExpiry(MemoryRegistry.PET_COOLDOWN.get(), Unit.INSTANCE, 600 + mob.getRandom().nextInt(600));
         mob.getBrain().eraseMemory(MemoryRegistry.PET_TARGET.get());
         mob.getBrain().eraseMemory(MemoryModuleType.LOOK_TARGET);
         mob.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
