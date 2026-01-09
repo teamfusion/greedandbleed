@@ -3,10 +3,12 @@ package com.github.teamfusion.greedandbleed.common.entity.brain;
 import com.github.teamfusion.greedandbleed.api.IPatbleMob;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Pigmy;
+import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MemoryRegistry;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Unit;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.Behavior;
@@ -15,6 +17,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.item.ItemStack;
 
 public class PetSomeMob<E extends Mob, T extends LivingEntity> extends Behavior<E> {
     private int talkTick;
@@ -51,7 +54,10 @@ public class PetSomeMob<E extends Mob, T extends LivingEntity> extends Behavior<
         if (target instanceof IPatbleMob petableMob) {
             petableMob.responsePet(target);
         }
-        if (target instanceof Hoglet) {
+        if (target instanceof Hoglet hoglet) {
+            if (hoglet.getMainHandItem().is(BlockRegistry.HOGDEW_FUNGUS.get().asItem())) {
+                hoglet.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+            }
             serverLevel.broadcastEntityEvent(livingEntity, (byte) Pigmy.PET_HOGLET_ANIMATION_ID);
         } else if (target instanceof Hoglin) {
             serverLevel.broadcastEntityEvent(livingEntity, (byte) Pigmy.PET_HOGLIN_ANIMATION_ID);
