@@ -1,26 +1,20 @@
 package com.github.teamfusion.greedandbleed.common;
 
+import com.blackgear.platform.common.integration.MobIntegration;
+import com.blackgear.platform.common.worldgen.modifier.BiomeManager;
+import com.blackgear.platform.core.ParallelDispatch;
 import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.ShamanPiglin;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.SkeletalPiglin;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.WarpedPiglin;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Hoggart;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Pigmy;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Shrygmy;
-import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.ZombifiedPigmies;
+import com.github.teamfusion.greedandbleed.common.integrations.MobIntegrations;
+import com.github.teamfusion.greedandbleed.common.integrations.WorldIntegration;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.BuckshotSlingshotBehavior;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotBehavior;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotItem;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedNetwork;
 import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedServerNetwork;
 import com.github.teamfusion.greedandbleed.common.registry.*;
-import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
-import com.github.teamfusion.greedandbleed.platform.common.worldgen.BiomeManager;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.event.events.common.LootEvent;
-import dev.architectury.registry.level.biome.BiomeModifications;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -28,20 +22,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -51,16 +39,72 @@ import org.jetbrains.annotations.Nullable;
 
 public class CommonSetup {
     public static void onBootstrap() {
-        MobRegistry.attributes(EntityTypeRegistry.SKELETAL_PIGLIN, SkeletalPiglin::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.HOGLET, Hoglet::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.SKELETON_HOGLET, Hoglet::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.ZOMBIFIED_HOGLET, Hoglet::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.SHAMAN_PIGLIN, ShamanPiglin::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.PIGMY, Pigmy::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.ZOMBIFIED_PIGMIES, ZombifiedPigmies::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.SHRYGMY, Shrygmy::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.HOGGART, Hoggart::setCustomAttributes);
-        MobRegistry.attributes(EntityTypeRegistry.WARPED_PIGLIN, WarpedPiglin::setCustomAttributes);
+        MobIntegration.registerIntegrations(MobIntegrations::bootstrap);
+    }
+    
+    public static void onInitialized(ParallelDispatch dispatch) {
+        onAmmoInit();
+        
+        PotionRegistry.init();
+        BiomeManager.add(WorldIntegration::bootstrap); //TODO
+        LootEvent.MODIFY_LOOT_TABLE.register(new LootEvent.ModifyLootTable() {
+            LootPool.Builder pool = LootPool.lootPool().add(
+                LootItem.lootTableItem(Items.ENCHANTED_BOOK)
+                    .apply(new EnchantRandomlyFunction.Builder().withEnchantment(EnchantmentRegistry.WOE_OF_SWINES.get()))
+            );
+            
+            @Override
+            public void modifyLootTable(@Nullable LootDataManager lootDataManager, ResourceLocation id, LootEvent.LootTableModificationContext context, boolean builtin) {
+                if (id.equals(new ResourceLocation("chests/nether_bridge"))) {
+                    context.addPool(pool);
+                }
+            }
+        });
+        LootEvent.MODIFY_LOOT_TABLE.register(new LootEvent.ModifyLootTable() {
+            LootPool.Builder pool = LootPool.lootPool().add(
+                LootItem.lootTableItem(ItemRegistry.PIGLIN_BELT.get()));
+            
+            @Override
+            public void modifyLootTable(@Nullable LootDataManager lootDataManager, ResourceLocation id, LootEvent.LootTableModificationContext context, boolean builtin) {
+                if (id.equals(new ResourceLocation("entities/piglin"))) {
+                    context.addPool(pool);
+                }
+            }
+        });
+        
+        InteractionEvent.RIGHT_CLICK_BLOCK.register((player, hand, blockPos, direction) -> {
+            ItemStack stack = player.getItemInHand(hand);
+            Level level = player.level();
+            if (stack.getItem() instanceof ShovelItem) {
+                BlockState state = Blocks.AIR.defaultBlockState();
+                
+                if (player.level().getBlockState(blockPos).is(Blocks.CRIMSON_NYLIUM)) {
+                    state = BlockRegistry.CRIMSON_NYLIUM_PATH.get().defaultBlockState();
+                    
+                }
+                if (player.level().getBlockState(blockPos).is(Blocks.WARPED_NYLIUM)) {
+                    state = BlockRegistry.WARPED_NYLIUM_PATH.get().defaultBlockState();
+                    
+                }
+                if (player.level().getBlockState(blockPos).is(BlockRegistry.HOGDEW_NYLIUM.get())) {
+                    state = BlockRegistry.HOGDEW_NYLIUM_PATH.get().defaultBlockState();
+                }
+                if (!state.isAir()) {
+                    level.playSound(player, blockPos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    
+                    level.setBlock(blockPos, state, 11);
+                    level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(player, state));
+                    if (player != null) {
+                        stack.hurtAndBreak(1, player, (playerx) -> playerx.broadcastBreakEvent(hand));
+                    }
+                    return EventResult.interruptTrue();
+                }
+            }
+            return EventResult.pass();
+        });
+        
+        GreedAndBleedNetwork.registerReceivers();
+        GreedAndBleedServerNetwork.registerReceivers();
     }
 
     public static void onAmmoInit() {
@@ -156,97 +200,6 @@ public class CommonSetup {
                 return new ThrownEnderpearl(level, shooter);
             }
         });
-    }
-
-    public static void onInitialized() {
-        onAmmoInit();
-
-        PotionRegistry.init();
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hoglet::checkHogletSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.ZOMBIFIED_HOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKELETON_HOGLET.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SKELETAL_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SHAMAN_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.HOGGART.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.PIGMY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.ZOMBIFIED_PIGMIES.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.SHRYGMY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-        BiomeManager.registrySpawnPlacement(EntityTypeRegistry.WARPED_PIGLIN.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-
-        BiomeModifications.addProperties((biomeContext, mutable) -> {
-            if (Biomes.CRIMSON_FOREST.location() == biomeContext.getKey().get()) {
-                mutable.getSpawnProperties().addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.HOGLET.get(), 8, 2, 4));
-            }
-
-            if (Biomes.WARPED_FOREST.location() == biomeContext.getKey().get()) {
-                mutable.getSpawnProperties().addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.WARPED_PIGLIN.get(), 1, 4, 4));
-                mutable.getSpawnProperties().setSpawnCost(EntityTypeRegistry.WARPED_PIGLIN.get(), 1.0, 0.01);
-            }
-
-            if (Biomes.SOUL_SAND_VALLEY.location() == biomeContext.getKey().get()) {
-                mutable.getSpawnProperties().addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityTypeRegistry.SKELETAL_PIGLIN.get(), 10, 4, 5));
-                mutable.getSpawnProperties().setSpawnCost(EntityTypeRegistry.SKELETAL_PIGLIN.get(), 0.7, 0.15);
-            }
-        });
-        LootEvent.MODIFY_LOOT_TABLE.register(new LootEvent.ModifyLootTable() {
-            LootPool.Builder pool = LootPool.lootPool().add(
-                    LootItem.lootTableItem(Items.ENCHANTED_BOOK)
-                            .apply(new EnchantRandomlyFunction.Builder().withEnchantment(EnchantmentRegistry.WOE_OF_SWINES.get()))
-            );
-
-            @Override
-            public void modifyLootTable(@Nullable LootDataManager lootDataManager, ResourceLocation id, LootEvent.LootTableModificationContext context, boolean builtin) {
-                if (id.equals(new ResourceLocation("chests/nether_bridge"))) {
-                    context.addPool(pool);
-                }
-            }
-        });
-        LootEvent.MODIFY_LOOT_TABLE.register(new LootEvent.ModifyLootTable() {
-            LootPool.Builder pool = LootPool.lootPool().add(
-                    LootItem.lootTableItem(ItemRegistry.PIGLIN_BELT.get()));
-
-            @Override
-            public void modifyLootTable(@Nullable LootDataManager lootDataManager, ResourceLocation id, LootEvent.LootTableModificationContext context, boolean builtin) {
-                if (id.equals(new ResourceLocation("entities/piglin"))) {
-                    context.addPool(pool);
-                }
-            }
-        });
-
-        InteractionEvent.RIGHT_CLICK_BLOCK.register((player, hand, blockPos, direction) -> {
-            ItemStack stack = player.getItemInHand(hand);
-            Level level = player.level();
-            if (stack.getItem() instanceof ShovelItem) {
-                BlockState state = Blocks.AIR.defaultBlockState();
-
-                if (player.level().getBlockState(blockPos).is(Blocks.CRIMSON_NYLIUM)) {
-                    state = BlockRegistry.CRIMSON_NYLIUM_PATH.get().defaultBlockState();
-
-                }
-                if (player.level().getBlockState(blockPos).is(Blocks.WARPED_NYLIUM)) {
-                    state = BlockRegistry.WARPED_NYLIUM_PATH.get().defaultBlockState();
-
-                }
-                if (player.level().getBlockState(blockPos).is(BlockRegistry.HOGDEW_NYLIUM.get())) {
-                    state = BlockRegistry.HOGDEW_NYLIUM_PATH.get().defaultBlockState();
-                }
-                if (!state.isAir()) {
-                    level.playSound(player, blockPos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
-
-                    level.setBlock(blockPos, state, 11);
-                    level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(player, state));
-                    if (player != null) {
-                        stack.hurtAndBreak(1, player, (playerx) -> playerx.broadcastBreakEvent(hand));
-                    }
-                    return EventResult.interruptTrue();
-                }
-            }
-            return EventResult.pass();
-        });
-
-        BiomeManager.setup();
-        GreedAndBleedNetwork.registerReceivers();
-        GreedAndBleedServerNetwork.registerReceivers();
     }
 
     public static void onHoglinAttack(LivingEntity entity, DamageSource source) {

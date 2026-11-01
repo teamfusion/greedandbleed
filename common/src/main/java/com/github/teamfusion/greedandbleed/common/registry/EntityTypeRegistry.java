@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
+import com.blackgear.platform.core.CoreRegistry;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.*;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Hoggart;
@@ -8,7 +9,6 @@ import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.Shrygmy;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.ZombifiedPigmies;
 import com.github.teamfusion.greedandbleed.common.entity.projectile.ThrownDamageableEntity;
 import com.github.teamfusion.greedandbleed.common.entity.projectile.WarpedSpit;
-import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -17,7 +17,7 @@ import net.minecraft.world.entity.MobCategory;
 import java.util.function.Supplier;
 
 public class EntityTypeRegistry {
-    public static final CoreRegistry<EntityType<?>> ENTITIES = CoreRegistry.of(BuiltInRegistries.ENTITY_TYPE, GreedAndBleed.MOD_ID);
+    public static final CoreRegistry<EntityType<?>> ENTITIES = CoreRegistry.create(BuiltInRegistries.ENTITY_TYPE, GreedAndBleed.MOD_ID);
 
     public static final Supplier<EntityType<SkeletalPiglin>> SKELETAL_PIGLIN = create("skeletal_piglin", EntityType.Builder.of(SkeletalPiglin::new, MobCategory.MONSTER).sized(0.6F, 1.95F));
     public static final Supplier<EntityType<Hoglet>> HOGLET = create("hoglet", EntityType.Builder.of(Hoglet::new, MobCategory.MONSTER).sized(0.6F, 0.55F));
@@ -34,6 +34,6 @@ public class EntityTypeRegistry {
     public static final Supplier<EntityType<WarpedSpit>> WARPED_SPIT = create("warped_spit", EntityType.Builder.<WarpedSpit>of(WarpedSpit::new, MobCategory.MISC).updateInterval(20).sized(0.3F, 0.3F));
 
     private static <T extends Entity> Supplier<EntityType<T>> create(String key, EntityType.Builder<T> builder) {
-        return ENTITIES.create(key, () -> builder.build(key));
+        return ENTITIES.register(key, () -> builder.build(key));
     }
 }

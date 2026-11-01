@@ -1,9 +1,9 @@
 package com.github.teamfusion.greedandbleed;
 
+import com.blackgear.platform.core.ModInstance;
 import com.github.teamfusion.greedandbleed.client.ClientSetup;
 import com.github.teamfusion.greedandbleed.common.CommonSetup;
 import com.github.teamfusion.greedandbleed.common.registry.*;
-import com.github.teamfusion.greedandbleed.platform.ModInstance;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 

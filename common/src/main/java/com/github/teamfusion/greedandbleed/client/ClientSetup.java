@@ -1,5 +1,6 @@
 package com.github.teamfusion.greedandbleed.client;
 
+import com.blackgear.platform.core.ParallelDispatch;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.*;
 import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
@@ -68,7 +69,7 @@ public class ClientSetup {
         RenderRegistry.layerDefinition(GoldenShieldModel.LAYER_LOCATION, GoldenShieldModel::createBodyLayer);
     }
 
-    public static void onInitialized() {
+    public static void onInitialized(ParallelDispatch dispatch) {
         MenuRegistry.registerScreenFactory(MenuTypeRegistry.PYGMY_STATION.get(), PygmyStationScreen::new);
         MenuRegistry.registerScreenFactory(MenuTypeRegistry.PYGMY_ARMOR_STAND.get(), PygmyArmorStandScreen::new);
 

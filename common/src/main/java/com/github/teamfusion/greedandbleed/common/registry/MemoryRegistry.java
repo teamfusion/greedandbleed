@@ -1,9 +1,9 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
+import com.blackgear.platform.core.CoreRegistry;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.Hoglet;
 import com.github.teamfusion.greedandbleed.common.entity.piglin.pigmy.GBPigmy;
-import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Unit;
@@ -15,17 +15,17 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class MemoryRegistry {
-    public static final CoreRegistry<MemoryModuleType<?>> MEMORY_MODULE_TYPES = CoreRegistry.of(BuiltInRegistries.MEMORY_MODULE_TYPE, GreedAndBleed.MOD_ID);
+    public static final CoreRegistry<MemoryModuleType<?>> MEMORY_MODULE_TYPES = CoreRegistry.create(BuiltInRegistries.MEMORY_MODULE_TYPE, GreedAndBleed.MOD_ID);
 
-    public static final Supplier<MemoryModuleType<Hoglet>> NEAREST_HOGLET = MEMORY_MODULE_TYPES.create("nearest_hoglet", () -> new MemoryModuleType<>(Optional.empty()));
-    public static final Supplier<MemoryModuleType<Hoglet>> NEAREST_TAMED_HOGLET = MEMORY_MODULE_TYPES.create("nearest_tamed_hoglet", () -> new MemoryModuleType<>(Optional.empty()));
-    public static final Supplier<MemoryModuleType<LivingEntity>> TALK_TARGET = MEMORY_MODULE_TYPES.create("talk_target", () -> new MemoryModuleType<>(Optional.empty()));
-    public static final Supplier<MemoryModuleType<LivingEntity>> PET_TARGET = MEMORY_MODULE_TYPES.create("pet_target", () -> new MemoryModuleType<>(Optional.empty()));
-    public static final Supplier<MemoryModuleType<List<GBPigmy>>> NEARBY_ADULT_PYGMYS = MEMORY_MODULE_TYPES.create("nearby_adult_pygmys", () -> new MemoryModuleType<>(Optional.empty()));
-    public static final Supplier<MemoryModuleType<List<GBPigmy>>> NEAREST_VISIBLE_ADULT_PYGMYS = MEMORY_MODULE_TYPES.create("nearest_visible_adult_pygmys", () -> new MemoryModuleType<>(Optional.empty()));
-    public static final Supplier<MemoryModuleType<Integer>> WORK_TIME = MEMORY_MODULE_TYPES.create("work_time", () -> new MemoryModuleType<>(Optional.of(Codec.INT)));
+    public static final Supplier<MemoryModuleType<Hoglet>> NEAREST_HOGLET = MEMORY_MODULE_TYPES.register("nearest_hoglet", () -> new MemoryModuleType<>(Optional.empty()));
+    public static final Supplier<MemoryModuleType<Hoglet>> NEAREST_TAMED_HOGLET = MEMORY_MODULE_TYPES.register("nearest_tamed_hoglet", () -> new MemoryModuleType<>(Optional.empty()));
+    public static final Supplier<MemoryModuleType<LivingEntity>> TALK_TARGET = MEMORY_MODULE_TYPES.register("talk_target", () -> new MemoryModuleType<>(Optional.empty()));
+    public static final Supplier<MemoryModuleType<LivingEntity>> PET_TARGET = MEMORY_MODULE_TYPES.register("pet_target", () -> new MemoryModuleType<>(Optional.empty()));
+    public static final Supplier<MemoryModuleType<List<GBPigmy>>> NEARBY_ADULT_PYGMYS = MEMORY_MODULE_TYPES.register("nearby_adult_pygmys", () -> new MemoryModuleType<>(Optional.empty()));
+    public static final Supplier<MemoryModuleType<List<GBPigmy>>> NEAREST_VISIBLE_ADULT_PYGMYS = MEMORY_MODULE_TYPES.register("nearest_visible_adult_pygmys", () -> new MemoryModuleType<>(Optional.empty()));
+    public static final Supplier<MemoryModuleType<Integer>> WORK_TIME = MEMORY_MODULE_TYPES.register("work_time", () -> new MemoryModuleType<>(Optional.of(Codec.INT)));
 
-    public static final Supplier<MemoryModuleType<Unit>> TALK_COOLDOWN = MEMORY_MODULE_TYPES.create("talk_cooldown", () -> new MemoryModuleType<>(Optional.of(Codec.unit(Unit.INSTANCE))));
-    public static final Supplier<MemoryModuleType<Unit>> PET_COOLDOWN = MEMORY_MODULE_TYPES.create("pet_cooldown", () -> new MemoryModuleType<>(Optional.of(Codec.unit(Unit.INSTANCE))));
+    public static final Supplier<MemoryModuleType<Unit>> TALK_COOLDOWN = MEMORY_MODULE_TYPES.register("talk_cooldown", () -> new MemoryModuleType<>(Optional.of(Codec.unit(Unit.INSTANCE))));
+    public static final Supplier<MemoryModuleType<Unit>> PET_COOLDOWN = MEMORY_MODULE_TYPES.register("pet_cooldown", () -> new MemoryModuleType<>(Optional.of(Codec.unit(Unit.INSTANCE))));
 
 }

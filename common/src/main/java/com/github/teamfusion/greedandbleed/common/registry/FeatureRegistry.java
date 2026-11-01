@@ -1,8 +1,8 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
+import com.blackgear.platform.core.CoreRegistry;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.feature.BlobHollowFeature;
-import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.BlockPileConfiguration;
@@ -10,8 +10,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.BlockPileConfig
 import java.util.function.Supplier;
 
 public class FeatureRegistry {
-    public static final CoreRegistry<Feature<?>> FEATURES = CoreRegistry.of(BuiltInRegistries.FEATURE, GreedAndBleed.MOD_ID);
-    public static final Supplier<Feature<BlockPileConfiguration>> BLOB_HOLLOW = FEATURES.create("blob_hollow", () -> new BlobHollowFeature(BlockPileConfiguration.CODEC));
+    public static final CoreRegistry<Feature<?>> FEATURES = CoreRegistry.create(BuiltInRegistries.FEATURE, GreedAndBleed.MOD_ID);
+    public static final Supplier<Feature<BlockPileConfiguration>> BLOB_HOLLOW = FEATURES.register("blob_hollow", () -> new BlobHollowFeature(BlockPileConfiguration.CODEC));
 
 
     public static void init() {

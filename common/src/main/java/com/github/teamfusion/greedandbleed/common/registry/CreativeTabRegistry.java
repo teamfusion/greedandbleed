@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
+import com.blackgear.platform.core.CoreRegistry;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
-import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class CreativeTabRegistry {
-    public static final CoreRegistry<CreativeModeTab> CREATIVE_TABS = CoreRegistry.of(BuiltInRegistries.CREATIVE_MODE_TAB, GreedAndBleed.MOD_ID);
+    public static final CoreRegistry<CreativeModeTab> CREATIVE_TABS = CoreRegistry.create(BuiltInRegistries.CREATIVE_MODE_TAB, GreedAndBleed.MOD_ID);
 
     public static final Supplier<CreativeModeTab> GLEED_AND_BLEED = create("gleed_and_bleed", () -> dev.architectury.registry.CreativeTabRegistry.create(builder -> {
         builder.title(Component.translatable("itemGroup.greed_and_bleed"))
@@ -80,6 +80,6 @@ public class CreativeTabRegistry {
     }));
 
     public static <T extends CreativeModeTab> Supplier<T> create(String key, Supplier<T> entry) {
-        return CREATIVE_TABS.create(key, entry);
+        return CREATIVE_TABS.register(key, entry);
     }
 }

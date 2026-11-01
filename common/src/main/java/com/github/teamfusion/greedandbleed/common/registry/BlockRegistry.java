@@ -1,11 +1,11 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
+import com.blackgear.platform.core.CoreRegistry;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.block.HogdewLumpBlock;
 import com.github.teamfusion.greedandbleed.common.block.NyliumPathBlock;
 import com.github.teamfusion.greedandbleed.common.block.PygmyArmorStandBlock;
 import com.github.teamfusion.greedandbleed.common.block.PygmyStationBlock;
-import com.github.teamfusion.greedandbleed.platform.CoreRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
@@ -24,7 +24,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class BlockRegistry {
-    public static final CoreRegistry<Block> BLOCKS = CoreRegistry.of(BuiltInRegistries.BLOCK, GreedAndBleed.MOD_ID);
+    public static final CoreRegistry<Block> BLOCKS = CoreRegistry.create(BuiltInRegistries.BLOCK, GreedAndBleed.MOD_ID);
 
     public static final Supplier<Block> HOGDEW_PLANKS = createWithItem("hogdew_planks", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
     public static final Supplier<Block> HOGDEW_PLANKS_STAIRS = createWithItem("hogdew_stairs", () -> new StairBlock(HOGDEW_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).instrument(NoteBlockInstrument.BASS).strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
@@ -66,13 +66,13 @@ public class BlockRegistry {
     }
 
     public static <T extends Block> Supplier<T> create(String key, Supplier<T> entry) {
-        return BLOCKS.create(key, entry);
+        return BLOCKS.register(key, entry);
     }
 
     private static <T extends Block> Supplier<T> createBase(String name, Supplier<? extends T> block, Function<Supplier<T>, Supplier<? extends Item>> item) {
         Supplier<T> register = (Supplier<T>) create(name, block);
         Supplier<? extends Item> itemSupplier = item.apply(register);
-        ItemRegistry.ITEMS.create(name, itemSupplier);
+        ItemRegistry.ITEMS.register(name, itemSupplier);
         return register;
     }
 

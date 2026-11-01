@@ -2,7 +2,6 @@ package com.github.teamfusion.greedandbleed.data.client;
 
 import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
-import com.github.teamfusion.greedandbleed.platform.common.MobRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.models.BlockModelGenerators;
@@ -10,6 +9,7 @@ import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 public class ModelGenerator extends FabricModelProvider {
@@ -19,7 +19,6 @@ public class ModelGenerator extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockModelGenerators gen) {
-        MobRegistry.eggs().forEach(item -> gen.delegateItemModel(item, ModelLocationUtils.decorateItemModelLocation("template_spawn_egg")));
         gen.woodProvider(BlockRegistry.HOGDEW_STEM.get()).logUVLocked(BlockRegistry.HOGDEW_STEM.get()).wood(BlockRegistry.HOGDEW_HYPHAE.get());
         gen.woodProvider(BlockRegistry.STRIPPED_HOGDEW_STEM.get()).logUVLocked(BlockRegistry.STRIPPED_HOGDEW_STEM.get()).wood(BlockRegistry.STRIPPED_HOGDEW_HYPHAE.get());
 
@@ -36,6 +35,17 @@ public class ModelGenerator extends FabricModelProvider {
         createNyliumPath(gen, BlockRegistry.HOGDEW_NYLIUM_PATH.get());
         createNyliumPath(gen, BlockRegistry.CRIMSON_NYLIUM_PATH.get());
         createNyliumPath(gen, BlockRegistry.WARPED_NYLIUM_PATH.get());
+        
+        createSpawnEgg(gen, ItemRegistry.SKELETAL_PIGLIN_SPAWN_EGG.get());
+        createSpawnEgg(gen, ItemRegistry.HOGLET_SPAWN_EGG.get());
+        createSpawnEgg(gen, ItemRegistry.ZOMBIFIED_HOGLET_SPAWN_EGG.get());
+        createSpawnEgg(gen, ItemRegistry.SKELETON_HOGLET_SPAWN_EGG.get());
+        createSpawnEgg(gen, ItemRegistry.SHAMAN_PIGLIN_SPAWN_EGG.get());
+        createSpawnEgg(gen, ItemRegistry.PIGMY_SPAWN_EGG.get());
+        createSpawnEgg(gen, ItemRegistry.SHRYGMY_SPAWN_EGG.get());
+        createSpawnEgg(gen, ItemRegistry.HOGGART_SPAWN_EGG.get());
+        createSpawnEgg(gen, ItemRegistry.ZOMBIFIED_PIGMY_SPAWN_EGG.get());
+        createSpawnEgg(gen, ItemRegistry.WARPED_PIGLIN_SPAWN_EGG.get());
     }
     @Override
     public void generateItemModels(ItemModelGenerators gen) {
@@ -55,5 +65,9 @@ public class ModelGenerator extends FabricModelProvider {
     private void createNyliumPath(BlockModelGenerators generators, Block block) {
         ResourceLocation resourceLocation = GBTexturedModel.NYLIUM_PATH.create(block, generators.modelOutput);
         generators.blockStateOutput.accept(generators.createRotatedVariant(block, resourceLocation));
+    }
+    
+    public void createSpawnEgg(BlockModelGenerators gen, ItemLike item) {
+        gen.delegateItemModel(item.asItem(), ModelLocationUtils.decorateItemModelLocation("template_spawn_egg"));
     }
 }
