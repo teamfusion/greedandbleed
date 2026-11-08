@@ -298,24 +298,4 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
             }
         });
     }
-    
-    public static void onHoglinAttack(LivingEntity entity, DamageSource source) {
-        if (source.getDirectEntity() instanceof ToleratingMount mount && !entity.level().isClientSide) {
-            if (mount.getTolerance() > 0) {
-                mount.addTolerance(-1);
-            } else if (mount.getTolerance() < 0) {
-                mount.setTolerance(0);
-            }
-        }
-    }
-    
-    public static void onHoglinUpdate(LivingEntity entity) {
-        if (entity instanceof ToleratingMount mount && !entity.level().isClientSide) {
-            if (mount.getTolerance() > 0) {
-                mount.addTolerance(-1);
-            } else if (mount.getTolerance() < 0) {
-                mount.setTolerance(0);
-            }
-        }
-    }
 }

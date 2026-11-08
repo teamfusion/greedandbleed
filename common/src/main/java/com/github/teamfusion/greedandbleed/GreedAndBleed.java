@@ -1,6 +1,7 @@
 package com.github.teamfusion.greedandbleed;
 
 import com.blackgear.platform.core.ModInstance;
+import com.blackgear.platform.core.network.NetworkChannel;
 import com.github.teamfusion.greedandbleed.client.ClientSetup;
 import com.github.teamfusion.greedandbleed.common.CommonSetup;
 import com.github.teamfusion.greedandbleed.common.registry.*;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 public class GreedAndBleed {
     public static final String MOD_ID = "greedandbleed";
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final NetworkChannel NETWORKING = new NetworkChannel(GreedAndBleed.MOD_ID, 0, "network");
     public static final ModInstance INSTANCE = ModInstance.create(MOD_ID)
         .common(CommonSetup::onBootstrap)
         .postCommon(CommonSetup::onInitialized)

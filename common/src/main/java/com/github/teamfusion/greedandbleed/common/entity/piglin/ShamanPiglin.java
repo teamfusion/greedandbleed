@@ -1,8 +1,9 @@
 package com.github.teamfusion.greedandbleed.common.entity.piglin;
 
+import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.api.ITaskManager;
 import com.github.teamfusion.greedandbleed.api.ShamanPiglinTaskManager;
-import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
+import com.github.teamfusion.greedandbleed.client.network.ClientboundHurtPacket;
 import com.github.teamfusion.greedandbleed.common.entity.HasMountArmor;
 import com.github.teamfusion.greedandbleed.common.entity.SummonData;
 import com.github.teamfusion.greedandbleed.common.entity.SummonHandler;
@@ -11,10 +12,8 @@ import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
-import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -46,9 +45,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-
-import static dev.architectury.networking.NetworkManager.collectPackets;
-import static dev.architectury.networking.NetworkManager.serverToClient;
 
 public class ShamanPiglin extends GBPiglin implements NeutralMob {
     protected static final ImmutableList<SensorType<? extends Sensor<? super ShamanPiglin>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_BRUTE_SPECIFIC_SENSOR);
@@ -162,12 +158,8 @@ public class ShamanPiglin extends GBPiglin implements NeutralMob {
             LivingEntity living = data.getOwner(this.level());
             if (living != null) {
                 if (!this.level().isClientSide()) {
-                    FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-                    buf.writeInt(this.getId());
-                    buf.writeFloat(amount);
-                    buf.writeUtf(source.typeHolder().unwrapKey().get().location().toString());
                     living.hurt(source, amount);
-                    collectPackets(GreedAndBleedClientNetwork.ofTrackingEntity(() -> living), serverToClient(), GreedAndBleedClientNetwork.HURT_PACKET, buf);
+                    GreedAndBleed.NETWORKING.sendToPlayersTrackingEntity(new ClientboundHurtPacket(this.getId(), amount, source.typeHolder().unwrapKey().get().location().toString()), living);
                     this.playSound(SoundEvents.FIRE_EXTINGUISH);
                 }
                 return false;

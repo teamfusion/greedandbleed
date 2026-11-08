@@ -3,17 +3,14 @@ package com.github.teamfusion.greedandbleed.client;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
 import com.github.teamfusion.greedandbleed.common.item.slingshot.SlingshotPouchItem;
-import com.github.teamfusion.greedandbleed.common.network.GreedAndBleedServerNetwork;
+import com.github.teamfusion.greedandbleed.common.network.ServerboundSelectSyncPacket;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.PotionRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.architectury.networking.NetworkManager;
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -87,9 +84,7 @@ public class RenderHelper {
         Player player = minecraft.player;
         ItemStack pouch = player.getMainHandItem().is(ItemRegistry.SLINGSHOT_POUCH.get()) ? player.getMainHandItem() : player.getOffhandItem().is(ItemRegistry.SLINGSHOT_POUCH.get()) ? player.getOffhandItem() : ItemStack.EMPTY;
         if (player.isShiftKeyDown() && pouch.getItem() == ItemRegistry.SLINGSHOT_POUCH.get()) {
-            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            buf.writeInt(scrollDelta > 0 ? 1 : -1);
-            NetworkManager.sendToServer(GreedAndBleedServerNetwork.SELECT_SYNC_PACKET, buf);
+            GreedAndBleed.NETWORKING.sendToServer(new ServerboundSelectSyncPacket(scrollDelta > 0 ? 1 : -1));
             return true;
         }
         return false;

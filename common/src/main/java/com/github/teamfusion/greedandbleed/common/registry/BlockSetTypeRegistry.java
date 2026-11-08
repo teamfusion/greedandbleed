@@ -1,6 +1,6 @@
 package com.github.teamfusion.greedandbleed.common.registry;
 
-import com.github.teamfusion.greedandbleed.mixin.BlockSetTypeInvoker;
+import com.github.teamfusion.greedandbleed.core.mixin.BlockSetTypeInvoker;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.properties.BlockSetType;

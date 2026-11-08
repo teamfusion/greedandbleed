@@ -1,9 +1,12 @@
 package com.github.teamfusion.greedandbleed.client;
 
+import com.blackgear.platform.client.GameRendering;
 import com.blackgear.platform.core.ParallelDispatch;
+import com.blackgear.platform.core.network.base.NetworkDirection;
 import com.github.teamfusion.greedandbleed.GreedAndBleed;
 import com.github.teamfusion.greedandbleed.client.models.*;
-import com.github.teamfusion.greedandbleed.client.network.GreedAndBleedClientNetwork;
+import com.github.teamfusion.greedandbleed.client.network.ClientboundHurtPacket;
+import com.github.teamfusion.greedandbleed.client.network.ClientboundScreenOpenPacket;
 import com.github.teamfusion.greedandbleed.client.renderer.*;
 import com.github.teamfusion.greedandbleed.client.screen.PygmyArmorStandScreen;
 import com.github.teamfusion.greedandbleed.client.screen.PygmyStationScreen;
@@ -13,7 +16,6 @@ import com.github.teamfusion.greedandbleed.common.registry.BlockRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.EntityTypeRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import com.github.teamfusion.greedandbleed.common.registry.MenuTypeRegistry;
-import com.github.teamfusion.greedandbleed.platform.client.RenderRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -24,7 +26,6 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ClientSetup {
@@ -36,47 +37,55 @@ public class ClientSetup {
 
 
     public static void onBootstrap() {
-        GreedAndBleedClientNetwork.registerReceivers();
+        GreedAndBleed.NETWORKING.registerPacket(NetworkDirection.CLIENTBOUND, ClientboundScreenOpenPacket.ID, ClientboundScreenOpenPacket.HANDLER, ClientboundScreenOpenPacket.class);
+        GreedAndBleed.NETWORKING.registerPacket(NetworkDirection.CLIENTBOUND, ClientboundHurtPacket.ID, ClientboundHurtPacket.HANDLER, ClientboundHurtPacket.class);
+        
         // HOGLET RENDERER
-        RenderRegistry.entityModel(EntityTypeRegistry.HOGLET, HogletRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.ZOMBIFIED_HOGLET, ZombifiedHogletRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.SKELETON_HOGLET, SkeletonHogletRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.SHAMAN_PIGLIN, ShamanPiglinRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.PIGMY, PigmyRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.SHRYGMY, ShrygmyRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.HOGGART, HoggartRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.ZOMBIFIED_PIGMIES, ZombifiedPigmyRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.WARPED_PIGLIN, WarpedPiglinRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.THROWN_DAMAGEABLE, ThrownItemRenderer::new);
-        RenderRegistry.entityModel(EntityTypeRegistry.WARPED_SPIT, WarpedSpitRenderer::new);
-
-
-        RenderRegistry.layerDefinition(HogletRenderer.MAIN, AbstractHogletModel::createBodyLayer);
-        RenderRegistry.layerDefinition(HogletRenderer.MONSTER, MonsterHogletModel::createBodyLayer);
-        // SKELETAL PIGLIN RENDERER
-        RenderRegistry.entityModel(EntityTypeRegistry.SKELETAL_PIGLIN, SkeletalPiglinRenderer::new);
-        RenderRegistry.layerDefinition(SkeletalPiglinRenderer.MAIN, SkeletalPiglinModel::createBodyLayer);
-        RenderRegistry.layerDefinition(SkeletalPiglinRenderer.OUTER_ARMOR, OUTER_ARMOR_DEFINITION);
-        RenderRegistry.layerDefinition(SkeletalPiglinRenderer.INNER_ARMOR, INNER_ARMOR_DEFINITION);
-        RenderRegistry.layerDefinition(HOGLIN, () -> GBHoglinModelComplete.createBodyLayer(0.0F));
-        RenderRegistry.layerDefinition(HOGLIN_ARMOR, () -> GBHoglinModelComplete.createBodyLayer(0.05F));
-        RenderRegistry.layerDefinition(ShamanPiglinRenderer.MAIN, ShamanPiglinModel::createBodyLayer);
-        RenderRegistry.layerDefinition(PigmyRenderer.MAIN, PigmyModel::createBodyLayer);
-        RenderRegistry.layerDefinition(ShrygmyRenderer.MAIN, ShrygmyModel::createBodyLayer);
-        RenderRegistry.layerDefinition(HoggartRenderer.MAIN, HoggartModel::createBodyLayer);
-        RenderRegistry.layerDefinition(WarpedPiglinRenderer.MAIN, WarpedPiglinModel::createBodyLayer);
-        RenderRegistry.layerDefinition(WarpedSpitRenderer.LAYER_LOCATION, WarpedSpitModel::createBodyLayer);
-        RenderRegistry.layerDefinition(GoldenShieldModel.LAYER_LOCATION, GoldenShieldModel::createBodyLayer);
+        GameRendering.registerEntityRenderers(event -> {
+            event.register(EntityTypeRegistry.HOGLET.get(), HogletRenderer::new);
+            event.register(EntityTypeRegistry.ZOMBIFIED_HOGLET.get(), ZombifiedHogletRenderer::new);
+            event.register(EntityTypeRegistry.SKELETON_HOGLET.get(), SkeletonHogletRenderer::new);
+            event.register(EntityTypeRegistry.SHAMAN_PIGLIN.get(), ShamanPiglinRenderer::new);
+            event.register(EntityTypeRegistry.PIGMY.get(), PigmyRenderer::new);
+            event.register(EntityTypeRegistry.SHRYGMY.get(), ShrygmyRenderer::new);
+            event.register(EntityTypeRegistry.HOGGART.get(), HoggartRenderer::new);
+            event.register(EntityTypeRegistry.ZOMBIFIED_PIGMIES.get(), ZombifiedPigmyRenderer::new);
+            event.register(EntityTypeRegistry.WARPED_PIGLIN.get(), WarpedPiglinRenderer::new);
+            event.register(EntityTypeRegistry.THROWN_DAMAGEABLE.get(), ThrownItemRenderer::new);
+            event.register(EntityTypeRegistry.WARPED_SPIT.get(), WarpedSpitRenderer::new);
+            event.register(EntityTypeRegistry.SKELETAL_PIGLIN.get(), SkeletalPiglinRenderer::new);
+        });
+        
+        GameRendering.registerModelLayers(event -> {
+            event.register(HogletRenderer.MAIN, AbstractHogletModel::createBodyLayer);
+            event.register(HogletRenderer.MONSTER, MonsterHogletModel::createBodyLayer);
+            event.register(SkeletalPiglinRenderer.MAIN, SkeletalPiglinModel::createBodyLayer);
+            event.register(SkeletalPiglinRenderer.OUTER_ARMOR, OUTER_ARMOR_DEFINITION);
+            event.register(SkeletalPiglinRenderer.INNER_ARMOR, INNER_ARMOR_DEFINITION);
+            event.register(HOGLIN, () -> GBHoglinModelComplete.createBodyLayer(0.0F));
+            event.register(HOGLIN_ARMOR, () -> GBHoglinModelComplete.createBodyLayer(0.05F));
+            event.register(ShamanPiglinRenderer.MAIN, ShamanPiglinModel::createBodyLayer);
+            event.register(PigmyRenderer.MAIN, PigmyModel::createBodyLayer);
+            event.register(ShrygmyRenderer.MAIN, ShrygmyModel::createBodyLayer);
+            event.register(HoggartRenderer.MAIN, HoggartModel::createBodyLayer);
+            event.register(WarpedPiglinRenderer.MAIN, WarpedPiglinModel::createBodyLayer);
+            event.register(WarpedSpitRenderer.LAYER_LOCATION, WarpedSpitModel::createBodyLayer);
+            event.register(GoldenShieldModel.LAYER_LOCATION, GoldenShieldModel::createBodyLayer);
+        });
     }
 
     public static void onInitialized(ParallelDispatch dispatch) {
         MenuRegistry.registerScreenFactory(MenuTypeRegistry.PYGMY_STATION.get(), PygmyStationScreen::new);
         MenuRegistry.registerScreenFactory(MenuTypeRegistry.PYGMY_ARMOR_STAND.get(), PygmyArmorStandScreen::new);
-
-        RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_FUNGUS.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_LUMPS.get()));
-        RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_DOOR.get()));
-        RenderRegistry.block(RenderType.cutout(), Objects.requireNonNull(BlockRegistry.HOGDEW_TRAPDOOR.get()), Objects.requireNonNull(BlockRegistry.HOGDEW_TRAPDOOR.get()));
-
+        GameRendering.registerBlockRenderers(event -> {
+            event.register(RenderType.cutout(),
+                BlockRegistry.HOGDEW_FUNGUS.get(),
+                BlockRegistry.HOGDEW_LUMPS.get(),
+                BlockRegistry.HOGDEW_DOOR.get(),
+                BlockRegistry.HOGDEW_TRAPDOOR.get()
+            );
+        });
+        
         ItemProperties.register(ItemRegistry.SLINGSHOT.get(), new ResourceLocation("pull"), (stack, level, entity, seed) -> {
             if (entity == null) {
                 return 0.0f;

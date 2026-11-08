@@ -1,7 +1,7 @@
 package com.github.teamfusion.greedandbleed.client.layers;
 
 import com.github.teamfusion.greedandbleed.api.IGBArmor;
-import com.github.teamfusion.greedandbleed.platform.client.ArmorHook;
+import com.github.teamfusion.greedandbleed.core.platform.client.ArmorHook;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
