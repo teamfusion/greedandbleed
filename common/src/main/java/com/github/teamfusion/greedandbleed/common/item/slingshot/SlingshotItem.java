@@ -1,9 +1,11 @@
 package com.github.teamfusion.greedandbleed.common.item.slingshot;
 
+import com.github.teamfusion.greedandbleed.common.entity.ToleratingMount;
 import com.github.teamfusion.greedandbleed.common.registry.ItemRegistry;
 import it.unimi.dsi.fastutil.objects.AbstractObject2ObjectFunction;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -11,12 +13,16 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Map;
@@ -115,7 +121,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int i) {
         if (!level.isClientSide) {
             SoundEvent soundEvent = SoundEvents.CROSSBOW_LOADING_START;
-            float f = SlingshotItem.getPowerForTime((itemStack.getUseDuration() - i));
+            float f = getPowerForTime((itemStack.getUseDuration() - i));
             if (f < 0.2f) {
                 this.startSoundPlayed = false;
             }
@@ -148,7 +154,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         ItemStack itemstack2 = hand == InteractionHand.MAIN_HAND ? player.getItemInHand(InteractionHand.OFF_HAND) : player.getItemInHand(InteractionHand.MAIN_HAND);
-        boolean flag = SlingshotItem.getAmmoBehavior(itemstack2.getItem()) != null || !this.getProjectile(player).isEmpty();
+        boolean flag = getAmmoBehavior(itemstack2.getItem()) != null || !this.getProjectile(player).isEmpty();
 
         if (!flag) {
             return InteractionResultHolder.fail(itemstack);
@@ -181,7 +187,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
             }
 
             ItemStack itemStack3 = list.get(SlingshotPouchItem.getSelectedItem(pouch));
-            if (SlingshotItem.getAmmoBehavior(itemStack3.getItem()) == null) return ItemStack.EMPTY;
+            if (getAmmoBehavior(itemStack3.getItem()) == null) return ItemStack.EMPTY;
             return itemStack3;
         }
 
@@ -189,9 +195,7 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
     }
 
     public Predicate<ItemStack> getAllSupportedProjectiles() {
-        return itemStack -> {
-            return false;
-        };
+        return itemStack -> false;
     }
 
     @Override
@@ -199,4 +203,119 @@ public class SlingshotItem extends ProjectileWeaponItem implements Vanishable {
         return 8;
     }
 
+    public static void bootstrap() {
+        
+        registerAmmo(Items.EGG, new SlingshotBehavior());
+        registerAmmo(Items.SNOWBALL, new SlingshotBehavior());
+        registerAmmo(ItemRegistry.CRIMSON_FUNGUS.get(), new SlingshotBehavior());
+        registerAmmo(ItemRegistry.PEBBLE.get(), new SlingshotBehavior());
+        registerAmmo(Items.POISONOUS_POTATO, new SlingshotBehavior());
+        registerAmmo(Items.PUFFERFISH, new SlingshotBehavior());
+        registerAmmo(Items.SPIDER_EYE, new SlingshotBehavior());
+        registerAmmo(Items.IRON_NUGGET, new SlingshotBehavior());
+        registerAmmo(Items.GOLD_NUGGET, new SlingshotBehavior());
+        registerAmmo(Items.RAW_IRON, new SlingshotBehavior());
+        registerAmmo(Items.RAW_GOLD, new SlingshotBehavior());
+        registerAmmo(Items.RAW_COPPER, new SlingshotBehavior());
+        registerAmmo(Items.IRON_INGOT, new SlingshotBehavior());
+        registerAmmo(Items.GOLD_INGOT, new SlingshotBehavior());
+        registerAmmo(Items.COPPER_INGOT, new SlingshotBehavior());
+        registerAmmo(Items.NETHERITE_INGOT, new SlingshotBehavior());
+        registerAmmo(Items.DIAMOND, new SlingshotBehavior());
+        registerAmmo(Items.EMERALD, new SlingshotBehavior());
+        registerAmmo(Items.BRICK, new SlingshotBehavior());
+        registerAmmo(Items.NETHER_BRICK, new SlingshotBehavior());
+        registerAmmo(Items.BEETROOT_SEEDS, new BuckshotSlingshotBehavior());
+        registerAmmo(Items.MELON_SEEDS, new BuckshotSlingshotBehavior());
+        registerAmmo(Items.PUMPKIN_SEEDS, new BuckshotSlingshotBehavior());
+        registerAmmo(Items.WHEAT_SEEDS, new BuckshotSlingshotBehavior());
+        registerAmmo(Items.SPLASH_POTION, new SlingshotBehavior() {
+            @Override
+            public float getXRot() {
+                return -10F;
+            }
+            
+            @Override
+            public float getMaxPower() {
+                return 1.5F;
+            }
+            
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                return new ThrownPotion(level, shooter);
+            }
+        });
+        registerAmmo(Items.EXPERIENCE_BOTTLE, new SlingshotBehavior() {
+            @Override
+            public float getXRot() {
+                return -10F;
+            }
+            
+            @Override
+            public float getMaxPower() {
+                return 1.5F;
+            }
+            
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                return new ThrownExperienceBottle(level, shooter);
+            }
+        });
+        registerAmmo(Items.FIRE_CHARGE, new SlingshotBehavior() {
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                LargeFireball largeFireball = new LargeFireball(EntityType.FIREBALL, level);
+                Vec3 vec3 = shooter.getViewVector(1.0F);
+                largeFireball.xPower = vec3.x * 0.05F * power;
+                largeFireball.yPower = -0.03F;
+                largeFireball.zPower = vec3.z * 0.05F * power;
+                largeFireball.setPos(shooter.getX(), shooter.getEyeY(), shooter.getZ());
+                return largeFireball;
+            }
+        });
+        registerAmmo(Items.LINGERING_POTION, new SlingshotBehavior() {
+            @Override
+            public float getXRot() {
+                return -10F;
+            }
+            
+            @Override
+            public float getMaxPower() {
+                return 1.5F;
+            }
+            
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                return new ThrownPotion(level, shooter);
+            }
+        });
+        
+        registerAmmo(Items.ENDER_PEARL, new SlingshotBehavior() {
+            
+            @Override
+            public Projectile getProjectile(Level level, BlockPos pos, LivingEntity shooter, ItemStack stack, float power) {
+                return new ThrownEnderpearl(level, shooter);
+            }
+        });
+    }
+    
+    public static void onHoglinAttack(LivingEntity entity, DamageSource source) {
+        if (source.getDirectEntity() instanceof ToleratingMount mount && !entity.level().isClientSide) {
+            if (mount.getTolerance() > 0) {
+                mount.addTolerance(-1);
+            } else if (mount.getTolerance() < 0) {
+                mount.setTolerance(0);
+            }
+        }
+    }
+    
+    public static void onHoglinUpdate(LivingEntity entity) {
+        if (entity instanceof ToleratingMount mount && !entity.level().isClientSide) {
+            if (mount.getTolerance() > 0) {
+                mount.addTolerance(-1);
+            } else if (mount.getTolerance() < 0) {
+                mount.setTolerance(0);
+            }
+        }
+    }
 }

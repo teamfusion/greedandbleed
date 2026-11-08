@@ -26,7 +26,6 @@
     "PigMixin",
     "PlayerMixin",
     "PlayerSensorMixin",
-    "PotionBrewingMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerMixin",
     "SkeletonMixin",
